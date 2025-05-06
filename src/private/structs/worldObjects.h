@@ -14,7 +14,7 @@ struct GridObject
 struct Cell
 {
     //std::shared_ptr<GridObject> object;
-    sf::CircleShape cs;
+    std::unique_ptr<sf::CircleShape> cs = std::make_unique<sf::CircleShape>();
 };
 
 struct World
