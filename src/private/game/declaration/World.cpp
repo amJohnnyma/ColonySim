@@ -5,31 +5,24 @@ World::World(int w, int h, sf::RenderWindow& window)
     width = w;
     height = h;
     view = window.getDefaultView();
+    WorldGeneration gen(0,w,h,cellSize);
+    grid = gen.getResult();
+    gen.~WorldGeneration();
 
-    for(int x = 0; x < w; x++)
-    {
-        for(int y = 0; y < h; y++)
-        {
-            std::unique_ptr<sf::CircleShape> shape = std::make_unique<sf::CircleShape>(cellSize/4);
-            shape->setOrigin(cellSize/4,cellSize/4);
-            shape->setPosition(
-                x * cellSize + cellSize / 2.f,
-                y * cellSize + cellSize / 2.f
-            );
-            shape->setFillColor(sf::Color::Green);    
+        //this temporary
+        std::unique_ptr<sf::CircleShape> shape = std::make_unique<sf::CircleShape>(cellSize/4);
+        shape->setOrigin(cellSize/4,cellSize/4);
+        shape->setPosition(
+            5 * cellSize + cellSize / 2.f,
+            5 * cellSize + cellSize / 2.f
+        );
+    
+        shape->setFillColor(sf::Color::Red);    
+        te.x = 5;
+        te.y = 5;
+        te.cs = std::move(shape);
+    ////////
 
-            std::unique_ptr<Cell> newC = std::make_unique<Cell>();     
-            CellData cd;
-
-            newC->cs = std::move(shape);   
-
-            cd.type = "(" + std::to_string(x) + ", " + std::to_string(y) + ")";
-            newC->x = x;
-            newC->y = y;
-            newC->data = cd;
-            grid.push_back(std::move(newC));
-        }
-    }
 
 }
 
@@ -47,8 +40,74 @@ void World::update()
 {
 
 }
+void World::drawEntities(sf::RenderWindow& window)
+{
+
+    if(te.x >= width)
+    {
+        te.x = 0;
+
+    }
+    else{
+        te.x++;
+    }
+    if(te.y >= height)
+    {
+        te.y = 0;
+    }
+    else{
+        te.y++;
+    }
+
+    
+        te.cs.get()->setPosition(
+        te.x * cellSize + cellSize / 2.f,
+        te.y * cellSize + cellSize / 2.f
+    );
+    
+
+
+    window.draw(*te.cs);
+    
+}
 
 //helper render
+void World::drawTerrain(sf::RenderWindow & window)
+{
+    int drawCount = 0;
+    int skippedCount = 0;
+    
+    sf::FloatRect viewRect(
+        window.getView().getCenter().x - window.getView().getSize().x / 2.f,
+        window.getView().getCenter().y - window.getView().getSize().y / 2.f,
+        window.getView().getSize().x,
+        window.getView().getSize().y
+    );
+    for (int x = 0; x < width; x++) {
+        for (int y = 0; y < height; y++) {
+            float px = x * cellSize;
+            float py = y * cellSize;
+
+            sf::FloatRect cellBounds(px,py, cellSize,cellSize);
+            if(!viewRect.intersects(cellBounds))
+            {
+                skippedCount++;
+                continue;
+            }                
+
+            
+            //for debuggin
+            drawCount++;       
+
+                
+               
+    
+            window.draw(*this->at(x,y).get()->cs);
+        }
+    }
+//std::cout << "terrain drawn: " + std::to_string(drawCount) << std::endl;
+//std::cout << "terrain skipped: " + std::to_string(skippedCount) << std::endl;
+}
 void World::drawGrid(sf::RenderWindow & window)
 {
     int drawCount = 0;
@@ -89,14 +148,16 @@ void World::drawGrid(sf::RenderWindow & window)
             window.draw(rs);
         }
     }
-std::cout << "Cells drawn: " + std::to_string(drawCount) << std::endl;
-std::cout << "Cells skipped: " + std::to_string(skippedCount) << std::endl;
+//std::cout << "Cells drawn: " + std::to_string(drawCount) << std::endl;
+//std::cout << "Cells skipped: " + std::to_string(skippedCount) << std::endl;
 }
 
 void World::render(sf::RenderWindow &window)
 {
     window.clear();
     drawGrid(window);
+    drawTerrain(window);
+    drawEntities(window);
     /*
         for(int i =0; i < height; i ++)
     {

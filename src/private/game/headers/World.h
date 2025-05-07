@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include "../../structs/worldObjects.h"
+#include "WorldGeneration.h"
 #include <array>
 
 
@@ -16,9 +17,15 @@ class World
         std::vector<Cell> base; //still needs to be assigned
         const int cellSize = 50;
         sf::View view;
+
+        //temp
+        tempentitiy te;
+
     public:
     private:
         void drawGrid(sf::RenderWindow & window);
+        void drawTerrain(sf::RenderWindow & window);
+        void drawEntities(sf::RenderWindow& window);
     public:
         World(int w, int h, sf::RenderWindow& window);
         ~World();

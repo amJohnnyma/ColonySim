@@ -15,6 +15,8 @@ struct GridObject
 struct CellData
 {
     std::string type = "Default";
+    std::string terrain ="flat";
+    double difficulty = 0;
 };
 
 struct Cell
@@ -30,6 +32,12 @@ struct Cell
     {
         this->cs->setFillColor(col);
     }
+};
+
+struct tempentitiy
+{
+    int x,y;
+    std::unique_ptr<sf::CircleShape> cs = std::make_unique<sf::CircleShape>();
 };
 
 
