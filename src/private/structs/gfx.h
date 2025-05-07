@@ -10,7 +10,7 @@ struct window
     int grids;
     sf::RenderWindow* wndw;
 
-    window(int w, int h, int grids) : windowWidth(w), windowHeight(h), grids(grids) 
+    window(int w, int h) : windowWidth(w), windowHeight(h)
     {
         wndw = new sf::RenderWindow(sf::VideoMode({windowWidth,windowHeight}), "Window");
     }

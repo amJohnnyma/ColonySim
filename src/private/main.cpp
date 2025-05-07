@@ -1,54 +1,9 @@
-#include <iostream>
-#include "world/headers/World.h"
-#include "structs/gfx.h"
+#include "game/headers/Game.h"
 
 int main()
 {
-    window wind(500,500,1);
-    World world(20,10,*wind.wndw);
-    while(wind.wndw->isOpen())
-    {
-
-        sf::Event event;
-        while(wind.wndw->pollEvent(event))
-        {
-            if(event.type == sf::Event::Closed)
-            {
-                wind.wndw->close();
-            }
-        }
-        world.handleInput(*wind.wndw);
-        world.update();
-        world.render(*wind.wndw);
-
-    }
-    //Game game; //Has input manager, and the world for updates, and a render class 
-    //game.run() ->
-    /*
-        {
-                window wind(500,500,1);
-    World world(20,10,*wind.wndw);
-    while(wind.wndw->isOpen())
-    {
-
-        sf::Event event;
-        while(wind.wndw->pollEvent(event))
-        {
-            if(event.type == sf::Event::Closed)
-            {
-                wind.wndw->close();
-            }
-        }
-        this->handleInput(*wind.wndw);
-        world.update();
-        world.render(*wind.wndw);
-
-    }
-    
-        }
-    
-    
-    */
+    Game game(500,500, 15,15);
+    game.run();
 
 
 

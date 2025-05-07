@@ -1,4 +1,4 @@
-#include "World.h"
+#include "../headers/World.h"
 
 World::World(int w, int h, sf::RenderWindow& window)
 {
