@@ -10,6 +10,7 @@ World::World(int w, int h, sf::RenderWindow& window)
     gen.~WorldGeneration();
 
         //this temporary
+       
         std::unique_ptr<sf::CircleShape> shape = std::make_unique<sf::CircleShape>(cellSize/4);
         shape->setOrigin(cellSize/4,cellSize/4);
         shape->setPosition(
@@ -20,7 +21,8 @@ World::World(int w, int h, sf::RenderWindow& window)
         shape->setFillColor(sf::Color::Red);    
         te.x = 5;
         te.y = 5;
-        te.cs = std::move(shape);
+        
+       te.cs = std::move(shape); 
     ////////
 
 
@@ -38,12 +40,7 @@ const std::unique_ptr<Cell> &World::at(int x, int y) const
 
 void World::update()
 {
-
-}
-void World::drawEntities(sf::RenderWindow& window)
-{
-
-    if(te.x >= width)
+        if(te.x >= width)
     {
         te.x = 0;
 
@@ -60,11 +57,15 @@ void World::drawEntities(sf::RenderWindow& window)
     }
 
     
-        te.cs.get()->setPosition(
-        te.x * cellSize + cellSize / 2.f,
-        te.y * cellSize + cellSize / 2.f
+    te.cs.get()->setPosition(
+    te.x * cellSize + cellSize / 2.f,
+    te.y * cellSize + cellSize / 2.f
     );
     
+
+}
+void World::drawEntities(sf::RenderWindow& window)
+{  
 
 
     window.draw(*te.cs);

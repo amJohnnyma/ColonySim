@@ -37,7 +37,7 @@ struct Cell
 struct tempentitiy
 {
     int x,y;
-    std::unique_ptr<sf::CircleShape> cs = std::make_unique<sf::CircleShape>();
+    std::unique_ptr<sf::CircleShape> cs;
 };
 
 
