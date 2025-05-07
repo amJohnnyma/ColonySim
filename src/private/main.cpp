@@ -5,7 +5,7 @@
 int main()
 {
     window wind(500,500,1);
-    World world(20,20,*wind.wndw);
+    World world(20,10,*wind.wndw);
     while(wind.wndw->isOpen())
     {
 

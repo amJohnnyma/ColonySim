@@ -6,7 +6,6 @@ World::World(int w, int h, sf::RenderWindow& window)
     height = h;
     view = window.getDefaultView();
 
-   // grid = std::vector<std::unique_ptr<Cell>>((w/cellSize)*(h/cellSize));
     for(int x = 0; x < w; x++)
     {
         for(int y = 0; y < h; y++)
@@ -31,6 +30,8 @@ World::World(int w, int h, sf::RenderWindow& window)
             grid.push_back(std::move(newC));
         }
     }
+
+    this->at(5,5).get()->data.type = "Base";
 }
 
 std::unique_ptr<Cell> &World::at(int x, int y)
@@ -48,18 +49,17 @@ void World::update()
 
 }
 
-//TEMP
-
-void World::render(sf::RenderWindow &window)
+//helper render
+void World::drawGrid(sf::RenderWindow & window)
 {
     int drawCount = 0;
     int skippedCount = 0;
-    window.clear();
+    
     sf::FloatRect viewRect(
-        view.getCenter().x - view.getSize().x / 2.f,
-        view.getCenter().y - view.getSize().y / 2.f,
-        view.getSize().x,
-        view.getSize().y
+        window.getView().getCenter().x - window.getView().getSize().x / 2.f,
+        window.getView().getCenter().y - window.getView().getSize().y / 2.f,
+        window.getView().getSize().x,
+        window.getView().getSize().y
     );
     for (int x = 0; x < width; x++) {
         for (int y = 0; y < height; y++) {
@@ -82,19 +82,33 @@ void World::render(sf::RenderWindow &window)
             rs.setFillColor(sf::Color::Transparent); // Optional    
             
             //for debuggin
-            drawCount++;           
+            drawCount++;       
+
+                
+               
     
             window.draw(rs);
         }
     }
 std::cout << "Cells drawn: " + std::to_string(drawCount) << std::endl;
 std::cout << "Cells skipped: " + std::to_string(skippedCount) << std::endl;
+}
+
+void World::render(sf::RenderWindow &window)
+{
+    window.clear();
+    drawGrid(window);
+    for(int i =0; i < height; i ++)
+    {
+        window.draw(*this->at(i,i).get()->cs); //eyawouigwe8uigybwr
+    }
+    //window.draw(*this->at(5,5).get()->cs);
     window.display();
 }
 
 void World::handleInput(sf::RenderWindow &window)
 {
-            //Temp input
+        //Temp input
             window.setView(view);
             if (sf::Keyboard::isKeyPressed(sf::Keyboard::W))
                 view.move(0, -0.5); // up

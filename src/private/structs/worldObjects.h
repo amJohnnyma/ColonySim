@@ -25,7 +25,7 @@ struct Cell
     int x,y;
     CellData data;
 
-
+    //need copy constructor and operator=
     void setColor(sf::Color col)
     {
         this->cs->setFillColor(col);

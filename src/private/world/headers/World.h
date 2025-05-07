@@ -13,11 +13,12 @@ class World
         int width, height;
         std::vector<std::unique_ptr<Cell>> grid;
         std::vector<Cell> drawShapes; //drawShapes.push_back(*grid[i]);
-        std::vector<Cell> base;
+        std::vector<Cell> base; //still needs to be assigned
         const int cellSize = 50;
         sf::View view;
     public:
     private:
+        void drawGrid(sf::RenderWindow & window);
     public:
         World(int w, int h, sf::RenderWindow& window);
         ~World();
