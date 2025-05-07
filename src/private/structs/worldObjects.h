@@ -11,28 +11,28 @@ struct GridObject
     virtual ~GridObject() = default;
 };
 
+
+struct CellData
+{
+    std::string type = "Default";
+};
+
 struct Cell
 {
     //std::shared_ptr<GridObject> object;
     std::unique_ptr<sf::CircleShape> cs = std::make_unique<sf::CircleShape>();
-};
+    //grid position
+    int x,y;
+    CellData data;
 
-struct World
-{
-    int width, height;
-    std::vector<Cell> grid;
 
-    World(int w, int h): width(w), height(h), grid(w*h) {}
-
-    Cell& at(int x, int y)
+    void setColor(sf::Color col)
     {
-        return grid[y * width + x];
-    }
-
-    const Cell& at(int x, int y) const
-    {
-        return grid[y*width+x];
+        this->cs->setFillColor(col);
     }
 };
+
+
+
 
 #endif

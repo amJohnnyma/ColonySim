@@ -1,29 +1,27 @@
-#include <SFML/Graphics.hpp>
 #include <iostream>
-#include "structs/worldObjects.h"
-#include <SFML/Window/Mouse.hpp>
-#include "structs/inputManager.h"
+#include "world/headers/World.h"
 #include "structs/gfx.h"
 
 int main()
 {
-    int size = 10;
-    float cellSize = 500/size;  
-
-    World world(15,15);    
-    window window(500,500,10);
-    inputs input;
-    while(window.wndw->isOpen())
+    World world(10,10);
+    window wind(500,500,1);
+    while(wind.wndw->isOpen())
     {
+
         sf::Event event;
-        while(window.wndw->pollEvent(event))
+        while(wind.wndw->pollEvent(event))
         {
             if(event.type == sf::Event::Closed)
-                window.wndw->close();
-
-            input.update(event);
+            {
+                wind.wndw->close();
+            }
         }
+        world.update();
+        world.render(*wind.wndw);
+
     }
+
     /*
     while (window.wndw->isOpen())
     {

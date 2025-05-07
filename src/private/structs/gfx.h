@@ -21,6 +21,7 @@ struct window
         delete wndw;
     }
 
+
 };
 
-#endif GFX_H
+#endif
