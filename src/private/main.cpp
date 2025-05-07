@@ -2,32 +2,43 @@
 #include <iostream>
 #include "structs/worldObjects.h"
 #include <SFML/Window/Mouse.hpp>
+#include "structs/inputManager.h"
+#include "structs/gfx.h"
 
 int main()
 {
-    unsigned int windowSize = 500;
     int size = 10;
-    float cellSize = windowSize/size;        // Pixel size of each grid cell
-    sf::RenderWindow window(sf::VideoMode({windowSize, windowSize}), "Grid");
-    World world(size,size);
+    float cellSize = 500/size;  
 
-    while (window.isOpen())
+    World world(15,15);    
+    window window(500,500,10);
+    inputs input;
+    while(window.wndw->isOpen())
     {
         sf::Event event;
-        while (window.pollEvent(event)) // Use pollEvent to get events
+        while(window.wndw->pollEvent(event))
+        {
+            if(event.type == sf::Event::Closed)
+                window.wndw->close();
+
+            input.update(event);
+        }
+    }
+    /*
+    while (window.wndw->isOpen())
+    {
+        sf::Event event;
+        while (window.wndw->pollEvent(event)) // Use pollEvent to get events
         {
             if (event.type == sf::Event::Closed) // Check for the closed event
                 window.close();
+            
+            input.update(event);
         }
-        // Clock to track time between clicks
-        sf::Clock clickClock;
-        float clickCooldown = 0.3f; // Minimum time between clicks in seconds
         // Check if the left mouse button is pressed
-        if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
+        if (input.mi.leftClick)
         {
-            // Check if enough time has passed since the last click
-            if (clickClock.getElapsedTime().asSeconds() <= clickCooldown)
-            {
+
                 // Get global mouse position
                 sf::Vector2i position = sf::Mouse::getPosition(window);
 
@@ -56,15 +67,10 @@ int main()
                 shape->setFillColor(sf::Color::Green);
                 world.at(gridX, gridY).cs = std::move(shape);
 
-                // Reset the clock to prevent spamming clicks
-                clickClock.restart();
-            }
         }
-        if (sf::Mouse::isButtonPressed(sf::Mouse::Right))
+        if (input.mi.rightClick)
         {
-            // Check if enough time has passed since the last click
-            if (clickClock.getElapsedTime().asSeconds() <= clickCooldown)
-            {
+
                 // Get global mouse position
                 sf::Vector2i position = sf::Mouse::getPosition(window);
 
@@ -82,15 +88,11 @@ int main()
 
                 world.at(gridX, gridY).cs->setFillColor(sf::Color::Red);
 
-                // Reset the clock to prevent spamming clicks
-                clickClock.restart();
-            }
+
         }
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Delete))
+        if (input.ki.isKeyPressed(sf::Keyboard::Key::Delete))
         {
-            // Check if enough time has passed since the last click
-            if (clickClock.getElapsedTime().asSeconds() <= clickCooldown)
-            {
+
                 // Get global mouse position
                 sf::Vector2i position = sf::Mouse::getPosition(window);
 
@@ -112,9 +114,6 @@ int main()
                     world.at(gridX, gridY).cs = std::move(std::make_unique<sf::CircleShape>());
                 }
 
-                // Reset the clock to prevent spamming clicks
-                clickClock.restart();
-            }
         }
         
 
@@ -136,4 +135,5 @@ int main()
         }
         window.display();
     }
+    */
 }
