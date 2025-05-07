@@ -1,9 +1,11 @@
 #include "World.h"
 
-World::World(int w, int h)
+World::World(int w, int h, sf::RenderWindow& window)
 {
     width = w;
     height = h;
+    view = window.getDefaultView();
+
    // grid = std::vector<std::unique_ptr<Cell>>((w/cellSize)*(h/cellSize));
     for(int x = 0; x < w; x++)
     {
@@ -46,16 +48,67 @@ void World::update()
 
 }
 
+//TEMP
 
 void World::render(sf::RenderWindow &window)
 {
-   // std::cout << "Rendering" << std::endl;
+    int drawCount = 0;
+    int skippedCount = 0;
     window.clear();
-    for(auto &i : grid)
-    {
-        window.draw(*i->cs);
+    sf::FloatRect viewRect(
+        view.getCenter().x - view.getSize().x / 2.f,
+        view.getCenter().y - view.getSize().y / 2.f,
+        view.getSize().x,
+        view.getSize().y
+    );
+    for (int x = 0; x < width; x++) {
+        for (int y = 0; y < height; y++) {
+            float px = x * cellSize;
+            float py = y * cellSize;
+
+            sf::FloatRect cellBounds(px,py, cellSize,cellSize);
+            if(!viewRect.intersects(cellBounds))
+            {
+                skippedCount++;
+                continue;
+            }
+                
+
+            sf::RectangleShape rs;
+            rs.setSize(sf::Vector2f(cellSize, cellSize));
+            rs.setPosition(x * cellSize, y * cellSize);
+            rs.setOutlineThickness(1.f);
+            rs.setOutlineColor(sf::Color::Blue);
+            rs.setFillColor(sf::Color::Transparent); // Optional    
+            
+            //for debuggin
+            drawCount++;           
+    
+            window.draw(rs);
+        }
     }
+std::cout << "Cells drawn: " + std::to_string(drawCount) << std::endl;
+std::cout << "Cells skipped: " + std::to_string(skippedCount) << std::endl;
     window.display();
+}
+
+void World::handleInput(sf::RenderWindow &window)
+{
+            //Temp input
+            window.setView(view);
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::W))
+                view.move(0, -0.5); // up
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::S))
+                view.move(0, 0.5);  // down
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::A))
+                view.move(-0.5, 0); // left
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::D))
+                view.move(0.5, 0);  // right    
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Q))
+                view.zoom(1.0001f); // zoom out
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::E))
+                view.zoom(0.9999f); // zoom in
+            
 }
 
 World::~World()

@@ -4,8 +4,8 @@
 
 int main()
 {
-    World world(10,10);
     window wind(500,500,1);
+    World world(20,20,*wind.wndw);
     while(wind.wndw->isOpen())
     {
 
@@ -17,6 +17,7 @@ int main()
                 wind.wndw->close();
             }
         }
+        world.handleInput(*wind.wndw);
         world.update();
         world.render(*wind.wndw);
 

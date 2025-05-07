@@ -15,10 +15,11 @@ class World
         std::vector<Cell> drawShapes; //drawShapes.push_back(*grid[i]);
         std::vector<Cell> base;
         const int cellSize = 50;
+        sf::View view;
     public:
     private:
     public:
-        World(int w, int h);
+        World(int w, int h, sf::RenderWindow& window);
         ~World();
     public:
         int getWidth();
@@ -29,6 +30,8 @@ class World
         const std::unique_ptr<Cell>& at(int x, int y) const;
         void update();
         void render(sf::RenderWindow & window);
+        //temp input
+        void handleInput(sf::RenderWindow& window);
     
 };
 
