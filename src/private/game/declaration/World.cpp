@@ -31,7 +31,6 @@ World::World(int w, int h, sf::RenderWindow& window)
         }
     }
 
-    this->at(5,5).get()->data.type = "Base";
 }
 
 std::unique_ptr<Cell> &World::at(int x, int y)
@@ -98,10 +97,13 @@ void World::render(sf::RenderWindow &window)
 {
     window.clear();
     drawGrid(window);
-    for(int i =0; i < height; i ++)
+    /*
+        for(int i =0; i < height; i ++)
     {
         window.draw(*this->at(i,i).get()->cs); //eyawouigwe8uigybwr
     }
+    */
+
     //window.draw(*this->at(5,5).get()->cs);
     window.display();
 }

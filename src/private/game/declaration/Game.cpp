@@ -13,6 +13,7 @@ void Game::run()
                 wind->wndw->close();
             }
         }
+        //inputManager->update(event);
         world->handleInput(*wind->wndw);
         world->update();
         world->render(*wind->wndw);
@@ -24,6 +25,7 @@ Game::Game(int windowWidth, int windowHeight, int worldWidth, int worldHeight)
 {
     wind = new window(windowWidth,windowHeight);
     world = new World(worldWidth,worldHeight,*wind->wndw);
+    inputManager = new inputs();
 }
 
 Game::~Game()

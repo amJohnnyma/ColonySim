@@ -80,7 +80,7 @@ struct inputs
     void update(const sf::Event &e)
     {
         ki.update(e);
-        mi.update(e);
+     //   mi.update(e);
     }
 };
 
