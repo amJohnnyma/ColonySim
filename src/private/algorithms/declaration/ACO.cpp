@@ -31,7 +31,7 @@ std::cout<< "Aco construction" << std::endl;
     this->startCell = startCell;
     for(auto &e: startCell->data.entities)
     {
-        if(e.get()->name == "Base")
+        if(e.get()->getName() == "Base")
         {
             base = e.get();
         }
@@ -70,10 +70,10 @@ void ACO::update()
     {
         std::cout << "Checking entity" << std::endl;
         if(e)
-        if(e->name == "ant")
+        if(e->getName() == "ant")
         {
             std::cout << "found ant" << std::endl;            
-            if(e.get()->target && e.get()->target->name == "Base")
+            if(e.get()->getTarget() && e.get()->getTarget()->getName() == "Base")
             {
                 returnHome(cell, e.get());
             }
@@ -136,7 +136,7 @@ void ACO::moveToCell(Cell* from, Cell* to, entity* e)
 */
 
 
-void ACO::moveToCell(Cell* from, Cell* to, entity* e)
+void ACO::moveToCell(Cell* from, Cell* to, Entity* e)
 {
     // Loop through the entities in the "from" cell
     for (auto it = from->data.entities.begin(); it != from->data.entities.end(); ++it)
@@ -165,7 +165,7 @@ void ACO::depositPheremones(Cell *c)
 
 }
 
-void ACO::findFood(Cell* cell, entity *e)
+void ACO::findFood(Cell* cell, Entity *e)
 {
 
     curCell = cell;
@@ -220,10 +220,10 @@ void ACO::findFood(Cell* cell, entity *e)
                     {
                         //go back home
                         std::cout << "Found goal" << std::endl;
-                        s.first->data.entities[0].get()->hitbox.get()->setFillColor(sf::Color::Magenta);
-                        goalImpact = 0.5 * s.first->data.entities[0].get()->resource;
+                        s.first->data.entities[0].get()->getHitbox()->setFillColor(sf::Color::Magenta);
+                        goalImpact = 0.5 * s.first->data.entities[0].get()->getResource();
                         //return home -> this will reinforce paths even more
-                        e->target = base;
+                        e->setTarget(base);
                         moveToCell(curCell, s.first, e);
 
 
@@ -250,7 +250,7 @@ void ACO::findFood(Cell* cell, entity *e)
             } 
 
 }
-void ACO::returnHome(Cell* cell, entity * e)
+void ACO::returnHome(Cell* cell, Entity * e)
 {
     std::cout << "Returning home!" << std::endl;
 }

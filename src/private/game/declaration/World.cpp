@@ -49,10 +49,10 @@ void World::drawEntities(sf::RenderWindow& window)
         //  std::cout << "Has texture: " << (j->hitbox->getTexture() ? "yes" : "no") << std::endl;
         //  std::cout << "Texture pointer: " << static_cast<const void*>(j->hitbox->getTexture()) << std::endl;
 
-          window.draw(*j.get()->hitbox);
-          if(j->name == "ant")
+          window.draw(*j.get()->getHitbox());
+          if(j->getName() == "ant")
           {
-            sf::Vector2f pos1 = j->hitbox->getPosition()+ sf::Vector2f(cellSize / 2.f, cellSize / 2.f);
+            sf::Vector2f pos1 = j->getHitbox()->getPosition()+ sf::Vector2f(cellSize / 2.f, cellSize / 2.f);
 
             // Iterate through all other grid cells to compare with other entities
             for (auto &k : grid)
@@ -64,9 +64,9 @@ void World::drawEntities(sf::RenderWindow& window)
                 for (auto it2 = k.get()->data.entities.begin(); it2 != k.get()->data.entities.end(); ++it2)
                 {
                     // Get position of the second entity in the other cell
-                    if(it2->get()->name == "location")
+                    if(it2->get()->getName() == "location")
                     {
-                        sf::Vector2f pos2 = it2->get()->hitbox->getPosition()+ sf::Vector2f(cellSize / 2.f, cellSize / 2.f);
+                        sf::Vector2f pos2 = it2->get()->getHitbox()->getPosition()+ sf::Vector2f(cellSize / 2.f, cellSize / 2.f);
 
                         // Create a line using sf::VertexArray
                         sf::VertexArray line(sf::Lines, 2);
@@ -105,14 +105,14 @@ void World::createACO()
     {
         for(auto &e : s.get()->data.entities)
         {
-            if(e->name == "ant")
+            if(e->getName() == "ant")
             {
                 
                 for(auto &g : grid)
                 {
                     for(auto &eg : g.get()->data.entities)
                     {
-                        if(eg->name == "location")
+                        if(eg->getName() == "location")
                         {
                             raw_goals.push_back(g.get());
                         }

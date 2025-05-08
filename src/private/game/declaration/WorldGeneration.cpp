@@ -98,8 +98,8 @@ void WorldGeneration::generateEntities(int num)
     
     for(int k = 0; k < num; k ++)
     {
-        std::unique_ptr<entity> et = std::make_unique<entity>(); //make ant entity
-        et->name = "ant";
+        std::unique_ptr<Entity> et = std::make_unique<Entity>(); //make ant entity
+        et->setName("ant");
         std::unique_ptr<sf::RectangleShape> rs = std::make_unique<sf::RectangleShape>();
 
         std::random_device rd;
@@ -110,37 +110,37 @@ void WorldGeneration::generateEntities(int num)
         std::pair<int, int> point = {xdis(gen), ydis(gen)};
 
         if (std::find(vis.begin(), vis.end(), point) == vis.end()) {
-            et->x = xdis(gen);
-            et->y = ydis(gen);
+            et->setX(xdis(gen));
+            et->setY(ydis(gen));
     
-            vis.push_back({et->x, et->y});
+            vis.push_back({et->getY(), et->getY()});
 
             rs.get()->setSize(sf::Vector2f(cellSize,cellSize));
-            rs.get()->setPosition(et->x * cellSize, et->y * cellSize);  
+            rs.get()->setPosition(et->getX() * cellSize, et->getY() * cellSize);  
             rs.get()->setOutlineThickness(1.f); 
-            rs.get()->setOutlineColor(sf::Color::Red);
+            rs.get()->setOutlineColor(sf::Color::Red); 
             rs.get()->setFillColor(sf::Color::White);    
 
-            et->hitbox = std::move(rs);
+            et->setHitbox(std::move(rs));
             
 
             
-            std::unique_ptr<entity> et2 = std::make_unique<entity>(); //make ant entity
-            et2->name = "Base";
+            std::unique_ptr<Entity> et2 = std::make_unique<Entity>(); //make ant entity
+            et2->setName("Base");
             std::unique_ptr<sf::RectangleShape> rs2 = std::make_unique<sf::RectangleShape>();    
     
-                et2->x = et->x;
-                et2->y = et->y;        
+                et2->setX(et->getX());
+                et2->setY(et->getY());        
     
                 rs2.get()->setSize(sf::Vector2f(cellSize,cellSize));
-                rs2.get()->setPosition(et2->x * cellSize, et2->y * cellSize);  
+                rs2.get()->setPosition(et2->getX() * cellSize, et2->getY() * cellSize);  
                 rs2.get()->setOutlineThickness(1.f); 
                 rs2.get()->setOutlineColor(sf::Color::Red);
                 rs2.get()->setFillColor(sf::Color::Yellow);   
     
-                et2->hitbox = std::move(rs2);
-                grid[et2->y*width+et2->x].get()->data.entities.push_back(std::move(et2));
-                grid[et->y*width+et->x].get()->data.entities.push_back(std::move(et));
+                et2->setHitbox(std::move(rs2));
+                grid[et2->getY()*width+et2->getX()].get()->data.entities.push_back(std::move(et2));
+                grid[et->getY()*width+et->getX()].get()->data.entities.push_back(std::move(et));
             
 
         }
@@ -165,9 +165,9 @@ void WorldGeneration::assignTextures()
     {
         for (auto& ent : cell->data.entities)
         {
-            if (ent->name == "ant")
+            if (ent->getName() == "ant")
             {
-                ent->hitbox->setTexture(antTexture);
+                ent->getHitbox()->setTexture(antTexture);
 
             }
         }
@@ -179,8 +179,8 @@ void WorldGeneration::generateLocations(int num)
     std::vector<std::pair<int,int>> vis;
     for(int k = 0; k < num; k ++)
     {
-        std::unique_ptr<entity> et = std::make_unique<entity>();
-        et->name = "location";
+        std::unique_ptr<Entity> et = std::make_unique<Entity>();
+        et->setName("location");
         std::unique_ptr<sf::RectangleShape> rs = std::make_unique<sf::RectangleShape>();
 
         std::random_device rd;
@@ -191,26 +191,26 @@ void WorldGeneration::generateLocations(int num)
         std::pair<int, int> point = {xdis(gen), ydis(gen)};
 
         if (std::find(vis.begin(), vis.end(), point) == vis.end()) {
-            et->x = xdis(gen);
-            et->y = ydis(gen);
+            et->setX(xdis(gen));
+            et->setY(ydis(gen));
     
-            vis.push_back({et->x, et->y});
+            vis.push_back({et->getX(), et->getY()});
 
 
-            double dif = grid[et->y*width+et->x].get()->data.difficulty;
+            double dif = grid[et->getY()*width+et->getX()].get()->data.difficulty;
 
             rs.get()->setSize(sf::Vector2f(cellSize,cellSize));
-            rs.get()->setPosition(et->x * cellSize, et->y * cellSize);  
+            rs.get()->setPosition(et->getX() * cellSize, et->getY() * cellSize);  
             rs.get()->setOutlineThickness(1.f); 
             rs.get()->setOutlineColor(sf::Color::White);
             rs.get()->setFillColor(sf::Color(255,255,255,dif*100));    
-            et->hitbox = std::move(rs);
-            et->maxResource = 100;
+            et->setHitbox(std::move(rs));
+            et->setMaxResource(100);
             //temp resource amount
-            et->resource = static_cast<int>(dif * 100);
+            et->setResource(static_cast<int>(dif * 100));
 
 
-            grid[et->y*width+et->x].get()->data.entities.push_back(std::move(et));
+            grid[et->getY()*width+et->getX()].get()->data.entities.push_back(std::move(et));
             
         }
         else{

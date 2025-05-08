@@ -29,7 +29,7 @@ class ACO
         std::unordered_set<Cell*> visited;
         int numberAnts = 1;
         int Q = 10;
-        entity* base;
+        Entity* base;
 
 
     private:
@@ -46,10 +46,10 @@ class ACO
         double calculateHeuristic(Cell* cur, Cell* next);
         //pair<cell, score>
         std::vector<std::pair<Cell*, double>> computeScores();
-        void moveToCell(Cell* from, Cell * to, entity* e);
+        void moveToCell(Cell* from, Cell * to, Entity* e);
         void depositPheremones(Cell* c);
-        void findFood(Cell* cell, entity* e);
-        void returnHome(Cell* cell, entity* e);
+        void findFood(Cell* cell, Entity* e);
+        void returnHome(Cell* cell, Entity* e);
 
 
         

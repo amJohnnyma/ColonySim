@@ -5,6 +5,7 @@
 #include "../../structs/worldObjects.h"
 #include <random>
 #include "../../utils/headers/TextureManager.h"
+#include "../../entities/Entity.h"
 
 class WorldGeneration
 {
