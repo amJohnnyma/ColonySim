@@ -50,6 +50,7 @@ void World::drawEntities(sf::RenderWindow& window)
         //  std::cout << "Texture pointer: " << static_cast<const void*>(j->hitbox->getTexture()) << std::endl;
 
           window.draw(*j.get()->getHitbox());
+          /*
           if(j->getName() == "ant")
           {
             sf::Vector2f pos1 = j->getHitbox()->getPosition()+ sf::Vector2f(cellSize / 2.f, cellSize / 2.f);
@@ -84,6 +85,8 @@ void World::drawEntities(sf::RenderWindow& window)
                 }
             }
           }
+          */
+          
 
         }
 
@@ -329,6 +332,14 @@ void World::handleInput(sf::RenderWindow &window)
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::E)) {
         view.zoom(0.999f);
         currentZoom *= 0.999f;
+    }
+    if(sf::Keyboard::isKeyPressed(sf::Keyboard::Num1))
+    {
+        running = true;
+    }
+    if(sf::Keyboard::isKeyPressed(sf::Keyboard::Num2))
+    {
+        running = false;
     }
 }
 

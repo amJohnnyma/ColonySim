@@ -20,7 +20,7 @@ void Game::run()
 
         // Only update every 500ms
         auto now = clock::now();
-        if (now - lastUpdate >= updateInterval)
+        if (now - lastUpdate >= updateInterval && world->isRunning())
         {
             world->update();
             lastUpdate = now;

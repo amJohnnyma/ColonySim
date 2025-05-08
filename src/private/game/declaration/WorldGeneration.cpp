@@ -7,9 +7,9 @@ WorldGeneration::WorldGeneration(unsigned int seed, int xWidth, int yWidth, int 
     height = yWidth;
     this->cellSize = cellSize;
     generateTerrain();
-    generateEntities(1);
+    generateEntities(20);
     assignTextures();
-    generateLocations(20);
+    generateLocations(5);
 
 
 }

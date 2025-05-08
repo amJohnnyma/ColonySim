@@ -72,14 +72,17 @@ void ACO::update()
         if(e)
         if(e->getName() == "ant")
         {
-            std::cout << "found ant" << std::endl;            
-            if(e.get()->getTarget() && e.get()->getTarget()->getName() == "Base")
+            std::cout << "found ant" << std::endl;  
+            /*
+                        if(e.get()->getTarget() && e.get()->getTarget()->getName() == "Base")
             {
                 returnHome(cell, e.get());
             }
             else{
                 findFood(cell, e.get());
-            }             
+            }    
+            */          
+         findFood(cell, e.get());
 
         }
     }

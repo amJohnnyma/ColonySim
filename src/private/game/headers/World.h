@@ -24,6 +24,7 @@ class World
         float baseSpeed = 1.0f;
         float speed;
         std::vector<ACO> sims;
+        bool running = false;
 
     public:
     private:
@@ -45,6 +46,7 @@ class World
         void render(sf::RenderWindow & window);
         //temp input
         void handleInput(sf::RenderWindow& window);
+        bool isRunning() { return running;}
 
     
 };
