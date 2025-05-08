@@ -11,17 +11,36 @@ struct GridObject
     virtual ~GridObject() = default;
 };
 
+struct pheromone
+{
+    double strength;
+    int x,y; //coords
+    std::string type;
+};
+
+struct entity //Should probably be a class
+{
+    int x,y;
+    std::string name;
+    std::unique_ptr<sf::RectangleShape> hitbox = std::make_unique<sf::RectangleShape>();
+
+ //   std::unique_ptr<sf::Sprite> sprite = std::make_unique<sf::Sprite>();
+
+};
 
 struct CellData
 {
     std::string type = "Default";
     std::string terrain ="flat";
     double difficulty = 0;
+    pheromone p;
+    std::vector<std::unique_ptr<entity>> entities;
+
+    
 };
 
 struct Cell
 {
-    //std::shared_ptr<GridObject> object;
     std::unique_ptr<sf::CircleShape> cs = std::make_unique<sf::CircleShape>();
     //grid position
     int x,y;
@@ -34,11 +53,8 @@ struct Cell
     }
 };
 
-struct tempentitiy
-{
-    int x,y;
-    std::unique_ptr<sf::CircleShape> cs;
-};
+
+
 
 
 

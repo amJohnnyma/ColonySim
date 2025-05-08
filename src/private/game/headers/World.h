@@ -13,13 +13,13 @@ class World
         int temp = 0;
         int width, height;
         std::vector<std::unique_ptr<Cell>> grid;
-        std::vector<Cell> drawShapes; //drawShapes.push_back(*grid[i]);
-        std::vector<Cell> base; //still needs to be assigned
+     //   std::vector<Cell> drawShapes; //drawShapes.push_back(*grid[i]);
+      //  std::vector<Cell> base; //still needs to be assigned
         const int cellSize = 50;
         sf::View view;
-
-        //temp
-        tempentitiy te;
+        float currentZoom = 1.0f;
+        float baseSpeed = 1.0f;
+        float speed;
 
     public:
     private:
@@ -40,6 +40,7 @@ class World
         void render(sf::RenderWindow & window);
         //temp input
         void handleInput(sf::RenderWindow& window);
+
     
 };
 
