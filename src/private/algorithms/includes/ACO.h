@@ -4,6 +4,9 @@
 #include "../../structs/worldObjects.h"
 #include <iostream>
 #include <cmath>
+#include <random>
+#include <unordered_set>
+
 
 
 
@@ -14,7 +17,7 @@ class ACO
     private:
         Cell* startCell;
         Cell* curCell;
-        std::vector<Cell*> goals;
+        std::unordered_set<Cell*> goals;
         std::vector<Cell*> world;
         float theta = 0.0f;
         std::vector<Cell*> adjCells;
@@ -22,6 +25,11 @@ class ACO
         int worldHeight;
         double pF = 0.5; //pheremone influnce
         double hF = 0.5; // heuristic influence
+        double pheremoneEvap = 0.2;
+        std::unordered_set<Cell*> visited;
+        int numberAnts = 1;
+        int Q = 2;
+
 
     private:
         void getAdjCells(int x, int y);
@@ -37,6 +45,8 @@ class ACO
         double calculateHeuristic(Cell* cur, Cell* next);
         //pair<cell, score>
         std::vector<std::pair<Cell*, double>> computeScores();
+        void moveToCell(Cell* from, Cell * to, entity* e);
+        void depositPheremones(Cell* c);
 
 
         

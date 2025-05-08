@@ -7,7 +7,7 @@ WorldGeneration::WorldGeneration(unsigned int seed, int xWidth, int yWidth, int 
     height = yWidth;
     this->cellSize = cellSize;
     generateTerrain();
-    generateEntities(3);
+    generateEntities(1);
     assignTextures();
     generateLocations(5);
 
@@ -96,7 +96,7 @@ void WorldGeneration::generateEntities(int num)
     
     for(int k = 0; k < num; k ++)
     {
-        std::unique_ptr<entity> et = std::make_unique<entity>();
+        std::unique_ptr<entity> et = std::make_unique<entity>(); //make ant entity
         et->name = "ant";
         std::unique_ptr<sf::RectangleShape> rs = std::make_unique<sf::RectangleShape>();
 

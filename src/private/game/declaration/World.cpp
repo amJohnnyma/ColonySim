@@ -1,5 +1,6 @@
 #include "../headers/World.h"
 #include "World.h"
+#include "../headers/GlobalVars.h"
 
 World::World(int w, int h, sf::RenderWindow& window)
 {
@@ -48,7 +49,7 @@ void World::drawEntities(sf::RenderWindow& window)
          // std::cout << "Has texture: " << (j->hitbox->getTexture() ? "yes" : "no") << std::endl;
         //  std::cout << "Texture pointer: " << static_cast<const void*>(j->hitbox->getTexture()) << std::endl;
 
-          window.draw(*j->hitbox);
+          window.draw(*j.get()->hitbox);
           if(j->name == "ant")
           {
             sf::Vector2f pos1 = j->hitbox->getPosition()+ sf::Vector2f(cellSize / 2.f, cellSize / 2.f);
@@ -96,7 +97,7 @@ void World::createACO()
 {
     
     Cell* start;
-    std::vector<Cell*> goals;
+    std::vector<Cell*> raw_goals;
     std::vector<Cell*> raw_grid;
     raw_grid.reserve(grid.size());
     for (const auto& cell_ptr : grid) {
@@ -115,11 +116,11 @@ void World::createACO()
                     {
                         if(eg->name == "location")
                         {
-                            goals.push_back(g.get());
+                            raw_goals.push_back(g.get());
                         }
                     }
                 }
-                ACO aco(start, goals, raw_grid, width, height);
+                ACO aco(start, raw_goals, raw_grid, width, height);
                 sims.push_back(aco);
             }
         }
@@ -192,10 +193,10 @@ void World::drawTerrain(sf::RenderWindow & window)
             //for debuggin
             drawCount++;       
 
-                
-               
-    
-            window.draw(*this->at(x,y).get()->cs);
+            Cell* dc = this->at(x,y).get();
+            float scaled = std::clamp(dc->data.p.strength / maxPheromone, 0.0, 1.0);
+            dc->cs.get()->setScale(scaled, scaled);
+            window.draw(*dc->cs.get());
         }
     }
 //std::cout << "terrain drawn: " + std::to_string(drawCount) << std::endl;

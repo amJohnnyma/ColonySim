@@ -18,7 +18,7 @@ struct pheromone
     std::string type;
 };
 
-struct entity //Should probably be a class
+struct entity //Make this a class
 {
     int x,y;
     std::string name;

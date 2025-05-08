@@ -3,5 +3,6 @@
 
 extern int cellSize;
 extern int antSize;
+extern double maxPheromone;
 
 #endif // GLOBALVARS_H
