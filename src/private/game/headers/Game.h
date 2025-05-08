@@ -7,8 +7,8 @@
 class Game
 {
     private:
-        window* wind;
         World* world;
+        window* wind;        
         inputs* inputManager; //How am i going to use this in other classes?
         
 

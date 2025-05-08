@@ -29,7 +29,8 @@ Game::Game(int windowWidth, int windowHeight, int worldWidth, int worldHeight)
 }
 
 Game::~Game()
-{
-    delete wind;
+{   
     delete world;
+    wind->wndw->close();   
+    delete wind;
 }
