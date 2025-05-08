@@ -19,7 +19,7 @@ private:
 public:
     // Constructor
     Entity(int x, int y, std::string name, int maxResource);
-    Entity(int x, int y, std::string name, int maxResource, sf::RectangleShape* hitbox);
+    Entity(int x, int y, std::string name, int maxResource, std::unique_ptr<sf::RectangleShape> hitbox);
 
     // Getter and setter for position
     void setPos(int x, int y);

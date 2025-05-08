@@ -42,13 +42,13 @@ Entity::Entity(int x, int y, std::string name, int maxResource)
     this->maxResource = maxResource;
 }
 
-Entity::Entity(int x, int y, std::string name, int maxResource, sf::RectangleShape *hitbox)
+Entity::Entity(int x, int y, std::string name, int maxResource, std::unique_ptr<sf::RectangleShape> hitbox)
 {
     this->x = x;
     this->y = y;
     this->name = name;
     this->maxResource = maxResource;
-    this->hitbox = std::move(std::make_unique<sf::RectangleShape>(hitbox));
+    this->hitbox = std::move(hitbox);
 }
 
 void Entity::setPos(int x, int y)
