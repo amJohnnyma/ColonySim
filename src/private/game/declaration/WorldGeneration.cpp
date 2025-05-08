@@ -77,8 +77,8 @@ void WorldGeneration::generateEntities(int num)
 
         std::random_device rd;
         std::mt19937 gen(rd());
-        std::uniform_int_distribution<> xdis(0.0,width);
-        std::uniform_int_distribution<> ydis(0.0, height);
+        std::uniform_int_distribution<> xdis(0.0,width-1);
+        std::uniform_int_distribution<> ydis(0.0, height-1);
 
         std::pair<int, int> point = {xdis(gen), ydis(gen)};
 
@@ -137,8 +137,8 @@ void WorldGeneration::generateLocations(int num)
 
         std::random_device rd;
         std::mt19937 gen(rd());
-        std::uniform_int_distribution<> xdis(0.0,width);
-        std::uniform_int_distribution<> ydis(0.0, height);
+        std::uniform_int_distribution<> xdis(0.0,width-1);
+        std::uniform_int_distribution<> ydis(0.0, height-1);
 
         std::pair<int, int> point = {xdis(gen), ydis(gen)};
 
@@ -148,13 +148,20 @@ void WorldGeneration::generateLocations(int num)
     
             vis.push_back({et->x, et->y});
 
+
+            double dif = grid[et->y*width+et->x].get()->data.difficulty;
+
             rs.get()->setSize(sf::Vector2f(cellSize,cellSize));
             rs.get()->setPosition(et->x * cellSize, et->y * cellSize);  
             rs.get()->setOutlineThickness(1.f); 
             rs.get()->setOutlineColor(sf::Color::White);
-            rs.get()->setFillColor(sf::Color::White);    
-
+            rs.get()->setFillColor(sf::Color(255,255,255,dif*100));    
             et->hitbox = std::move(rs);
+            et->maxResource = 100;
+            //temp resource amount
+            et->resource = static_cast<int>(dif * 100);
+
+
             grid[et->y*width+et->x].get()->data.entities.push_back(std::move(et));
             
         }

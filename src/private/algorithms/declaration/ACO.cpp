@@ -8,7 +8,7 @@ ACO::ACO(Cell* startCell, std::vector<Cell*>& goals)
     {
         if(i->name == "ant")
         {
-            conns += "Ant: (" + std::to_string(i->x) + ", " + std::to_string(i->y) + ")\n";
+            conns += "Ant: (" + std::to_string(i->x) + ", " + std::to_string(i->y) + ")\n";            
         }
     }
     for(auto &g:goals)
@@ -21,7 +21,17 @@ ACO::ACO(Cell* startCell, std::vector<Cell*>& goals)
             }
         }
     }
+    this->startCell = startCell;
+    this->goals = goals;
 
     std::cout << conns << std::endl;
+
+}
+
+void ACO::update()
+{
+    
+
+    
 
 }

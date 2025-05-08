@@ -26,7 +26,12 @@ const std::unique_ptr<Cell> &World::at(int x, int y) const
 
 void World::update()
 {
+    std::cout << "World update" << std::endl;
     //this is aco
+    for(auto &a : sims)
+    {
+        a.update();
+    }
 
 }
 
@@ -89,6 +94,7 @@ void World::drawEntities(sf::RenderWindow& window)
 
 void World::createACO()
 {
+    
     Cell* start;
     std::vector<Cell*> goals;
     for(auto &s : grid)
@@ -113,6 +119,8 @@ void World::createACO()
             }
         }
     }
+    
+
 }
 
 //temp draw function which shows lines between all entities
