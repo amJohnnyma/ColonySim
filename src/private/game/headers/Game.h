@@ -4,6 +4,9 @@
 #include "../../structs/gfx.h"
 #include "../../structs/inputManager.h"
 
+#include <thread>
+#include <chrono>
+
 class Game
 {
     private:

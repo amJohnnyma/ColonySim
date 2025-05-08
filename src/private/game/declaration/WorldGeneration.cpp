@@ -39,7 +39,7 @@ void WorldGeneration::generateTerrain()
             std::unique_ptr<Cell> newC = std::make_unique<Cell>();     
             CellData cd;
             pheromone p;
-            p.strength = 0;
+            p.strength = 0.1;
             p.x = x;
             p.y = y;
             p.type = "default";
@@ -67,8 +67,33 @@ void WorldGeneration::generateTerrain()
 
 void WorldGeneration::generateEntities(int num)
 {
-
     std::vector<std::pair<int,int>> vis;
+    //test entities to see grid indexes
+    /*
+    for(int i = 0; i < 5; i ++)
+    {
+        std::unique_ptr<entity> et = std::make_unique<entity>();
+        et->name = "ant";
+        std::unique_ptr<sf::RectangleShape> rs = std::make_unique<sf::RectangleShape>();
+    
+        et->x = i;
+        et->y = 0;
+
+        vis.push_back({et->x, et->y});
+
+        rs.get()->setSize(sf::Vector2f(cellSize,cellSize));
+        rs.get()->setPosition(et->x * cellSize, et->y * cellSize);  
+        rs.get()->setOutlineThickness(1.f); 
+        rs.get()->setOutlineColor(sf::Color::Red);
+        rs.get()->setFillColor(sf::Color::White);    
+
+        et->hitbox = std::move(rs);
+        grid[et->y*width+et->x].get()->data.entities.push_back(std::move(et));
+    
+    }
+        */
+    //////
+    
     for(int k = 0; k < num; k ++)
     {
         std::unique_ptr<entity> et = std::make_unique<entity>();

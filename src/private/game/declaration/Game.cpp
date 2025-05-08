@@ -2,22 +2,31 @@
 
 void Game::run()
 {
-    while(wind->wndw->isOpen())
+    using clock = std::chrono::steady_clock;
+    auto lastUpdate = clock::now();
+    const std::chrono::milliseconds updateInterval(500);  // 500ms
+
+    while (wind->wndw->isOpen())
     {
-
         sf::Event event;
-        while(wind->wndw->pollEvent(event))
+        while (wind->wndw->pollEvent(event))
         {
-            if(event.type == sf::Event::Closed)
-            {
+            if (event.type == sf::Event::Closed)
                 wind->wndw->close();
-            }
         }
-        //inputManager->update(event);
-        world->handleInput(*wind->wndw);
-        world->update();
-        world->render(*wind->wndw);
 
+        // Always run input and render
+        world->handleInput(*wind->wndw);
+
+        // Only update every 500ms
+        auto now = clock::now();
+        if (now - lastUpdate >= updateInterval)
+        {
+            world->update();
+            lastUpdate = now;
+        }
+
+        world->render(*wind->wndw);
     }
 }
 
