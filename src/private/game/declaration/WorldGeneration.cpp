@@ -122,23 +122,27 @@ void WorldGeneration::generateEntities(int num)
             rs.get()->setFillColor(sf::Color::White);    
 
             et->hitbox = std::move(rs);
-            grid[et->y*width+et->x].get()->data.entities.push_back(std::move(et));
+            
 
+            
             std::unique_ptr<entity> et2 = std::make_unique<entity>(); //make ant entity
             et2->name = "Base";
             std::unique_ptr<sf::RectangleShape> rs2 = std::make_unique<sf::RectangleShape>();    
     
-                et2->x = xdis(gen);
-                et2->y = ydis(gen);        
+                et2->x = et->x;
+                et2->y = et->y;        
     
                 rs2.get()->setSize(sf::Vector2f(cellSize,cellSize));
                 rs2.get()->setPosition(et2->x * cellSize, et2->y * cellSize);  
                 rs2.get()->setOutlineThickness(1.f); 
                 rs2.get()->setOutlineColor(sf::Color::Red);
-                rs2.get()->setFillColor(sf::Color::Yellow);    
+                rs2.get()->setFillColor(sf::Color::Yellow);   
     
                 et2->hitbox = std::move(rs2);
                 grid[et2->y*width+et2->x].get()->data.entities.push_back(std::move(et2));
+                grid[et->y*width+et->x].get()->data.entities.push_back(std::move(et));
+            
+
         }
         else{
             k--;

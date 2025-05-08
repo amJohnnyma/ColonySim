@@ -29,6 +29,13 @@ std::cout<< "Aco construction" << std::endl;
 */
 
     this->startCell = startCell;
+    for(auto &e: startCell->data.entities)
+    {
+        if(e.get()->name == "Base")
+        {
+            base = e.get();
+        }
+    }
 
     for(auto &g : goals)
     {
@@ -65,84 +72,14 @@ void ACO::update()
         if(e)
         if(e->name == "ant")
         {
-            curCell = cell;
-            std::cout<<"Getting adj cells"<<std::endl;
-            getAdjCells(e->x, e->y); 
-            if(adjCells.size() == 0)
+            std::cout << "found ant" << std::endl;            
+            if(e.get()->target && e.get()->target->name == "Base")
             {
-                std::cout << "No adj cells" << std::endl;
-                break; // very temporary
+                returnHome(cell, e.get());
             }
-            //compare all adjacent squares
-            std::vector<std::pair<Cell*, double>> scores;
-            for(const auto & ac: adjCells)
-            {
-                std::cout << "Checking adj cell" << std::endl;
-                //Look at distance to goal, difficulty of terrain -> heuristic
-                //check pheromones and bias toward following already successful pheromones
-                if (visited.find(ac) == visited.end()) {
-                    std::cout << "Not visited" << std::endl;
-                    if(goals.find(ac) != goals.end())
-                    {
-                        scores.push_back({ac, pheromoneCalc(ac->data.p.strength, calculateHeuristic(curCell, ac), curCell)*2});
-                    }
-                    else{
-                        scores.push_back({ac, pheromoneCalc(ac->data.p.strength, calculateHeuristic(curCell, ac), curCell)});
-
-                    }
-                }
-                else{
-                    std::cout<<"Already visited"<<std::endl;
-                    visited.erase(ac); //can visit after a run
-                }
-            }       
-
-            //choose score
-            std::random_device rd;
-            std::mt19937 gen(rd());
-            std::uniform_real_distribution<> dis(0.0,1.0);
-            double randomVal = dis(gen);
-            double cumulative = 0.0;
-            for(const auto &s : scores)
-            {
-                cumulative += s.second;
-                if(randomVal <= cumulative)
-                {
-                    std::cout << "Chose random cell" << std::endl;
-                    //choose the cell S as our next cell
-                    visited.insert(s.first);
-                    //if s is a goal then start heading back home to reinforce pheremones further
-                    double goalImpact = 0.0;
-                    if(goals.find(s.first) != visited.end())
-                    {
-                        //go back home
-                        std::cout << "Found goal" << std::endl;
-                        s.first->data.entities[0].get()->hitbox.get()->setFillColor(sf::Color::Magenta);
-                        goalImpact = 0.5 * s.first->data.entities[0].get()->resource;
-                        //return home -> this will reinforce paths even more
-
-
-                        break;
-
-                    }
-
-
-
-                    //update pheremones for this cell
-                    double updatedP = 0.0;
-                    updatedP = Q/s.first->data.p.strength * goalImpact;
-                    s.first->data.p.strength += updatedP;
-
-                    //move to new cell
-                    std::cout << "Moving entity: " << curCell->x << ", " << curCell->y << std::endl;
-                    moveToCell(curCell, s.first, e.get());
-                    std::cout << "Moved entity: " << s.first->x << ", " << s.first->y << std::endl;
-
-                    break;
-
-                    
-                }
-            }  
+            else{
+                findFood(cell, e.get());
+            }             
 
         }
     }
@@ -216,7 +153,7 @@ void ACO::moveToCell(Cell* from, Cell* to, entity* e)
             // Optionally, erase the entity from the "from" cell after moving
             from->data.entities.erase(it);
 
-            curCell = to;
+            //curCell = to;
             break; // Exit the loop after moving the entity
         }
     }
@@ -228,6 +165,95 @@ void ACO::depositPheremones(Cell *c)
 
 }
 
+void ACO::findFood(Cell* cell, entity *e)
+{
+
+    curCell = cell;
+            std::cout<<"Getting adj cells"<<std::endl;
+            getAdjCells(cell->x, cell->y); 
+            if(adjCells.size() == 0)
+            {
+                std::cout << "No adj cells" << std::endl;
+                return; // very temporary
+            }
+            //compare all adjacent squares
+            std::vector<std::pair<Cell*, double>> scores;
+            for(const auto & ac: adjCells)
+            {
+                std::cout << "Checking adj cell" << std::endl;
+                //Look at distance to goal, difficulty of terrain -> heuristic
+                //check pheromones and bias toward following already successful pheromones
+                if (visited.find(ac) == visited.end()) {
+                    std::cout << "Not visited" << std::endl;
+                    if(goals.find(ac) != goals.end())
+                    {
+                        scores.push_back({ac, pheromoneCalc(ac->data.p.strength, calculateHeuristic(curCell, ac), curCell)*2});
+                    }
+                    else{
+                        scores.push_back({ac, pheromoneCalc(ac->data.p.strength, calculateHeuristic(curCell, ac), curCell)});
+
+                    }
+                }
+                else{
+                    std::cout<<"Already visited"<<std::endl;
+                    visited.erase(ac); //can visit after a run
+                }
+            }       
+
+            //choose score
+            std::random_device rd;
+            std::mt19937 gen(rd());
+            std::uniform_real_distribution<> dis(0.0,1.0);
+            double randomVal = dis(gen);
+            double cumulative = 0.0;
+            for(const auto &s : scores)
+            {
+                cumulative += s.second;
+                if(randomVal <= cumulative)
+                {
+                    std::cout << "Chose random cell" << std::endl;
+                    //choose the cell S as our next cell
+                    visited.insert(s.first);
+                    //if s is a goal then start heading back home to reinforce pheremones further
+                    double goalImpact = 0.0;
+                    if(goals.find(s.first) != visited.end())
+                    {
+                        //go back home
+                        std::cout << "Found goal" << std::endl;
+                        s.first->data.entities[0].get()->hitbox.get()->setFillColor(sf::Color::Magenta);
+                        goalImpact = 0.5 * s.first->data.entities[0].get()->resource;
+                        //return home -> this will reinforce paths even more
+                        e->target = base;
+                        moveToCell(curCell, s.first, e);
+
+
+                        break;
+
+                    }
+
+
+
+                    //update pheremones for this cell
+                    double updatedP = 0.0;
+                    updatedP = Q/s.first->data.p.strength * goalImpact;
+                    s.first->data.p.strength += updatedP;
+
+                    //move to new cell
+                    std::cout << "Moving entity: " << curCell->x << ", " << curCell->y << std::endl;
+                    moveToCell(curCell, s.first, e);
+                    std::cout << "Moved entity: " << s.first->x << ", " << s.first->y << std::endl;
+
+                    break;
+
+                    
+                }
+            } 
+
+}
+void ACO::returnHome(Cell* cell, entity * e)
+{
+    std::cout << "Returning home!" << std::endl;
+}
 void ACO::getAdjCells(int x, int y)
 {
     const int dx[] = {0,0,-1,1};

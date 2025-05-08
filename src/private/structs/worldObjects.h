@@ -25,6 +25,7 @@ struct entity //Make this a class
     std::string name;
     int resource;
     int maxResource;
+    entity* target;
     std::unique_ptr<sf::RectangleShape> hitbox = std::make_unique<sf::RectangleShape>();
 
     void setPos(int x, int y)

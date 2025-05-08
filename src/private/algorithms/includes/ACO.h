@@ -29,6 +29,7 @@ class ACO
         std::unordered_set<Cell*> visited;
         int numberAnts = 1;
         int Q = 10;
+        entity* base;
 
 
     private:
@@ -47,6 +48,8 @@ class ACO
         std::vector<std::pair<Cell*, double>> computeScores();
         void moveToCell(Cell* from, Cell * to, entity* e);
         void depositPheremones(Cell* c);
+        void findFood(Cell* cell, entity* e);
+        void returnHome(Cell* cell, entity* e);
 
 
         
