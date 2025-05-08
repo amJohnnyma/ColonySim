@@ -94,9 +94,7 @@ void World::drawEntities(sf::RenderWindow& window)
 }
 
 void World::createACO()
-{
-    
-    Cell* start;
+{    
     std::vector<Cell*> raw_goals;
     std::vector<Cell*> raw_grid;
     raw_grid.reserve(grid.size());
@@ -109,7 +107,7 @@ void World::createACO()
         {
             if(e->name == "ant")
             {
-                start = s.get();
+                
                 for(auto &g : grid)
                 {
                     for(auto &eg : g.get()->data.entities)
@@ -120,7 +118,7 @@ void World::createACO()
                         }
                     }
                 }
-                ACO aco(start, raw_goals, raw_grid, width, height);
+                ACO aco(s.get(), raw_goals, raw_grid, width, height);
                 sims.push_back(aco);
             }
         }

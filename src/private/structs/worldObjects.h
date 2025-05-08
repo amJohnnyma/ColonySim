@@ -5,6 +5,7 @@
 #include <vector>
 #include <memory>
 #include <SFML/Graphics.hpp>
+#include "GlobalVars.h"
 
 struct GridObject
 {
@@ -25,6 +26,13 @@ struct entity //Make this a class
     int resource;
     int maxResource;
     std::unique_ptr<sf::RectangleShape> hitbox = std::make_unique<sf::RectangleShape>();
+
+    void setPos(int x, int y)
+    {
+        hitbox.get()->setPosition(x * cellSize, y * cellSize);  
+        this->x = x;
+        this->y = y;
+    }
 
  //   std::unique_ptr<sf::Sprite> sprite = std::make_unique<sf::Sprite>();
     int takeResource(int amount)

@@ -9,7 +9,7 @@ WorldGeneration::WorldGeneration(unsigned int seed, int xWidth, int yWidth, int 
     generateTerrain();
     generateEntities(1);
     assignTextures();
-    generateLocations(5);
+    generateLocations(1);
 
 
 }
@@ -39,7 +39,6 @@ void WorldGeneration::generateTerrain()
             std::unique_ptr<Cell> newC = std::make_unique<Cell>();     
             CellData cd;
             pheromone p;
-            p.strength = 0.1;
             p.x = x;
             p.y = y;
             p.type = "default";
@@ -52,6 +51,9 @@ void WorldGeneration::generateTerrain()
             std::uniform_real_distribution<> dis(0.0,1.0);
             double randomVal = dis(gen);
             cd.difficulty = randomVal;
+
+            p.strength = randomVal * 2; //arbitrary init
+
 
             shape->setFillColor(sf::Color(0,255,0, (randomVal*255)));    
 
@@ -121,11 +123,28 @@ void WorldGeneration::generateEntities(int num)
 
             et->hitbox = std::move(rs);
             grid[et->y*width+et->x].get()->data.entities.push_back(std::move(et));
-            
+
+            std::unique_ptr<entity> et2 = std::make_unique<entity>(); //make ant entity
+            et2->name = "Base";
+            std::unique_ptr<sf::RectangleShape> rs2 = std::make_unique<sf::RectangleShape>();    
+    
+                et2->x = xdis(gen);
+                et2->y = ydis(gen);        
+    
+                rs2.get()->setSize(sf::Vector2f(cellSize,cellSize));
+                rs2.get()->setPosition(et2->x * cellSize, et2->y * cellSize);  
+                rs2.get()->setOutlineThickness(1.f); 
+                rs2.get()->setOutlineColor(sf::Color::Red);
+                rs2.get()->setFillColor(sf::Color::Yellow);    
+    
+                et2->hitbox = std::move(rs2);
+                grid[et2->y*width+et2->x].get()->data.entities.push_back(std::move(et2));
         }
         else{
-            k --; //retry this step
-        }       
+            k--;
+        }
+
+      
 
     }    
 
