@@ -20,6 +20,7 @@ class WorldGeneration
         void generateTerrain();
         void generateEntities(int num);
         void assignTextures();
+        void generateLocations(int num);
 
 };
 

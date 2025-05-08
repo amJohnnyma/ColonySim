@@ -7,8 +7,9 @@ WorldGeneration::WorldGeneration(unsigned int seed, int xWidth, int yWidth, int 
     height = yWidth;
     this->cellSize = cellSize;
     generateTerrain();
-    generateEntities(4);
+    generateEntities(3);
     assignTextures();
+    generateLocations(5);
 
 
 }
@@ -104,7 +105,6 @@ void WorldGeneration::generateEntities(int num)
     }    
 
 }
-#include <filesystem>
 
 void WorldGeneration::assignTextures()
 {
@@ -126,3 +126,41 @@ void WorldGeneration::assignTextures()
     }
 }
 
+void WorldGeneration::generateLocations(int num)
+{
+    std::vector<std::pair<int,int>> vis;
+    for(int k = 0; k < num; k ++)
+    {
+        std::unique_ptr<entity> et = std::make_unique<entity>();
+        et->name = "location";
+        std::unique_ptr<sf::RectangleShape> rs = std::make_unique<sf::RectangleShape>();
+
+        std::random_device rd;
+        std::mt19937 gen(rd());
+        std::uniform_int_distribution<> xdis(0.0,width);
+        std::uniform_int_distribution<> ydis(0.0, height);
+
+        std::pair<int, int> point = {xdis(gen), ydis(gen)};
+
+        if (std::find(vis.begin(), vis.end(), point) == vis.end()) {
+            et->x = xdis(gen);
+            et->y = ydis(gen);
+    
+            vis.push_back({et->x, et->y});
+
+            rs.get()->setSize(sf::Vector2f(cellSize,cellSize));
+            rs.get()->setPosition(et->x * cellSize, et->y * cellSize);  
+            rs.get()->setOutlineThickness(1.f); 
+            rs.get()->setOutlineColor(sf::Color::White);
+            rs.get()->setFillColor(sf::Color::White);    
+
+            et->hitbox = std::move(rs);
+            grid[et->y*width+et->x].get()->data.entities.push_back(std::move(et));
+            
+        }
+        else{
+            k --; //retry this step
+        }       
+
+    }  
+}

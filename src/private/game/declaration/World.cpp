@@ -9,6 +9,7 @@ World::World(int w, int h, sf::RenderWindow& window)
     WorldGeneration gen(0,w,h,cellSize);
     grid = gen.getResult();
  //   gen.~WorldGeneration();
+    createACO();
 
 
 }
@@ -25,9 +26,10 @@ const std::unique_ptr<Cell> &World::at(int x, int y) const
 
 void World::update()
 {
-    
+    //this is aco
 
 }
+
 void World::drawEntities(sf::RenderWindow& window)
 {  
 
@@ -42,6 +44,40 @@ void World::drawEntities(sf::RenderWindow& window)
         //  std::cout << "Texture pointer: " << static_cast<const void*>(j->hitbox->getTexture()) << std::endl;
 
           window.draw(*j->hitbox);
+          if(j->name == "ant")
+          {
+            sf::Vector2f pos1 = j->hitbox->getPosition()+ sf::Vector2f(cellSize / 2.f, cellSize / 2.f);
+
+            // Iterate through all other grid cells to compare with other entities
+            for (auto &k : grid)
+            {
+                // Skip the same cell, we don't need to draw lines within the same cell
+                if (k == i) continue;
+
+                // Iterate through entities in the other grid cell
+                for (auto it2 = k.get()->data.entities.begin(); it2 != k.get()->data.entities.end(); ++it2)
+                {
+                    // Get position of the second entity in the other cell
+                    if(it2->get()->name == "location")
+                    {
+                        sf::Vector2f pos2 = it2->get()->hitbox->getPosition()+ sf::Vector2f(cellSize / 2.f, cellSize / 2.f);
+
+                        // Create a line using sf::VertexArray
+                        sf::VertexArray line(sf::Lines, 2);
+                        line[0].position = pos1; 
+                        line[1].position = pos2;
+    
+                        // Optionally set the color for the line
+                        line[0].color = sf::Color::White;
+                        line[1].color = sf::Color::White;
+    
+                        // Draw the line between the two entities
+                        window.draw(line);
+                    }
+
+                }
+            }
+          }
 
         }
 
@@ -50,6 +86,84 @@ void World::drawEntities(sf::RenderWindow& window)
     }
     
 }
+
+void World::createACO()
+{
+    Cell* start;
+    std::vector<Cell*> goals;
+    for(auto &s : grid)
+    {
+        for(auto &e : s.get()->data.entities)
+        {
+            if(e->name == "ant")
+            {
+                start = s.get();
+                for(auto &g : grid)
+                {
+                    for(auto &eg : g.get()->data.entities)
+                    {
+                        if(eg->name == "location")
+                        {
+                            goals.push_back(g.get());
+                        }
+                    }
+                }
+                ACO aco(start, goals);
+                sims.push_back(aco);
+            }
+        }
+    }
+}
+
+//temp draw function which shows lines between all entities
+/*
+   void World::drawEntities(sf::RenderWindow& window)
+   {
+       // Iterate through grid
+       for (auto &i : grid)
+       {
+           // Iterate through entities in the current grid cell
+           for (auto it1 = i.get()->data.entities.begin(); it1 != i.get()->data.entities.end(); ++it1)
+           {
+               // Get position of the first entity in current cell
+               sf::Vector2f pos1 = it1->get()->hitbox->getPosition() + sf::Vector2f(cellSize / 2.f, cellSize / 2.f);
+   
+               // Iterate through all other grid cells to compare with other entities
+               for (auto &j : grid)
+               {
+                   // Skip the same cell, we don't need to draw lines within the same cell
+                   if (i == j) continue;
+   
+                   // Iterate through entities in the other grid cell
+                   for (auto it2 = j.get()->data.entities.begin(); it2 != j.get()->data.entities.end(); ++it2)
+                   {
+                       // Get position of the second entity in the other cell
+                       sf::Vector2f pos2 = it2->get()->hitbox->getPosition()+ sf::Vector2f(cellSize / 2.f, cellSize / 2.f);
+   
+                       // Create a line using sf::VertexArray
+                       sf::VertexArray line(sf::Lines, 2);
+                       line[0].position = pos1;
+                       line[1].position = pos2;
+   
+                       // Optionally set the color for the line
+                       line[0].color = sf::Color::White;
+                       line[1].color = sf::Color::White;
+   
+                       // Draw the line between the two entities
+                       window.draw(line);
+                   }
+               }
+   
+               // Draw the hitbox of the current entity
+               window.draw(*it1->get()->hitbox);
+           }
+       }
+   }
+*/
+
+   
+    
+    
 
 //helper render
 void World::drawTerrain(sf::RenderWindow & window)

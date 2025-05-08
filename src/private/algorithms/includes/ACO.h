@@ -2,6 +2,8 @@
 #define ACO_H
 
 #include "../../structs/worldObjects.h"
+#include <iostream>
+
 class ACO
 {
     //start
@@ -51,11 +53,9 @@ class ACO
 
 
 
-        void update(std::vector<sf::CircleShape>& nCircles);
-        void handleEvents(sf::RenderWindow &window);
-        void render(sf::RenderWindow &window, const std::vector<sf::CircleShape> &nodes/*, const std::vector<std::pair<double, sf::Vertex>>& edges*/);
-
-    ACO(std::unique_ptr<Cell>& startCell, std::vector<std::unique_ptr<Cell>>& goals);
+        void update();
+    public:
+        ACO(Cell* startCell, std::vector<Cell*> & goals);
 };
 
 #endif
