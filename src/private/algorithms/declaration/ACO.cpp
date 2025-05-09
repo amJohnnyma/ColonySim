@@ -31,10 +31,16 @@ std::cout<< "Aco construction" << std::endl;
     this->startCell = startCell;
     for(auto &e: startCell->data.entities)
     {
+        if(e.get()->getName() != "default")
+        {
+            std::cout << e.get()->getName() << std::endl;
+        }
         if(e.get()->getName() == "Base")
         {
+            std::cout << "Ants have base" << std::endl;
             base = e.get();
         }
+
     }
 
     for(auto &g : goals)
@@ -48,15 +54,56 @@ std::cout<< "Aco construction" << std::endl;
     worldWidth = width;
     worldHeight = height;
     curCell = startCell;
-
     numberAnts = startCell->data.entities.size();
-
     startCell->setColor(sf::Color::Yellow);
+
+    assignRandomTarget(goals);
 
 
    // std::cout << "ACO construct end" << std::endl;
 
 }
+
+void ACO::assignRandomTarget(std::vector<Cell*> &raw_goals)
+{
+    for(auto &e: startCell->data.entities)
+    {
+        if(e)
+        if(e.get()->getName() == "ant")
+        {
+            double randomVal;
+            double randomVal2;
+            std::random_device rd;
+            std::mt19937 gen(rd());
+            Entity* target = new Entity(1,1,"base",-999);
+            while(target->getName() != "location")
+            {
+
+            std::uniform_int_distribution<> dis(0.0,startCell->data.entities.size()-1);
+            std::uniform_int_distribution<> dis2(0.0,raw_goals[randomVal]->data.entities.size()-1);
+
+            std::cout << "dis1 max: " << startCell->data.entities.size() << std::endl;
+            std::cout << "dis2 max: " << raw_goals[randomVal]->data.entities.size() << std::endl;
+
+             randomVal = dis(gen);
+             randomVal2 = dis2(gen);
+             
+             if(target->getMaxResource() == -999)
+             {
+                delete target;
+                target = nullptr;
+             }
+             target = raw_goals[randomVal]->data.entities[randomVal2].get();
+            }
+            std::cout << randomVal << ", " << randomVal2 << std::endl;
+            e.get()->setTarget(target);
+            std::cout << "Set target to: " << target->getName() << "( " << target->getX() << ", " << target->getY()<<" )"<<std::endl;
+        }
+
+
+    }
+
+} 
 
 void ACO::update()
 {
@@ -73,16 +120,14 @@ void ACO::update()
         if(e->getName() == "ant")
         {
             std::cout << "found ant" << std::endl;  
-            /*
-                        if(e.get()->getTarget() && e.get()->getTarget()->getName() == "Base")
+            std::cout << "Target: " << e.get()->getTarget()->getName() << std::endl;
+            if(e.get()->getTarget() && e.get()->getTarget()->getName() == "Base")
             {
                 returnHome(cell, e.get());
             }
             else{
                 findFood(cell, e.get());
             }    
-            */          
-         findFood(cell, e.get());
 
         }
     }
@@ -119,25 +164,24 @@ if(noBetterF)
 }
 
 /*
-void ACO::moveToCell(Cell* from, Cell* to, entity* e)
-{
+ void ACO::moveToCell(Cell* from, Cell* to, entity* e)
+ {
 
-    for (auto & ptr : from->data.entities)
-    {
-        if (ptr.get() == e) // compare raw pointer inside unique_ptr
-        {
-            ptr->x = to->x;
-            ptr->y = to->y;
-            to->data.entities.push_back(std::move(ptr)); 
+     for (auto & ptr : from->data.entities)
+     {
+         if (ptr.get() == e) // compare raw pointer inside unique_ptr
+         {
+             ptr->x = to->x;
+             ptr->y = to->y;
+             to->data.entities.push_back(std::move(ptr));
 
-            break;
-        }
-    }
+             break;
+         }
+     }
 
 
-}
-*/
-
+ }
+ */
 
 void ACO::moveToCell(Cell* from, Cell* to, Entity* e)
 {
@@ -319,7 +363,7 @@ double ACO::sumOfFeasiblePheremoneProb(Cell *cur)
 
 double ACO::calculateHeuristic(Cell *cur, Cell *next)
 {
-    double dist = std::abs(cur->x - next->x) + std::abs(cur->y - next->y);
+    double dist = std::abs(next->x - cur->x) + std::abs(cur->y - next->y);
     double difficulty = next->data.difficulty; // in range [0, 1]
     double heuristic = (1.0 - difficulty) * (dist + 1e-5);
     

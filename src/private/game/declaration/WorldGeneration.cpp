@@ -7,7 +7,7 @@ WorldGeneration::WorldGeneration(unsigned int seed, int xWidth, int yWidth, int 
     height = yWidth;
     this->cellSize = cellSize;
     generateTerrain();
-    generateEntities(20);
+    generateEntities(2);
     assignTextures();
     generateLocations(5);
 
@@ -96,6 +96,8 @@ void WorldGeneration::generateEntities(int num)
         */
     //////
     
+    int xVal;
+    int yVal;
     for(int k = 0; k < num; k ++)
     {
         sf::RectangleShape* rs = new sf::RectangleShape();
@@ -107,40 +109,57 @@ void WorldGeneration::generateEntities(int num)
 
         std::pair<int, int> point = {xdis(gen), ydis(gen)};
 
+        xVal = xdis(gen);
+        yVal = ydis(gen);
+
         if (std::find(vis.begin(), vis.end(), point) == vis.end()) {
             rs->setSize(sf::Vector2f(cellSize,cellSize));
             rs->setPosition(xdis(gen) * cellSize, ydis(gen) * cellSize);  
             rs->setOutlineThickness(1.f); 
             rs->setOutlineColor(sf::Color::Red); 
             rs->setFillColor(sf::Color::White);   
-            auto et = std::make_unique<Entity>(xdis(gen), ydis(gen), "ant", 10, std::make_unique<sf::RectangleShape>(*rs)); 
+            Cell* cell = grid[yVal*width+xVal].get();
+            auto et = std::make_unique<Entity>(xVal, yVal, "ant", 10, std::make_unique<sf::RectangleShape>(*rs),cell); 
     
             vis.push_back({et->getY(), et->getY()});            
 
             
-            sf::RectangleShape* rs2 = new sf::RectangleShape(); 
-     
-    
-            rs2->setSize(sf::Vector2f(cellSize,cellSize));
-            rs2->setPosition(xdis(gen) * cellSize, ydis(gen) * cellSize);  
-            rs2->setOutlineThickness(1.f); 
-            rs2->setOutlineColor(sf::Color::Red);
-            rs2->setFillColor(sf::Color::Yellow);   
 
-            auto et2 = std::make_unique<Entity>(xdis(gen), ydis(gen), "Base", 100, std::make_unique<sf::RectangleShape>(*rs2)); //make ant entity
 
-            grid[ydis(gen)*width+xdis(gen)].get()->data.entities.push_back(std::move(et2));
-            grid[ydis(gen)*width+xdis(gen)].get()->data.entities.push_back(std::move(et));
+            grid[yVal*width+xVal].get()->data.entities.push_back(std::move(et));
+
+
+            
             
 
         }
         else{
             k--;
         }
-
       
 
-    }    
+    }   
+    
+    sf::RectangleShape* rs2 = new sf::RectangleShape();      
+    
+    rs2->setSize(sf::Vector2f(cellSize,cellSize));
+    rs2->setPosition(xVal * cellSize, yVal * cellSize);  
+    rs2->setOutlineThickness(1.f); 
+    rs2->setOutlineColor(sf::Color::Red);
+    rs2->setFillColor(sf::Color::Yellow);   
+    Cell* cell = grid[yVal*width+xVal].get();
+
+    auto et2 = std::make_unique<Entity>(xVal, yVal, "Base", 100, std::make_unique<sf::RectangleShape>(*rs2),cell); //make ant entity
+    grid[yVal*width+xVal].get()->data.entities.push_back(std::move(et2));
+
+
+    for(auto &i : grid)
+    {
+        for(auto &k : i.get()->data.entities)
+        {
+            std::cout << k.get()->getName() << ", " << k.get()->getX() << ", " << k.get()->getX() << std::endl;
+        }
+    }
 
 }
 
@@ -180,23 +199,24 @@ void WorldGeneration::generateLocations(int num)
 
         if (std::find(vis.begin(), vis.end(), point) == vis.end()) {
     
-            vis.push_back({xdis(gen), ydis(gen)});
+            vis.push_back({point.first, point.second});
 
 
-            double dif = grid[ydis(gen)*width+xdis(gen)].get()->data.difficulty;
+            double dif = grid[point.second*width+point.first].get()->data.difficulty;
 
             rs->setSize(sf::Vector2f(cellSize,cellSize));
-            rs->setPosition(xdis(gen) * cellSize, ydis(gen) * cellSize);  
+            rs->setPosition(point.first * cellSize, point.second * cellSize);  
             rs->setOutlineThickness(1.f); 
             rs->setOutlineColor(sf::Color::White);
             rs->setFillColor(sf::Color(255,255,255,dif*100));   
 
 
 
+            Cell* cell = grid[point.first*width+point.second].get();
 
-            auto et = std::make_unique<Entity>(xdis(gen), ydis(gen), "location", 1000, std::make_unique<sf::RectangleShape>(*rs));
+            auto et = std::make_unique<Entity>(point.first, point.second, "location", 1000, std::make_unique<sf::RectangleShape>(*rs),cell);
 
-            grid[et->getY()*width+et->getX()].get()->data.entities.push_back(std::move(et));
+            grid[point.first*width+point.second].get()->data.entities.push_back(std::move(et));
             
         }
         else{

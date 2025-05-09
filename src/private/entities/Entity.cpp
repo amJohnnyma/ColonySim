@@ -1,5 +1,6 @@
 #include "Entity.h"
 
+
 int Entity::takeResource(int amount)
 {
     if (amount <= resource)
@@ -42,13 +43,15 @@ Entity::Entity(int x, int y, std::string name, int maxResource)
     this->maxResource = maxResource;
 }
 
-Entity::Entity(int x, int y, std::string name, int maxResource, std::unique_ptr<sf::RectangleShape> hitbox)
+
+Entity::Entity(int x, int y, std::string name, int maxResource, std::unique_ptr<sf::RectangleShape> hitbox, Cell* curCell)
 {
     this->x = x;
     this->y = y;
     this->name = name;
     this->maxResource = maxResource;
     this->hitbox = std::move(hitbox);
+    this->currentCell = curCell;
 }
 
 void Entity::setPos(int x, int y)

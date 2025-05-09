@@ -28,8 +28,9 @@ class ACO
         double pheremoneEvap = 0.2;
         std::unordered_set<Cell*> visited;
         int numberAnts = 1;
-        int Q = 10;
+        int Q = 1;
         Entity* base;
+        Entity* target;
 
 
     private:
@@ -61,6 +62,7 @@ class ACO
     public:
         ACO(Cell* startCell, std::vector<Cell*>& goals, std::vector<Cell*>& world, int width, int height);
         void update();
+        void assignRandomTarget(std::vector<Cell*> &raw_goals);
 };
 
 #endif

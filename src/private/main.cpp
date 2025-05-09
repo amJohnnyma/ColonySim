@@ -2,7 +2,7 @@
 
 int main()
 {
-    Game game(500,500, 100,20);
+    Game game(500,500, 20,20);
     game.run();
 
 

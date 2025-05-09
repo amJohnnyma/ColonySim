@@ -5,6 +5,7 @@
 #include <memory>
 #include <string>
 #include "../game/headers/GlobalVars.h"
+#include "../structs/worldObjects.h"
 
 class Entity
 {
@@ -14,12 +15,13 @@ private:
     int resource;
     int maxResource;
     Entity* target;
+    Cell* currentCell;
     std::unique_ptr<sf::RectangleShape> hitbox;
 
 public:
     // Constructor
     Entity(int x, int y, std::string name, int maxResource);
-    Entity(int x, int y, std::string name, int maxResource, std::unique_ptr<sf::RectangleShape> hitbox);
+    Entity(int x, int y, std::string name, int maxResource, std::unique_ptr<sf::RectangleShape> hitbox, Cell* currentCell);
 
     // Getter and setter for position
     void setPos(int x, int y);
