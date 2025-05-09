@@ -19,6 +19,7 @@ private:
     Entity* base;
    // Cell* currentCell;
     std::unique_ptr<sf::RectangleShape> hitbox;
+    std::vector<Cell*> path;
 
 public:
     // Constructor
@@ -45,6 +46,7 @@ public:
     const std::string& getName() const { return name; }
     Entity* getTarget() const { return target; }
     sf::RectangleShape* getHitbox() { return hitbox.get(); }
+    std::vector<Cell*>& getPath() {return path;}
 
 
     // Setters

@@ -39,6 +39,7 @@ void World::update()
 void World::drawEntities(sf::RenderWindow& window)
 {  
     std::vector<sf::RectangleShape*> waitList;
+    std::vector<std::vector<Cell*>> pathTraces;
 
     for(auto &i : grid)
     {
@@ -52,49 +53,18 @@ void World::drawEntities(sf::RenderWindow& window)
 
             if(j->getName() == "ant")
             {
-                waitList.push_back(j->getHitbox());
+                waitList.push_back(j->getHitbox());     
+                std::vector<Cell*> path;
+                for(auto &p:j.get()->getPath())           
+                {
+                    path.push_back(p);
+                }
+                pathTraces.push_back(path);
             }
             else{
                 window.draw(*j.get()->getHitbox());
 
             }
-
-          /*
-          if(j->getName() == "ant")
-          {
-            sf::Vector2f pos1 = j->getHitbox()->getPosition()+ sf::Vector2f(cellSize / 2.f, cellSize / 2.f);
-
-            // Iterate through all other grid cells to compare with other entities
-            for (auto &k : grid)
-            {
-                // Skip the same cell, we don't need to draw lines within the same cell
-                if (k == i) continue;
-
-                // Iterate through entities in the other grid cell
-                for (auto it2 = k.get()->data.entities.begin(); it2 != k.get()->data.entities.end(); ++it2)
-                {
-                    // Get position of the second entity in the other cell
-                    if(it2->get()->getName() == "location")
-                    {
-                        sf::Vector2f pos2 = it2->get()->getHitbox()->getPosition()+ sf::Vector2f(cellSize / 2.f, cellSize / 2.f);
-
-                        // Create a line using sf::VertexArray
-                        sf::VertexArray line(sf::Lines, 2);
-                        line[0].position = pos1; 
-                        line[1].position = pos2;
-    
-                        // Optionally set the color for the line
-                        line[0].color = sf::Color::White;
-                        line[1].color = sf::Color::White;
-    
-                        // Draw the line between the two entities
-                        window.draw(line);
-                    }
-
-                }
-            }
-          }
-          */
           
 
         }
@@ -107,6 +77,40 @@ void World::drawEntities(sf::RenderWindow& window)
     {
         window.draw(*e);
     }
+
+          //  std::cout<<"Path trace check: " << pathTraces.size() <<std::endl;
+
+            float segmentThickness = 1.0f;
+
+            for (auto& path : pathTraces)
+            {
+               // std::cout << "Path check: " << path.size() << std::endl;
+            
+                for (size_t i = 1; i < path.size(); ++i) // start at 1 to access previous point
+                {
+                  //  std::cout << "Segment: " << i - 1 << " -> " << i << std::endl;
+            
+                    float x1 = path[i - 1]->x * cellSize + cellSize / 2;
+                    float y1 = path[i - 1]->y * cellSize + cellSize / 2;
+            
+                    float x2 = path[i]->x * cellSize + cellSize / 2;
+                    float y2 = path[i]->y * cellSize + cellSize / 2;
+            
+                    sf::Vector2f start(x1, y1);
+                    sf::Vector2f end(x2, y2);
+            
+                    sf::Vector2f direction = end - start;
+                    float length = std::sqrt(direction.x * direction.x + direction.y * direction.y);
+                    float angle = std::atan2(direction.y, direction.x) * 180.f / 3.14159265f;
+            
+                    sf::RectangleShape segment(sf::Vector2f(length, segmentThickness + path[i]->data.p.strength));
+                    segment.setPosition(start);
+                    segment.setRotation(angle);
+                    segment.setFillColor(sf::Color::White); // You can also color based on index or path
+            
+                    window.draw(segment);
+                }
+            }
     
 }
 
@@ -263,57 +267,6 @@ void World::drawGrid(sf::RenderWindow & window)
 //std::cout << "Cells skipped: " + std::to_string(skippedCount) << std::endl;
 }
 
-/*
-void World::drawGrid(sf::RenderWindow &window)
-{
-    int drawCount = 0;
-    int skippedCount = 0;
-    
-    // Get current view bounds
-    sf::FloatRect viewRect(
-        window.getView().getCenter().x - window.getView().getSize().x / 2.f,
-        window.getView().getCenter().y - window.getView().getSize().y / 2.f,
-        window.getView().getSize().x,
-        window.getView().getSize().y
-    );
-
-    // Adjust cell size based on the zoom level
-    float zoom = view.getSize().x / 800.f; // You can change 800.f to be the base size for your zoom factor
-    float zoomedCellSize = cellSize * zoom; // Adjust cell size based on zoom
-
-    for (int x = 0; x < width; x++) {
-        for (int y = 0; y < height; y++) {
-            float px = x * zoomedCellSize;
-            float py = y * zoomedCellSize;
-
-            // Check if the current cell intersects with the view rectangle
-            sf::FloatRect cellBounds(px, py, zoomedCellSize, zoomedCellSize);
-            if (!viewRect.intersects(cellBounds)) {
-                skippedCount++;
-                continue;
-            }
-
-            // Create a rectangle shape for the grid cell
-            sf::RectangleShape rs;
-            rs.setSize(sf::Vector2f(zoomedCellSize, zoomedCellSize));
-            rs.setPosition(px, py);
-            rs.setOutlineThickness(0.5f);
-            rs.setOutlineColor(sf::Color::Blue);
-            rs.setFillColor(sf::Color::Transparent); // Optional: you can change this to fill cells with color
-
-            // For debugging purposes: count cells drawn/skipped
-            drawCount++;
-
-            // Draw the grid cell
-            window.draw(rs);
-        }
-    }
-    
-    // For debugging: uncomment to log drawn/skipped counts
-    // std::cout << "Cells drawn: " + std::to_string(drawCount) << std::endl;
-    // std::cout << "Cells skipped: " + std::to_string(skippedCount) << std::endl;
-}
-*/
 void World::render(sf::RenderWindow &window)
 {
     window.clear();

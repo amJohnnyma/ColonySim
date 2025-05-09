@@ -23,12 +23,12 @@ class ACO
         std::vector<Cell*> adjCells;
         int worldWidth;
         int worldHeight;
-        double pF = 0.2; //pheremone influnce
-        double hF = 0.8; // heuristic influence
-        double pheremoneEvap = 0.8;
+        double pF = 0.5; //pheremone influnce
+        double hF = 0.5; // heuristic influence
+        double pheremoneEvap = 0.1;
         std::unordered_set<Cell*> visited;
         int numberAnts = 1;
-        int Q = 0.5;
+        int Q = 3;
         Entity* base;
         Entity* target;
         std::vector<Entity*> tl; // goals

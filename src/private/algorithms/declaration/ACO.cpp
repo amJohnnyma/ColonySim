@@ -100,6 +100,7 @@ void ACO::assignRandomTarget(std::vector<Cell*> &raw_goals)
             if(entity.get()->getName() == "ant")
             {
                 getNewTarget(entity.get());
+                entity.get()->getPath().push_back(cell);
             }
 
         }
@@ -181,25 +182,7 @@ void ACO::update()
 
 }
 
-/*
- void ACO::moveToCell(Cell* from, Cell* to, entity* e)
- {
 
-     for (auto & ptr : from->data.entities)
-     {
-         if (ptr.get() == e) // compare raw pointer inside unique_ptr
-         {
-             ptr->x = to->x;
-             ptr->y = to->y;
-             to->data.entities.push_back(std::move(ptr));
-
-             break;
-         }
-     }
-
-
- }
- */
 
 void ACO::moveToCell(Cell* from, Cell* to, Entity* e)
 {
@@ -219,6 +202,8 @@ void ACO::moveToCell(Cell* from, Cell* to, Entity* e)
             
             // Optionally, erase the entity from the "from" cell after moving
             from->data.entities.erase(it);
+
+          //  e->getPath().push_back(to);
 
           //  curCell = to;
 
@@ -249,26 +234,20 @@ void ACO::findFood(Cell* cell, Entity *e)
             std::vector<std::pair<Cell*, double>> scores;
             for(const auto & ac: adjCells)
             {
-             //   std::cout << "Checking adj cell" << std::endl;
-                //Look at distance to goal, difficulty of terrain -> heuristic
-                //check pheromones and bias toward following already successful pheromones
-                    if(goals.find(ac) != goals.end())
-                    {
-                        scores.push_back({ac, pheromoneCalc(ac, e->getTarget())*10});
-                    }
-                    else{
-                        scores.push_back({ac, pheromoneCalc(ac, e->getTarget())});
-
-                    }
+                double heuristic = calculateHeuristic(ac, e->getTarget());
+                double pheromone = ac->data.p.strength;
+                double score = std::pow(pheromone, pF) * std::pow(heuristic, hF);
+                scores.push_back({ac, score});
                 
 
             }       
 
-            //choose score
-            std::random_device rd;
-            std::mt19937 gen(rd());
-            std::uniform_real_distribution<> dis(0.0,1.0);
-            double randomVal = dis(gen);
+            // Normalize scores
+            double totalScore = 0.0;
+            for (auto& score : scores) totalScore += score.second;
+
+            // Choose a random cell based on the weighted scores
+            double randomVal = rand() / (double)RAND_MAX * totalScore;
             double cumulative = 0.0;
           //  std::cout << "Scores count: " << scores.size() << std::endl;
             for(const auto &s : scores)
@@ -276,88 +255,16 @@ void ACO::findFood(Cell* cell, Entity *e)
                 cumulative += s.second;
                 if(randomVal <= cumulative)
                 {
-                 //   std::cout << "Chose random cell" << std::endl;
-                    //choose the cell S as our next cell
-                    //if s is a goal then start heading back home to reinforce pheremones further
-                    double goalImpact = 1.0;
-                    bool containsTarget = std::any_of(
-                        s.first->data.entities.begin(),
-                        s.first->data.entities.end(),
-                        [&](const std::unique_ptr<Entity>& ent) {
-                            return ent.get() == e->getTarget();
-                        });
-                    if(goals.find(s.first) != goals.end() || containsTarget)
-                    {
-                        //go back home
-                        std::cout << "Found goal" << std::endl;
-                        bool found = false;
-                      //  std::cout << "Target at: " << e->getTarget()->getX() << ", " << e->getTarget()->getY() << std::endl;                        
-                        for(auto &eg : s.first->data.entities)
-                        {
-                            if(eg.get() == e->getTarget())
-                            {
-                                std::cout << "Was target found" << std::endl;
-                                found = true;
-                            }
-
-                            if(eg.get()->getName() != "Base")
-                            {
-                                eg.get()->getHitbox()->setFillColor(sf::Color::Magenta);                      
-
-                            }
-
-                            if(found) break;
-                        }
-                        if(!found)
-                        {
-                            std::cout << "Was not target found" << std::endl;
-                        }
-                      //  goalImpact = 0.5 * s.first->data.entities[0].get()->getMaxResource();
-                        //return home -> this will reinforce paths even more
-                        if(e->getTarget() == base)
-                        {   
-                            e->getTarget()->giveResource(e->getResource());
-                            e->setResource(0); //temp for now
-
-                            getNewTarget(e);
-                            moveToCell(curCell, s.first, e);
-
-                            double updatedP = 0.0;
-                            updatedP = Q/s.first->data.p.strength * goalImpact;
-                            s.first->data.p.strength = updatedP;
-
-                            
-                        }
-                        else{
-                            e->setResource(10);
-
-                            e->setTarget(base);
-                            moveToCell(curCell, s.first, e);
-
-                            double updatedP = 0.0;
-                            updatedP = Q/s.first->data.p.strength * goalImpact;
-                            s.first->data.p.strength = updatedP;
-                        }
-
-                        break;
-
-                    }
-
-
-
-                    //update pheremones for this cell
-                    double updatedP = 0.0;
-                    updatedP = Q/s.first->data.p.strength;
+                    e->getPath().push_back(s.first);
+                    // Update pheromone after choosing the cell
+                    double updatedP = Q / s.first->data.p.strength;
                     s.first->data.p.strength += updatedP;
-
-                    //move to new cell
-               //     std::cout << "Moving entity: " << e->getX() << ", " << e->getY() << std::endl;
+        
                     moveToCell(curCell, s.first, e);
-                 //   std::cout << "Moved entity: " << e->getX() << ", " << e->getY() << std::endl;
-
-                    break;
 
                     
+                    break;
+
                 }
             } 
 
