@@ -7,7 +7,7 @@ WorldGeneration::WorldGeneration(unsigned int seed, int xWidth, int yWidth, int 
     height = yWidth;
     this->cellSize = cellSize;
     generateTerrain();
-    generateEntities(2,1);
+    generateEntities(100,1);
     assignTextures();
     generateLocations(1);
 
@@ -150,7 +150,7 @@ void WorldGeneration::generateEntities(int num, int col)
         rs2->setFillColor(sf::Color::Yellow);   
         Cell* cell = grid[xVal*width+yVal].get();
     
-        auto et2 = std::make_unique<Entity>(yVal, xVal, "Base", 100, std::make_unique<sf::RectangleShape>(*rs2),cell); //make ant entity
+        auto et2 = std::make_unique<Entity>(yVal, xVal, "Base", 1000, std::make_unique<sf::RectangleShape>(*rs2),cell); //make ant entity
         grid[xVal*width+yVal].get()->data.entities.push_back(std::move(et2));
     
     
@@ -219,7 +219,7 @@ void WorldGeneration::generateLocations(int num)
 
             Cell* cell = grid[point.first*width+point.second].get();
 
-            auto et = std::make_unique<Entity>(point.first, point.second, "location", 1000, std::make_unique<sf::RectangleShape>(*rs),cell);
+            auto et = std::make_unique<Entity>(point.first, point.second, "location", 10000, std::make_unique<sf::RectangleShape>(*rs),cell);
 
             grid[point.first*width+point.second].get()->data.entities.push_back(std::move(et));
             

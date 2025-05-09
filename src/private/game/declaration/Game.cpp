@@ -4,7 +4,7 @@ void Game::run()
 {
     using clock = std::chrono::steady_clock;
     auto lastUpdate = clock::now();
-    const std::chrono::milliseconds updateInterval(50);  // 500ms
+    const std::chrono::milliseconds updateInterval(150);  // 500ms
 
     while (wind->wndw->isOpen())
     {

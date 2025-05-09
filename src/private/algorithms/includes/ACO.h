@@ -23,14 +23,16 @@ class ACO
         std::vector<Cell*> adjCells;
         int worldWidth;
         int worldHeight;
-        double pF = 0.5; //pheremone influnce
-        double hF = 0.1; // heuristic influence
-        double pheremoneEvap = 0.2;
+        double pF = 0.2; //pheremone influnce
+        double hF = 0.8; // heuristic influence
+        double pheremoneEvap = 0.8;
         std::unordered_set<Cell*> visited;
         int numberAnts = 1;
-        int Q = 1;
+        int Q = 0.5;
         Entity* base;
         Entity* target;
+        std::vector<Entity*> tl; // goals
+
 
 
     private:
@@ -42,15 +44,16 @@ class ACO
         • β is a parameter that controls the influence of the heuristic value.
         • Ni is the set of feasible nodes that can be visited from node i.
         */
-        double pheromoneCalc(double Tij, double Nij, Cell *cur);   
-        double sumOfFeasiblePheremoneProb(Cell *cur);     
-        double calculateHeuristic(Cell* cur, Cell* next);
+        double pheromoneCalc(Cell* cell, Entity* target);   
+        double sumOfFeasiblePheremoneProb(Entity *target);     
+        double calculateHeuristic(Cell* next, Entity* target);
         //pair<cell, score>
         std::vector<std::pair<Cell*, double>> computeScores();
         void moveToCell(Cell* from, Cell * to, Entity* e);
         void depositPheremones(Cell* c);
         void findFood(Cell* cell, Entity* e);
         void returnHome(Cell* cell, Entity* e);
+        void getNewTarget(Entity* e);
 
 
         
