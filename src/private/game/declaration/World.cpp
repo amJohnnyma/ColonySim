@@ -9,8 +9,9 @@ World::World(int w, int h, sf::RenderWindow& window)
     view = window.getDefaultView();
     WorldGeneration gen(0,w,h,cellSize);
     grid = gen.getResult();
- //   gen.~WorldGeneration();
     createACO();
+
+   // gen.~WorldGeneration();
 
 
 }
@@ -73,6 +74,48 @@ void World::drawEntities(sf::RenderWindow& window)
 
     }
 
+    float segmentThickness = 0.0f;
+
+    for (auto& path : pathTraces)
+    {
+       // std::cout << "Path check: " << path.size() << std::endl;
+    
+        for (size_t i = 1; i < path.size(); ++i) // start at 1 to access previous point
+        {
+          //  std::cout << "Segment: " << i - 1 << " -> " << i << std::endl;
+    
+            float x1 = path[i - 1]->x * cellSize + cellSize / 2;
+            float y1 = path[i - 1]->y * cellSize + cellSize / 2;
+    
+            float x2 = path[i]->x * cellSize + cellSize / 2;
+            float y2 = path[i]->y * cellSize + cellSize / 2;
+    
+            sf::Vector2f start(x1, y1);
+            sf::Vector2f end(x2, y2);
+    
+            sf::Vector2f direction = end - start;
+            float length = std::sqrt(direction.x * direction.x + direction.y * direction.y);
+            float angle = std::atan2(direction.y, direction.x) * 180.f / 3.14159265f;
+    
+            // Assuming 'segmentThickness' is a float and 'path[i]->data.p.strength' is also a float
+            float thick = segmentThickness + path[i]->data.p.strength;
+
+            if(thick > 1)
+            {
+                
+                sf::RectangleShape segment(sf::Vector2f(length, thick));
+                segment.setPosition(start);
+                segment.setRotation(angle);
+                segment.setFillColor(sf::Color::White); // You can also color based on index or path
+        
+                window.draw(segment);
+            }
+            else{
+                path.erase(path.begin() + i);
+            }
+        }
+    }
+
     for(auto &e : waitList)
     {
         window.draw(*e);
@@ -80,37 +123,7 @@ void World::drawEntities(sf::RenderWindow& window)
 
           //  std::cout<<"Path trace check: " << pathTraces.size() <<std::endl;
 
-            float segmentThickness = 1.0f;
 
-            for (auto& path : pathTraces)
-            {
-               // std::cout << "Path check: " << path.size() << std::endl;
-            
-                for (size_t i = 1; i < path.size(); ++i) // start at 1 to access previous point
-                {
-                  //  std::cout << "Segment: " << i - 1 << " -> " << i << std::endl;
-            
-                    float x1 = path[i - 1]->x * cellSize + cellSize / 2;
-                    float y1 = path[i - 1]->y * cellSize + cellSize / 2;
-            
-                    float x2 = path[i]->x * cellSize + cellSize / 2;
-                    float y2 = path[i]->y * cellSize + cellSize / 2;
-            
-                    sf::Vector2f start(x1, y1);
-                    sf::Vector2f end(x2, y2);
-            
-                    sf::Vector2f direction = end - start;
-                    float length = std::sqrt(direction.x * direction.x + direction.y * direction.y);
-                    float angle = std::atan2(direction.y, direction.x) * 180.f / 3.14159265f;
-            
-                    sf::RectangleShape segment(sf::Vector2f(length, segmentThickness + path[i]->data.p.strength));
-                    segment.setPosition(start);
-                    segment.setRotation(angle);
-                    segment.setFillColor(sf::Color::White); // You can also color based on index or path
-            
-                    window.draw(segment);
-                }
-            }
     
 }
 
@@ -213,7 +226,7 @@ void World::drawTerrain(sf::RenderWindow & window)
             drawCount++;       
 
             Cell* dc = this->at(x,y).get();
-            float scaled = std::clamp(dc->data.p.strength / maxPheromone, 0.0, 1.0);
+            float scaled = std::clamp(dc->data.p.strength, 0.0, 1.0);
             dc->cs.get()->setScale(scaled, scaled);
             window.draw(*dc->cs.get());
         }
@@ -307,6 +320,14 @@ void World::handleInput(sf::RenderWindow &window)
     if(sf::Keyboard::isKeyPressed(sf::Keyboard::Num2))
     {
         running = false;
+    }
+    if(sf::Keyboard::isKeyPressed(sf::Keyboard::R))
+    {
+        sims.clear();
+        grid.clear();
+        WorldGeneration gen(0,width,height,cellSize);
+        grid = gen.getResult();
+        createACO();
     }
 }
 

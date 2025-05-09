@@ -6,10 +6,13 @@ WorldGeneration::WorldGeneration(unsigned int seed, int xWidth, int yWidth, int 
     width = xWidth;
     height = yWidth;
     this->cellSize = cellSize;
+    grid.clear();
+
     generateTerrain();
-    generateEntities(1,1);
+    generateEntities(2,1);
     assignTextures();
     generateLocations(1);
+
 
 
 }
@@ -18,9 +21,8 @@ WorldGeneration::~WorldGeneration()
 {
 }
 
-std::vector<std::unique_ptr<Cell>> WorldGeneration::getResult()
-{
-    return std::move(grid);
+std::vector<std::unique_ptr<Cell>> WorldGeneration::getResult() {
+    return std::move(grid); // Transfer ownership safely
 }
 
 void WorldGeneration::generateTerrain()
@@ -150,7 +152,7 @@ void WorldGeneration::generateEntities(int num, int col)
         rs2->setFillColor(sf::Color::Yellow);   
         Cell* cell = grid[xVal*width+yVal].get();
     
-        auto et2 = std::make_unique<Entity>(yVal, xVal, "Base", 1000, std::make_unique<sf::RectangleShape>(*rs2),cell); //make ant entity
+        auto et2 = std::make_unique<Entity>(xVal, yVal, "Base", 1000, std::make_unique<sf::RectangleShape>(*rs2),cell); //make ant entity
         grid[xVal*width+yVal].get()->data.entities.push_back(std::move(et2));
     
     

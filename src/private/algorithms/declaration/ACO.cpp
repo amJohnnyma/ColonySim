@@ -1,32 +1,8 @@
 #include "../includes/ACO.h"
 #include "../../game/headers/GlobalVars.h"
 
-
 ACO::ACO(Cell *startCell, std::vector<Cell *> &goals, std::vector<Cell *> &world, int width, int height) 
 {
-   // std::cout << "ACO construct statr" << std::endl;
-/*
-std::cout<< "Aco construction" << std::endl;
-
-    std::string conns = " ";
-    for(auto &i: startCell->data.entities)
-    {
-        if(i->name == "ant")
-        {
-            conns += "Ant: (" + std::to_string(i->x) + ", " + std::to_string(i->y) + ")\n";            
-        }
-    }
-    for(auto &g:goals)
-    {
-        for(auto &i: g->data.entities)
-        {
-            if(i->name == "location")
-            {
-                conns += "->location: (" + std::to_string(i->x) + ", " + std::to_string(i->y) + ")\n";
-            }
-        }
-    }
-*/
 
 for(auto &cell : world)
 {
@@ -66,11 +42,12 @@ for(auto &cell : world)
     assignRandomTarget(goals);
 
 
-   // std::cout << "ACO construct end" << std::endl;
-
 }
 
-void ACO::assignRandomTarget(std::vector<Cell*> &raw_goals)
+ACO::~ACO()
+{
+}
+void ACO::assignRandomTarget(std::vector<Cell *> &raw_goals)
 {
     for(auto &e: startCell->data.entities)
     {
@@ -119,11 +96,12 @@ void ACO::getNewTarget(Entity* e)
  //   std::cout << "Assigned index: " << randomIndex << std::endl;
 
     e->setTarget(tl[randomIndex]);
+    target = tl[randomIndex];
 }
 
 void ACO::update()
 {
-    std::cout << base->getResource() << std::endl;
+  //  std::cout << base->getResource() << std::endl;
     bool noBetterF = true;
     double runBest = 0;
  //   std::cout << "Updating aco" << std::endl;
@@ -140,10 +118,11 @@ void ACO::update()
          //   std::cout << "Target: " << e.get()->getTarget()->getName() << std::endl;
          if(e->getTarget()->getName() == "Base")
          {
-       //     std::cout << "Goinghome" << std::endl;
+         //   std::cout << "Goinghome" << std::endl;
+       //  std::cout << "Target: (" << e.get()->getTarget()->getX() << ", " << e.get()->getTarget()->getY() << ")" << std::endl;
          }
          else{
-       //     std::cout << "finding food" << std::endl;
+        //    std::cout << "finding food" << std::endl;
          }
           findFood(cell,e.get());
           /*
@@ -158,10 +137,9 @@ void ACO::update()
         }
     }
         //update pheremones of all cells
-
-    double pLevel = cell->data.p.strength;
-    double updatedP = (1-pheremoneEvap) * pLevel + (std::abs(((1-pheremoneEvap) * pLevel) - pLevel));
-    cell->data.p.strength = updatedP;
+        double pLevel = cell->data.p.strength;
+        double updatedP = (1 - pheremoneEvap) * pLevel + 0.01;
+        cell->data.p.strength = updatedP;
 
     if (cell->data.p.strength > maxPheromone)
     {
@@ -256,11 +234,37 @@ void ACO::findFood(Cell* cell, Entity *e)
                 if(randomVal <= cumulative)
                 {
                     e->getPath().push_back(s.first);
+
+                    bool containsTarget = std::any_of(
+                        s.first->data.entities.begin(),
+                        s.first->data.entities.end(),
+                        [&](const std::unique_ptr<Entity>& ent) {
+                            return ent.get() == e->getTarget();
+                        });
+                    if(containsTarget)
+                    {
+                        for(auto &eg : s.first->data.entities)
+                        {
+                            if(e->getTarget() != base)
+                            {
+                                eg.get()->getHitbox()->setFillColor(sf::Color::Magenta);
+                                e->setTarget(base);
+                            }
+                            else{
+                                e->setTarget(target);
+                            }
+
+                            break;
+                        }
+                    }
+
                     // Update pheromone after choosing the cell
                     double updatedP = Q / s.first->data.p.strength;
                     s.first->data.p.strength += updatedP;
         
                     moveToCell(curCell, s.first, e);
+
+
 
                     
                     break;

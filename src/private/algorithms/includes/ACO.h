@@ -23,8 +23,8 @@ class ACO
         std::vector<Cell*> adjCells;
         int worldWidth;
         int worldHeight;
-        double pF = 0.5; //pheremone influnce
-        double hF = 0.5; // heuristic influence
+        double pF = 0; //pheremone influnce
+        double hF = 10; // heuristic influence
         double pheremoneEvap = 0.1;
         std::unordered_set<Cell*> visited;
         int numberAnts = 1;
@@ -64,8 +64,10 @@ class ACO
         
     public:
         ACO(Cell* startCell, std::vector<Cell*>& goals, std::vector<Cell*>& world, int width, int height);
+        ~ACO();
         void update();
         void assignRandomTarget(std::vector<Cell*> &raw_goals);
+ 
 };
 
 #endif
