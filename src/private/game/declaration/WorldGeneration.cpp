@@ -9,7 +9,7 @@ WorldGeneration::WorldGeneration(unsigned int seed, int xWidth, int yWidth, int 
     grid.clear();
 
     generateTerrain();
-    generateEntities(2,1);
+    generateEntities(3,1);
     assignTextures();
     generateLocations(1);
 
