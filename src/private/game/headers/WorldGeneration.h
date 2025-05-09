@@ -19,7 +19,7 @@ class WorldGeneration
         std::vector<std::unique_ptr<Cell>> getResult();
     private:
         void generateTerrain();
-        void generateEntities(int num);
+        void generateEntities(int num,int col);
         void assignTextures();
         void generateLocations(int num);
 

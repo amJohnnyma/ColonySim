@@ -5,7 +5,8 @@
 #include <memory>
 #include <string>
 #include "../game/headers/GlobalVars.h"
-#include "../structs/worldObjects.h"
+
+class Cell;
 
 class Entity
 {
@@ -15,7 +16,7 @@ private:
     int resource;
     int maxResource;
     Entity* target;
-    Cell* currentCell;
+    Entity* base;
     std::unique_ptr<sf::RectangleShape> hitbox;
 
 public:

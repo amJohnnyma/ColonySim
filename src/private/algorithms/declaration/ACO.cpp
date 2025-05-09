@@ -90,6 +90,7 @@ void ACO::assignRandomTarget(std::vector<Cell*> &raw_goals)
              
              if(target->getMaxResource() == -999)
              {
+                std::cout << "Deleting init target" << std::endl;
                 delete target;
                 target = nullptr;
              }

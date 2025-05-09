@@ -42,6 +42,7 @@ void World::drawEntities(sf::RenderWindow& window)
     for(auto &i : grid)
     {
         //if(i.get()->data.entities.size() > 0)
+        std::vector<Entity*> waitList;
         for(auto &j : i.get()->data.entities)
         {
         //  std::cout << "Drawing entities" << std::endl;
@@ -49,7 +50,15 @@ void World::drawEntities(sf::RenderWindow& window)
         //  std::cout << "Has texture: " << (j->hitbox->getTexture() ? "yes" : "no") << std::endl;
         //  std::cout << "Texture pointer: " << static_cast<const void*>(j->hitbox->getTexture()) << std::endl;
 
-          window.draw(*j.get()->getHitbox());
+            if(j->getName() == "ant")
+            {
+                waitList.push_back(j.get());
+            }
+            else{
+                window.draw(*j.get()->getHitbox());
+
+            }
+
           /*
           if(j->getName() == "ant")
           {

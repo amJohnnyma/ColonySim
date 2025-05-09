@@ -20,6 +20,7 @@ struct pheromone
     std::string type;
 };
 
+class Entity;
 
 struct CellData
 {
