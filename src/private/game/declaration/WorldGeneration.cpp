@@ -9,7 +9,7 @@ WorldGeneration::WorldGeneration(unsigned int seed, int xWidth, int yWidth, int 
     generateTerrain();
     generateEntities(2,1);
     assignTextures();
-    generateLocations(5);
+    generateLocations(1);
 
 
 }
@@ -119,15 +119,16 @@ void WorldGeneration::generateEntities(int num, int col)
                 rs->setOutlineThickness(1.f); 
                 rs->setOutlineColor(sf::Color::Red); 
                 rs->setFillColor(sf::Color::White);   
-                Cell* cell = grid[yVal*width+xVal].get();
-                auto et = std::make_unique<Entity>(xVal, yVal, "ant", 10, std::make_unique<sf::RectangleShape>(*rs),cell); 
+                Cell* cell = grid[xVal*width+yVal].get();
+                auto et = std::make_unique<Entity>(yVal, xVal, "ant", 10, std::make_unique<sf::RectangleShape>(*rs),cell); 
         
-                vis.push_back({et->getY(), et->getY()});            
+                vis.push_back({yVal, xVal});            
+
 
                 
 
 
-                grid[yVal*width+xVal].get()->data.entities.push_back(std::move(et));
+                grid[xVal*width+yVal].get()->data.entities.push_back(std::move(et));
 
 
                 
@@ -147,10 +148,10 @@ void WorldGeneration::generateEntities(int num, int col)
         rs2->setOutlineThickness(1.f); 
         rs2->setOutlineColor(sf::Color::Red);
         rs2->setFillColor(sf::Color::Yellow);   
-        Cell* cell = grid[yVal*width+xVal].get();
+        Cell* cell = grid[xVal*width+yVal].get();
     
-        auto et2 = std::make_unique<Entity>(xVal, yVal, "Base", 100, std::make_unique<sf::RectangleShape>(*rs2),cell); //make ant entity
-        grid[yVal*width+xVal].get()->data.entities.push_back(std::move(et2));
+        auto et2 = std::make_unique<Entity>(yVal, xVal, "Base", 100, std::make_unique<sf::RectangleShape>(*rs2),cell); //make ant entity
+        grid[xVal*width+yVal].get()->data.entities.push_back(std::move(et2));
     
     
         for(auto &i : grid)

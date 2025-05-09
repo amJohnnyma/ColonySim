@@ -17,6 +17,7 @@ private:
     int maxResource;
     Entity* target;
     Entity* base;
+   // Cell* currentCell;
     std::unique_ptr<sf::RectangleShape> hitbox;
 
 public:

@@ -38,11 +38,11 @@ void World::update()
 
 void World::drawEntities(sf::RenderWindow& window)
 {  
+    std::vector<sf::RectangleShape*> waitList;
 
     for(auto &i : grid)
     {
         //if(i.get()->data.entities.size() > 0)
-        std::vector<Entity*> waitList;
         for(auto &j : i.get()->data.entities)
         {
         //  std::cout << "Drawing entities" << std::endl;
@@ -52,7 +52,7 @@ void World::drawEntities(sf::RenderWindow& window)
 
             if(j->getName() == "ant")
             {
-                waitList.push_back(j.get());
+                waitList.push_back(j->getHitbox());
             }
             else{
                 window.draw(*j.get()->getHitbox());
@@ -101,6 +101,11 @@ void World::drawEntities(sf::RenderWindow& window)
 
         
 
+    }
+
+    for(auto &e : waitList)
+    {
+        window.draw(*e);
     }
     
 }

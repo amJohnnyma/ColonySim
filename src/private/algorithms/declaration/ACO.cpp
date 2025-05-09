@@ -28,20 +28,27 @@ std::cout<< "Aco construction" << std::endl;
     }
 */
 
-    this->startCell = startCell;
-    for(auto &e: startCell->data.entities)
+for(auto &cell : world)
+{
+    for(auto &e: cell->data.entities)
     {
-        if(e.get()->getName() != "default")
+        if(e)
         {
-            std::cout << e.get()->getName() << std::endl;
-        }
-        if(e.get()->getName() == "Base")
-        {
-            std::cout << "Ants have base" << std::endl;
-            base = e.get();
+            if(e.get()->getName() != "default")
+            {
+                std::cout << cell->x << ", " << cell->y << ": " << e.get()->getName() << std::endl;
+            }
+            if(e.get()->getName() == "Base")
+            {
+                std::cout << "Ants have base" << std::endl;
+                base = e.get();
+            }
         }
 
+
     }
+}
+
 
     for(auto &g : goals)
     {
@@ -55,7 +62,6 @@ std::cout<< "Aco construction" << std::endl;
     worldHeight = height;
     curCell = startCell;
     numberAnts = startCell->data.entities.size();
-    startCell->setColor(sf::Color::Yellow);
 
     assignRandomTarget(goals);
 
@@ -66,42 +72,36 @@ std::cout<< "Aco construction" << std::endl;
 
 void ACO::assignRandomTarget(std::vector<Cell*> &raw_goals)
 {
+    std::vector<Entity*> tl;
     for(auto &e: startCell->data.entities)
     {
         if(e)
-        if(e.get()->getName() == "ant")
+        if(e.get()->getName() == "location")
         {
-            double randomVal;
-            double randomVal2;
-            std::random_device rd;
-            std::mt19937 gen(rd());
-            Entity* target = new Entity(1,1,"base",-999);
-            while(target->getName() != "location")
-            {
 
-            std::uniform_int_distribution<> dis(0.0,startCell->data.entities.size()-1);
-            std::uniform_int_distribution<> dis2(0.0,raw_goals[randomVal]->data.entities.size()-1);
-
-            std::cout << "dis1 max: " << startCell->data.entities.size() << std::endl;
-            std::cout << "dis2 max: " << raw_goals[randomVal]->data.entities.size() << std::endl;
-
-             randomVal = dis(gen);
-             randomVal2 = dis2(gen);
-             
-             if(target->getMaxResource() == -999)
-             {
-                std::cout << "Deleting init target" << std::endl;
-                delete target;
-                target = nullptr;
-             }
-             target = raw_goals[randomVal]->data.entities[randomVal2].get();
-            }
-            std::cout << randomVal << ", " << randomVal2 << std::endl;
-            e.get()->setTarget(target);
-            std::cout << "Set target to: " << target->getName() << "( " << target->getX() << ", " << target->getY()<<" )"<<std::endl;
+            tl.push_back(e.get());            
+            std::cout << "Added posibble location: " << e->getName() << "( " << e->getX() << ", " << e->getY()<<" )"<<std::endl;
         }
 
+    }
 
+    for(auto &cell : world)
+    {
+        for(auto &entity : cell->data.entities)
+        {
+            if(entity)
+            {
+                if(entity.get()->getName() == "ant")
+                {      
+                    std::random_device rd;
+                    std::mt19937 gen(rd());
+                    std::uniform_int_distribution<> dis(0, tl.size() - 1);
+                    int randomIndex = dis(gen);            
+                    //random target
+                    entity.get()->setTarget(tl[randomIndex]);
+                }
+            }
+        }
     }
 
 } 
@@ -110,18 +110,18 @@ void ACO::update()
 {
     bool noBetterF = true;
     double runBest = 0;
-    std::cout << "Updating aco" << std::endl;
+   // std::cout << "Updating aco" << std::endl;
     //from start cell, look at each entity (ant)
     for(auto &cell:world)
     {
     for(auto &e : cell->data.entities)
     {
-        std::cout << "Checking entity" << std::endl;
+     //   std::cout << "Checking entity" << std::endl;
         if(e)
         if(e->getName() == "ant")
         {
-            std::cout << "found ant" << std::endl;  
-            std::cout << "Target: " << e.get()->getTarget()->getName() << std::endl;
+          //  std::cout << "found ant" << std::endl;  
+          //  std::cout << "Target: " << e.get()->getTarget()->getName() << std::endl;
             if(e.get()->getTarget() && e.get()->getTarget()->getName() == "Base")
             {
                 returnHome(cell, e.get());
@@ -141,18 +141,11 @@ void ACO::update()
     if (cell->data.p.strength > maxPheromone)
     {
         maxPheromone = cell->data.p.strength;
-        noBetterF = false;
     } 
-    if (cell->data.p.strength > runBest)
-    {
-        runBest = cell->data.p.strength;
-    } 
+
 }
 
-if(noBetterF)
-{
-    maxPheromone = runBest;
-}
+
 
  
 
@@ -186,6 +179,8 @@ if(noBetterF)
 
 void ACO::moveToCell(Cell* from, Cell* to, Entity* e)
 {
+    std::cout << "Moving from: (" << from->x << ", " << from->y << ") to: (" << to->x << ", " << to->y << ")" << std::endl;
+
     // Loop through the entities in the "from" cell
     for (auto it = from->data.entities.begin(); it != from->data.entities.end(); ++it)
     {
@@ -200,6 +195,8 @@ void ACO::moveToCell(Cell* from, Cell* to, Entity* e)
             
             // Optionally, erase the entity from the "from" cell after moving
             from->data.entities.erase(it);
+
+          //  curCell = to;
 
             //curCell = to;
             break; // Exit the loop after moving the entity
@@ -217,22 +214,22 @@ void ACO::findFood(Cell* cell, Entity *e)
 {
 
     curCell = cell;
-            std::cout<<"Getting adj cells"<<std::endl;
-            getAdjCells(cell->x, cell->y); 
+         //   std::cout<<"Getting adj cells"<<std::endl;
+            getAdjCells(cell->y, cell->x); 
             if(adjCells.size() == 0)
             {
-                std::cout << "No adj cells" << std::endl;
+           //     std::cout << "No adj cells" << std::endl;
                 return; // very temporary
             }
             //compare all adjacent squares
             std::vector<std::pair<Cell*, double>> scores;
             for(const auto & ac: adjCells)
             {
-                std::cout << "Checking adj cell" << std::endl;
+             //   std::cout << "Checking adj cell" << std::endl;
                 //Look at distance to goal, difficulty of terrain -> heuristic
                 //check pheromones and bias toward following already successful pheromones
-                if (visited.find(ac) == visited.end()) {
-                    std::cout << "Not visited" << std::endl;
+            //    if (visited.find(ac) == visited.end()) {
+              //      std::cout << "Not visited" << std::endl;
                     if(goals.find(ac) != goals.end())
                     {
                         scores.push_back({ac, pheromoneCalc(ac->data.p.strength, calculateHeuristic(curCell, ac), curCell)*2});
@@ -241,11 +238,11 @@ void ACO::findFood(Cell* cell, Entity *e)
                         scores.push_back({ac, pheromoneCalc(ac->data.p.strength, calculateHeuristic(curCell, ac), curCell)});
 
                     }
-                }
-                else{
-                    std::cout<<"Already visited"<<std::endl;
-                    visited.erase(ac); //can visit after a run
-                }
+            //    }
+            //    else{
+              //      std::cout<<"Already visited"<<std::endl;
+               //     visited.erase(ac); //can visit after a run
+              //  }
             }       
 
             //choose score
@@ -259,15 +256,30 @@ void ACO::findFood(Cell* cell, Entity *e)
                 cumulative += s.second;
                 if(randomVal <= cumulative)
                 {
-                    std::cout << "Chose random cell" << std::endl;
+                 //   std::cout << "Chose random cell" << std::endl;
                     //choose the cell S as our next cell
-                    visited.insert(s.first);
+                   // visited.insert(s.first);
                     //if s is a goal then start heading back home to reinforce pheremones further
                     double goalImpact = 0.0;
                     if(goals.find(s.first) != visited.end())
                     {
                         //go back home
                         std::cout << "Found goal" << std::endl;
+                        bool found = false;
+                        std::cout << "Target at: " << e->getTarget()->getX() << ", " << e->getTarget()->getY() << std::endl;                        
+                        for(auto &eg : s.first->data.entities)
+                        {
+                            if(eg.get() == e->getTarget())
+                            {
+                                std::cout << "Was target found" << std::endl;
+                                found = true;
+                                break;
+                            }
+                        }
+                        if(!found)
+                        {
+                            std::cout << "Was not target found" << std::endl;
+                        }
                         s.first->data.entities[0].get()->getHitbox()->setFillColor(sf::Color::Magenta);
                         goalImpact = 0.5 * s.first->data.entities[0].get()->getResource();
                         //return home -> this will reinforce paths even more
@@ -275,7 +287,7 @@ void ACO::findFood(Cell* cell, Entity *e)
                         moveToCell(curCell, s.first, e);
 
 
-                        break;
+                        continue;
 
                     }
 
@@ -287,11 +299,11 @@ void ACO::findFood(Cell* cell, Entity *e)
                     s.first->data.p.strength += updatedP;
 
                     //move to new cell
-                    std::cout << "Moving entity: " << curCell->x << ", " << curCell->y << std::endl;
+                    std::cout << "Moving entity: " << e->getX() << ", " << e->getY() << std::endl;
                     moveToCell(curCell, s.first, e);
-                    std::cout << "Moved entity: " << s.first->x << ", " << s.first->y << std::endl;
+                    std::cout << "Moved entity: " << e->getX() << ", " << e->getY() << std::endl;
 
-                    break;
+                    continue;
 
                     
                 }
@@ -300,17 +312,13 @@ void ACO::findFood(Cell* cell, Entity *e)
 }
 void ACO::returnHome(Cell* cell, Entity * e)
 {
-    std::cout << "Returning home!" << std::endl;
+ //   std::cout << "Returning home!" << std::endl;
 }
 void ACO::getAdjCells(int x, int y)
 {
     const int dx[] = {0,0,-1,1};
     const int dy[] = {1,-1,0,0};
 
-    for(auto & ac:adjCells)
-    {
-       // ac->cs.get()->setFillColor(sf::Color(0,255,0,ac->data.difficulty));
-    }
     adjCells.clear();
 
     for(int i =0; i < 4; i++)
@@ -325,10 +333,7 @@ void ACO::getAdjCells(int x, int y)
             
         }
     }
-    for(auto & ac:adjCells)
-    {
-      //  ac->cs.get()->setFillColor(sf::Color::Red);
-    }
+
 
 }
 

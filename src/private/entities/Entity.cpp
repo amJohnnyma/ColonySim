@@ -51,7 +51,7 @@ Entity::Entity(int x, int y, std::string name, int maxResource, std::unique_ptr<
     this->name = name;
     this->maxResource = maxResource;
     this->hitbox = std::move(hitbox);
-    this->currentCell = curCell;
+  //  this->currentCell = curCell;
 }
 
 void Entity::setPos(int x, int y)
