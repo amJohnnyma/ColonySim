@@ -1,5 +1,5 @@
 #include "../includes/ACO.h"
-//#include "../../game/headers/GlobalVars.h"
+#include "../../game/headers/GlobalVars.h"
 
 ACO::ACO(Cell *startCell, std::vector<Cell *> &goals, std::vector<Cell *> &world, int width, int height) 
 {
@@ -36,7 +36,7 @@ for(auto &cell : world)
     this->world = world;
     worldWidth = width;
     worldHeight = height;
-    curCell = startCell;
+   // curCell = startCell;
     numberAnts = startCell->data.entities.size();
 
     assignRandomTarget(goals);
@@ -96,32 +96,46 @@ void ACO::getNewTarget(Entity* e)
  //   std::cout << "Assigned index: " << randomIndex << std::endl;
 
     e->setTarget(tl[randomIndex]);
-    target = tl[randomIndex];
+   // target = tl[randomIndex];
 }
 
 void ACO::update()
 {
+  //  std::cout << base->getResource() << std::endl;
     bool noBetterF = true;
     double runBest = 0;
+ //   std::cout << "Updating aco" << std::endl;
+    //from start cell, look at each entity (ant)
     for(auto &cell:world)
     {
-    for(auto &e : cell->data.entities)
-    {
-        if(e)
-        if(e->getName() == "ant")
-        {
-          findFood(cell,e.get());
-        }
-    }
-        //update pheremones of all cells
+               //update pheremones of all cells
         double pLevel = cell->data.p.strength;
-        double updatedP = (1 - pheremoneEvap) * pLevel;
-        cell->data.p.strength = std::max(0.001, updatedP);
+        double updatedP = (1 - pheremoneEvap) * pLevel + 0.01;
+        cell->data.p.strength = updatedP;
 
     if (cell->data.p.strength > conf::maxPheromone)
     {
         conf::maxPheromone = cell->data.p.strength;
     } 
+
+    for(auto &e : cell->data.entities)
+    {
+        if(e)
+        if(e->getName() == "ant")
+        {
+            std::cout << "Found ant" << std::endl;
+            if(e->getTarget()->getName() == "Base")
+            {
+                std::cout << "Goig base" << std::endl;
+                returnHome(cell, e.get());
+            }
+            else{
+                 findFood(cell,e.get());
+
+            }
+        }
+    }
+
 
 }
 
@@ -141,19 +155,29 @@ void ACO::update()
 
 void ACO::moveToCell(Cell* from, Cell* to, Entity* e)
 {
+    std::cout << "Moving from: (" << from->x << ", " << from->y << ") to: (" << to->x << ", " << to->y << ")" << std::endl;
 
+    // Loop through the entities in the "from" cell
     for (auto it = from->data.entities.begin(); it != from->data.entities.end(); ++it)
     {
-        if (it->get() == e) 
+        if (it->get() == e) // Compare raw pointer inside unique_ptr
         {
-            to->data.entities.push_back(std::move(*it));            
-
+            // Move ownership of the entity to the "to" cell
+            to->data.entities.push_back(std::move(*it));
+            
+            // Adjust entity position to match the "to" cell
+            // Assuming you're using grid positions for x, y (change logic if needed)
             e->setPos(to->x, to->y);
             
+            // Optionally, erase the entity from the "from" cell after moving
             from->data.entities.erase(it);
 
+          //  e->getPath().push_back(to);
 
-            break; 
+          //  curCell = to;
+
+            //curCell = to;
+            break; // Exit the loop after moving the entity
         }
     }
 }
@@ -167,93 +191,140 @@ void ACO::depositPheremones(Cell *c)
 void ACO::findFood(Cell* cell, Entity *e)
 {
 
-            curCell = cell;
+         //   std::cout<<"Getting adj cells"<<std::endl;
             getAdjCells(cell->y, cell->x); 
             if(adjCells.size() == 0)
             {
-                return; 
+           //     std::cout << "No adj cells" << std::endl;
+                return; // very temporary
             }
+            //compare all adjacent squares
             std::vector<std::pair<Cell*, double>> scores;
-
-            // Calculate raw scores
-            for (const auto& ac : adjCells)
+            for(const auto & ac: adjCells)
             {
-                double score = pheromoneCalc(cell, e);
-                scores.push_back({ac, score});
-            }
+              //  double heuristic = calculateHeuristic(ac, e->getTarget());
+              //  double pheromone = ac->data.p.strength;
+                double score = calculateHeuristic(ac, e->getTarget());
+                scores.push_back({ac, score});               
+
+            }       
 
             // Normalize scores
             double totalScore = 0.0;
-            for (auto& score : scores)
-                totalScore += score.second;
+            for (auto& score : scores) totalScore += score.second;
 
-            if (totalScore == 0.0) {
-                // Handle edge case (e.g., equal probability or fallback)
-                double uniformProb = 1.0 / scores.size();
-                for (auto& score : scores)
-                    score.second = uniformProb;
-            } else {
-                for (auto& score : scores)
-                    score.second /= totalScore;
-            }
+            // Choose a random cell based on the weighted scores
+            double randomVal = rand() / (double)RAND_MAX * totalScore;
+            double cumulative = 0.0;
+          //  std::cout << "Scores count: " << scores.size() << std::endl;
 
-            // Choose a cell based on normalized probabilities
-            double randomVal = static_cast<double>(rand()) / RAND_MAX;
-            double cumulative = 0.0;          
-            for(const auto &s : scores)
+          //temp
+          double best = 0;
+          Cell* bestC = nullptr;
+            for(const auto & s : scores)
             {
-                cumulative += s.second;
-               // std::cout << "rand: " << std::to_string(randomVal) << std::endl;
-               // std::cout << "Cum: " << std::to_string(cumulative) << std::endl;
-                if(randomVal <= cumulative)
+                if(s.second > best)
                 {
-                    e->addPath(s.first);
-
-                    bool containsTarget = std::any_of(
-                        s.first->data.entities.begin(),
-                        s.first->data.entities.end(),
-                        [&](const std::unique_ptr<Entity>& ent) {
-                            return ent.get() == e->getTarget();
-                        });
-                    if(containsTarget)
-                    {        
-                        std::cout<<"Contains target"<<std::endl;                
-                        for(auto &eg : s.first->data.entities)
-                        {    
-                            if(eg.get() == e->getTarget())
-                            {
-                                if(e->getTarget() != base)
-                                {
-                                    std::cout << "Found target, going home" << std::endl;
-                                    eg.get()->getHitbox()->setFillColor(sf::Color::Magenta);
-                                    e->setTarget(base);
-                                }
-                                else{
-                                    std::cout << "At home, going target" << std::endl;
-                                    e->setTarget(target);
-                                }
-                            break;
-                            }                        
-
-
-                        }
-                    }
-
-                    // Update pheromone after choosing the cell
-                    double updatedP = Q / pheromoneCalc(s.first, e->getTarget());
-                    s.first->data.p.strength += updatedP;
-        
-                    moveToCell(curCell, s.first, e);
-                    
-                    break;
-
+                    best = s.second;
+                    bestC = s.first;
                 }
-            } 
+            }
+            if(bestC)
+            {
+                    e->addPath(bestC);
+                // Update pheromone after choosing the cell
+                double updatedP = Q / bestC->data.p.strength;
+                bestC->data.p.strength += updatedP;        
+                moveToCell(cell, bestC, e);
+
+                bool containsTarget = std::any_of(
+                    bestC->data.entities.begin(),
+                    bestC->data.entities.end(),
+                    [&](const std::unique_ptr<Entity>& ent) {
+                        return ent.get() == e->getTarget();
+                    });
+                if(containsTarget)
+                {
+                   // std::cout << bestC->data.type << std::endl;;
+                    for(auto &eg : bestC->data.entities)
+                    {
+                        if(eg.get() != base)
+                        {
+                            eg.get()->getHitbox()->setFillColor(sf::Color::Magenta);
+                            e->setTarget(base);
+                            std::cout << "Going gome" << std::endl;
+                        }
+
+                        break;
+                    }
+                }
+
+
+            }
+                   
+
 
 }
 void ACO::returnHome(Cell* cell, Entity * e)
 {
- //   std::cout << "Returning home!" << std::endl;
+    //   std::cout<<"Getting adj cells"<<std::endl;
+    getAdjCells(e->getX(), e->getY()); 
+    if(adjCells.size() == 0)
+    {
+    //     std::cout << "No adj cells" << std::endl;
+        return; // very temporary
+    }
+    //compare all adjacent squares
+    std::vector<std::pair<Cell*, double>> scores;
+    for(const auto & ac: adjCells)
+    {
+        //  double heuristic = calculateHeuristic(ac, e->getTarget());
+        //  double pheromone = ac->data.p.strength;
+        double score = calculateHeuristic(ac, e->getTarget());
+        scores.push_back({ac, score});               
+
+    }       
+
+
+    //temp
+    double best = 0;
+    Cell* bestC = nullptr;
+    for(const auto & s : scores)
+    {
+        if(s.second > best)
+        {
+            best = s.second;
+            bestC = s.first;
+        }
+    }    
+        // Update pheromone after choosing the cell
+        double updatedP = Q / bestC->data.p.strength;
+        bestC->data.p.strength += updatedP;        
+        moveToCell(cell, bestC, e);
+
+        bool containsTarget = std::any_of(
+            bestC->data.entities.begin(),
+            bestC->data.entities.end(),
+            [&](const std::unique_ptr<Entity>& ent) {
+                return ent.get() == e->getTarget();
+            });
+        if(containsTarget)
+        {
+            // std::cout << bestC->data.type << std::endl;;
+            for(auto &eg : bestC->data.entities)
+            {
+                if(eg.get() == base)
+                {
+                    std::cout << "Base to new target" << std::endl;
+                    getNewTarget(e);
+                }
+
+                break;
+            }
+        }
+
+
+    
 }
 void ACO::getAdjCells(int x, int y)
 {
@@ -296,9 +367,9 @@ double ACO::pheromoneCalc(Cell* cell, Entity* target)
     double Tij = cell->data.p.strength;
 
     double numerator = std::pow(Tij, pF) * std::pow(Nij, hF);
-    double denominator = sumOfFeasiblePheremoneProb(target);
+    double denominator = sumOfFeasiblePheremoneProb(target) + 0.01;
 
-   // std::cout << numerator / denominator << std::endl;
+    std::cout << numerator / denominator << std::endl;
     return numerator / denominator;
 }
 

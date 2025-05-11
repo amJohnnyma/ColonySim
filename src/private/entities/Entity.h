@@ -20,6 +20,7 @@ private:
    // Cell* currentCell;
     std::unique_ptr<sf::RectangleShape> hitbox;
     std::vector<Cell*> path;
+    bool returningHome = false;
 
 public:
     // Constructor
@@ -28,6 +29,9 @@ public:
 
     // Getter and setter for position
     void setPos(int x, int y);
+
+    bool getStatus() {return returningHome;}
+    void setStatus(bool stat) {returningHome = stat;}
 
 
     // Function to take resources
