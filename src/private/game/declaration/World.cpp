@@ -363,6 +363,18 @@ void World::handleInput(sf::RenderWindow &window, sf::Event &event)
         conf::hF -= 0.1;
         std::cout << "New hf: " << conf::hF << std::endl;
     }
+            if(event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Up)
+    {
+        std::cout << "Old timestep: " << conf::timestep << std::endl;
+        conf::timestep += 1;
+        std::cout << "New timestep: " << conf::timestep << std::endl;
+    }
+    if(event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Down)
+    {
+        std::cout << "Old timestep: " << conf::timestep << std::endl;
+        conf::timestep -= 1;
+        std::cout << "New timestep: " << conf::timestep << std::endl;
+    }
 }
 
 

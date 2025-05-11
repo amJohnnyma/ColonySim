@@ -4,7 +4,7 @@ void Game::run()
 {
     using clock = std::chrono::steady_clock;
     auto lastUpdate = clock::now();
-    const std::chrono::milliseconds updateInterval(100);  // 500ms
+    const std::chrono::milliseconds updateInterval(conf::timestep); 
     ////////////////
     sf::Clock fpsClock;
     sf::Font font;
@@ -41,9 +41,10 @@ void Game::run()
         {
             world->update();
             lastUpdate = now;
-        }
-        world->render(*wind->wndw);
 
+        }
+
+            world->render(*wind->wndw);
 
     /////////////////
      elapsedTime += fpsClock.restart().asSeconds();
