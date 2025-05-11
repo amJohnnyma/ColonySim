@@ -15,6 +15,26 @@ class ACO
 {
 
     private:
+/*        Cell* startCell;
+        Cell* curCell;
+        std::unordered_set<Cell*> goals;
+        std::vector<Cell*> world;
+        float theta = 0.0f;
+        std::vector<Cell*> adjCells;
+        int worldWidth;
+        int worldHeight;
+        double pF = 0.3; //pheremone influnce
+        double hF = 0.8; // heuristic influence
+        double pheremoneEvap = 0.1;
+        std::unordered_set<Cell*> visited;
+        int numberAnts = 1;
+        int Q = 3;
+        Entity* base;
+        Entity* target;
+        std::vector<Entity*> tl; // goals
+*/
+
+
         Cell* startCell;
         Cell* curCell;
         std::unordered_set<Cell*> goals;
@@ -32,8 +52,6 @@ class ACO
         Entity* base;
         Entity* target;
         std::vector<Entity*> tl; // goals
-
-
 
     private:
         void getAdjCells(int x, int y);

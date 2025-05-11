@@ -24,4 +24,10 @@ struct window
 
 };
 
+
+struct curvedRectangleWindow
+{
+
+};
+
 #endif
