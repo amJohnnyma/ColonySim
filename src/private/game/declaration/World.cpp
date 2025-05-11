@@ -234,6 +234,8 @@ void World::drawTerrain(sf::RenderWindow & window)
 
 void World::drawGrid(sf::RenderWindow & window)
 {
+
+    sf::VertexArray outlines(sf::Lines);
     int drawCount = 0;
     int skippedCount = 0;
     
@@ -245,6 +247,8 @@ void World::drawGrid(sf::RenderWindow & window)
     );
     for (int x = 0; x < width; x++) {
         for (int y = 0; y < height; y++) {
+            int index = (x+y*width) *4;
+            
             float px = x * cellSize;
             float py = y * cellSize;
 
@@ -256,12 +260,26 @@ void World::drawGrid(sf::RenderWindow & window)
             }
                 
 
-            sf::RectangleShape rs;
-            rs.setSize(sf::Vector2f(cellSize, cellSize));
-            rs.setPosition(x * cellSize, y * cellSize);
-            rs.setOutlineThickness(0.5f);
-            rs.setOutlineColor(sf::Color::Blue);
-            rs.setFillColor(sf::Color::Transparent); // Optional    
+
+
+            outlines.append(sf::Vertex(sf::Vector2f(px,py), sf::Color::Blue));
+            outlines.append(sf::Vertex(sf::Vector2f(px + conf::cellSize, py), sf::Color::Blue));
+
+            outlines.append(sf::Vertex(sf::Vector2f(px + conf::cellSize, py), sf::Color::Blue));
+            outlines.append(sf::Vertex(sf::Vector2f(px + conf::cellSize, py + conf::cellSize), sf::Color::Blue));
+
+            outlines.append(sf::Vertex(sf::Vector2f(px + conf::cellSize, py + conf::cellSize), sf::Color::Blue));
+            outlines.append(sf::Vertex(sf::Vector2f(px, py + conf::cellSize), sf::Color::Blue));
+
+            outlines.append(sf::Vertex(sf::Vector2f(px, py + conf::cellSize), sf::Color::Blue));
+            outlines.append(sf::Vertex(sf::Vector2f(px, py), sf::Color::Blue));
+            //convert to vertex
+      //      sf::RectangleShape rs;
+       //     rs.setSize(sf::Vector2f(cellSize, cellSize));
+       //     rs.setPosition(x * cellSize, y * cellSize);
+       //     rs.setOutlineThickness(0.5f);
+        //    rs.setOutlineColor(sf::Color::Blue);
+       //     rs.setFillColor(sf::Color::Transparent); // Optional    
             
             //for debuggin
             drawCount++;       
@@ -269,9 +287,11 @@ void World::drawGrid(sf::RenderWindow & window)
                 
                
     
-            window.draw(rs);
         }
     }
+
+ //   window.draw(grid);
+    window.draw(outlines);
 //std::cout << "Cells drawn: " + std::to_string(drawCount) << std::endl;
 //std::cout << "Cells skipped: " + std::to_string(skippedCount) << std::endl;
 }
@@ -283,7 +303,7 @@ void World::render(sf::RenderWindow &window)
     drawTerrain(window);
     drawEntities(window);
 
-    window.display();
+  //  window.display();
 }
 
 void World::handleInput(sf::RenderWindow &window)

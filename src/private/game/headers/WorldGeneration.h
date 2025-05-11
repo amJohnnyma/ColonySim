@@ -6,6 +6,7 @@
 #include <random>
 #include "../../utils/headers/TextureManager.h"
 #include "../../entities/Entity.h"
+#include "../../shapes/Shape.h"
 
 class WorldGeneration
 {

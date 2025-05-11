@@ -29,7 +29,9 @@ src/private/%.o: src/private/%.cpp
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
 clean:
-	rm -rf src/private/**/*.o $(TARGET)
+	find src/private -name '*.o' -delete
+	rm -f $(TARGET)
+
 
 
 run: $(TARGET)
