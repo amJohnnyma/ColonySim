@@ -47,10 +47,6 @@ void World::drawEntities(sf::RenderWindow& window)
         //if(i.get()->data.entities.size() > 0)
         for(auto &j : i.get()->data.entities)
         {
-        //  std::cout << "Drawing entities" << std::endl;
-        //  std::cout << std::to_string(j.get()->hitbox.get()->getTexture()->getSize().x) << ", "<< std::to_string(j.get()->hitbox.get()->getTexture()->getSize().y) << std::endl;
-        //  std::cout << "Has texture: " << (j->hitbox->getTexture() ? "yes" : "no") << std::endl;
-        //  std::cout << "Texture pointer: " << static_cast<const void*>(j->hitbox->getTexture()) << std::endl;
 
             if(j->getName() == "ant")
             {
@@ -328,6 +324,10 @@ void World::handleInput(sf::RenderWindow &window)
         WorldGeneration gen(0,width,height,cellSize);
         grid = gen.getResult();
         createACO();
+    }
+    if(sf::Keyboard::isKeyPressed(sf::Keyboard::Escape))
+    {
+        window.close();
     }
 }
 

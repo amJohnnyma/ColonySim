@@ -58,12 +58,12 @@ public:
     
 void setX(int newX) { 
     x = newX; 
-    hitbox->setPosition(x * cellSize, y * cellSize);
+    hitbox->setPosition(x * conf::cellSize, y * conf::cellSize);
 }
 
 void setY(int newY) { 
     y = newY; 
-    hitbox->setPosition(x * cellSize, y * cellSize);
+    hitbox->setPosition(x * conf::cellSize, y * conf::cellSize);
 }
 
 void setName(const std::string& newName) { name = newName; }

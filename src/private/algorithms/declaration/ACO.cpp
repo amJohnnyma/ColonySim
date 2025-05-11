@@ -1,5 +1,5 @@
 #include "../includes/ACO.h"
-#include "../../game/headers/GlobalVars.h"
+//#include "../../game/headers/GlobalVars.h"
 
 ACO::ACO(Cell *startCell, std::vector<Cell *> &goals, std::vector<Cell *> &world, int width, int height) 
 {
@@ -141,9 +141,9 @@ void ACO::update()
         double updatedP = (1 - pheremoneEvap) * pLevel + 0.01;
         cell->data.p.strength = updatedP;
 
-    if (cell->data.p.strength > maxPheromone)
+    if (cell->data.p.strength > conf::maxPheromone)
     {
-        maxPheromone = cell->data.p.strength;
+        conf::maxPheromone = cell->data.p.strength;
     } 
 
 }

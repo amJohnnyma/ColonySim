@@ -34,7 +34,7 @@ Game::Game(int windowWidth, int windowHeight, int worldWidth, int worldHeight)
 {
     wind = new window(windowWidth,windowHeight);
     world = new World(worldWidth,worldHeight,*wind->wndw);
-    inputManager = new inputs();
+    inputManager = new inputs();    
 }
 
 Game::~Game()

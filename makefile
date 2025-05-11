@@ -28,9 +28,9 @@ $(TARGET): $(OBJS)
 src/private/%.o: src/private/%.cpp
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
-# Clean
 clean:
-	rm -f src/private/*.o $(TARGET)
+	rm -rf src/private/**/*.o $(TARGET)
+
 
 run: $(TARGET)
 	./$(TARGET)

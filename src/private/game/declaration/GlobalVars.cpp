@@ -1,5 +1,13 @@
 #include "../headers/GlobalVars.h"
 
-extern int cellSize = 50;
-extern int antSize = 50;
-extern double maxPheromone = 0;
+namespace conf
+{
+    const int cellSize = 50;
+    const int antSize = 50;
+    double maxPheromone = 0;
+    const sf::Vector2f window_size = {500, 500};
+    const sf::Vector2f window_size_f = static_cast<sf::Vector2f>(window_size);
+    const sf::Vector2i worldSize = {30, 30};
+    const uint32_t max_framerate = 60;
+    const float dt = 1.0f / static_cast<float>(max_framerate);
+}

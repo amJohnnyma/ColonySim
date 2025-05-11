@@ -12,7 +12,9 @@ struct window
 
     window(int w, int h) : windowWidth(w), windowHeight(h)
     {
-        wndw = new sf::RenderWindow(sf::VideoMode({windowWidth,windowHeight}), "Window");
+        wndw = new sf::RenderWindow(sf::VideoMode({windowWidth,windowHeight}), "Window", sf::Style::Fullscreen);
+        wndw->setFramerateLimit(conf::max_framerate);
+        
     }
 
     ~window()

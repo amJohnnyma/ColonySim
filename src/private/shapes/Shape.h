@@ -9,7 +9,7 @@ class Shape //abstract
     private:
         int xg,yg; //gridspace
         int xr, yr; // window space
-        std::vector<sf::Vertex> vertexArray;
+        sf::VertexArray va{sf::PrimitiveType::Quads, 4 * 10};
 
     public:
         Shape();
