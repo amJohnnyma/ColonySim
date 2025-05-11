@@ -152,6 +152,14 @@ void World::drawTerrain(sf::RenderWindow & window)
     int drawCount = 0;
 
     std::vector<sf::VertexArray> allCircles;    
+    std::vector<sf::Text> allTexts;
+
+    sf::Font font;
+    if (!font.loadFromFile("src/fonts/pixel.ttf")) {
+        // Make sure to include a fallback or log this
+        std::cerr << "Failed to load font!" << std::endl;
+        return;
+    }
    
     for (int x = 0; x < width; x++) {
         for (int y = 0; y < height; y++) {
@@ -174,6 +182,25 @@ void World::drawTerrain(sf::RenderWindow & window)
                     circleShape->setFillColor(sf::Color(redIntensity, 255,0,255*dc->data.difficulty));
 
                     allCircles.push_back(circleShape->getVA());
+
+                    /*
+                    
+                    sf::Vector2f center = circleShape->getVA()[0].position;
+
+                    // Prepare text
+                    sf::Text text;
+                    text.setFont(font);
+                    text.setString(std::to_string(dc->x) + "," + std::to_string(dc->y));
+                    text.setCharacterSize(12); // Adjust as needed
+                    text.setFillColor(sf::Color::Red);
+                    
+                    // Center the text
+                    sf::FloatRect bounds = text.getLocalBounds();
+                    text.setOrigin(bounds.width / 2, bounds.height / 2);
+                    text.setPosition(center);
+
+                    allTexts.push_back(text);
+                    */
                 
                 }
             }
@@ -185,6 +212,10 @@ void World::drawTerrain(sf::RenderWindow & window)
     for (auto& circle : allCircles) 
     {
         window.draw(circle);
+    }
+
+        for (auto& text : allTexts) {
+        window.draw(text);
     }
 //std::cout << "terrain drawn: " + std::to_string(drawCount) << std::endl;
 //std::cout << "terrain skipped: " + std::to_string(skippedCount) << std::endl;
