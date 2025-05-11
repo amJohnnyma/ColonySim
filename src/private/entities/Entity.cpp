@@ -60,3 +60,13 @@ void Entity::setPos(int x, int y)
     this->x = x;
     this->y = y;
 }
+
+void Entity::addPath(Cell *newC)
+{
+    this->path.push_back(newC);
+
+        if (path.size() >= conf::antPathDrawLength)
+        {
+            this->path.erase(path.begin());  // Removes the front element in a vector        
+        }
+}

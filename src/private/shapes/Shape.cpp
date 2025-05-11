@@ -1,5 +1,7 @@
 #include "Shape.h"
 
-Shape::Shape()
+
+void Shape::draw(sf::RenderTarget &target) const
 {
+    target.draw(va);
 }

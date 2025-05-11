@@ -5,6 +5,12 @@
 
 class Circle : public Shape
 {
+    private:
+        double radius;
+        int resolution = 8;
+    public:
+        Circle(int xg, int yg, double radius, int resolution);
+        void setFillColor(sf::Color col) override;
 
 };
 

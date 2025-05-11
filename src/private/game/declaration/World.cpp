@@ -38,89 +38,75 @@ void World::update()
 }
 
 void World::drawEntities(sf::RenderWindow& window)
-{  
+{
     std::vector<sf::RectangleShape*> waitList;
-    std::vector<std::vector<Cell*>> pathTraces;
+    std::vector<sf::VertexArray> pathTraces;  // Each ants path
 
-    for(auto &i : grid)
+    for (auto& i : grid)
     {
-        //if(i.get()->data.entities.size() > 0)
-        for(auto &j : i.get()->data.entities)
+        for (auto& j : i.get()->data.entities)
         {
-
-            if(j->getName() == "ant")
+            if (j->getName() == "ant")
             {
-                waitList.push_back(j->getHitbox());     
-                std::vector<Cell*> path;
-                for(auto &p:j.get()->getPath())           
-                {
-                    path.push_back(p);
-                }
-                pathTraces.push_back(path);
-            }
-            else{
-                window.draw(*j.get()->getHitbox());
+                waitList.push_back(j->getHitbox());
+                sf::VertexArray pathTrace(sf::LinesStrip);
 
-            }
-          
+                // Adding path vertices to the VertexArray (no duplicates)
+                std::vector<Cell*> path = j.get()->getPath();
 
-        }
-
-        
-
-    }
-
-    float segmentThickness = 0.0f;
-
-    for (auto& path : pathTraces)
-    {
-       // std::cout << "Path check: " << path.size() << std::endl;
-    
-        for (size_t i = 1; i < path.size(); ++i) // start at 1 to access previous point
-        {
-          //  std::cout << "Segment: " << i - 1 << " -> " << i << std::endl;
-    
-            float x1 = path[i - 1]->x * cellSize + cellSize / 2;
-            float y1 = path[i - 1]->y * cellSize + cellSize / 2;
-    
-            float x2 = path[i]->x * cellSize + cellSize / 2;
-            float y2 = path[i]->y * cellSize + cellSize / 2;
-    
-            sf::Vector2f start(x1, y1);
-            sf::Vector2f end(x2, y2);
-    
-            sf::Vector2f direction = end - start;
-            float length = std::sqrt(direction.x * direction.x + direction.y * direction.y);
-            float angle = std::atan2(direction.y, direction.x) * 180.f / 3.14159265f;
-    
-            // Assuming 'segmentThickness' is a float and 'path[i]->data.p.strength' is also a float
-            float thick = segmentThickness + path[i]->data.p.strength;
-
-            if(thick > 1)
-            {
                 
-                sf::RectangleShape segment(sf::Vector2f(length, thick));
-                segment.setPosition(start);
-                segment.setRotation(angle);
-                segment.setFillColor(sf::Color::White); // You can also color based on index or path
-        
-                window.draw(segment);
+                // Loop through the path and add segments to pathTrace
+                for (size_t i = 1; i < path.size(); ++i)
+                {
+                    float x1 = path[i - 1]->x * cellSize + cellSize / 2;
+                    float y1 = path[i - 1]->y * cellSize + cellSize / 2;
+
+                    float x2 = path[i]->x * cellSize + cellSize / 2;
+                    float y2 = path[i]->y * cellSize + cellSize / 2;
+
+                    sf::Vector2f start(x1, y1);
+                    sf::Vector2f end(x2, y2);
+
+                    sf::Vector2f direction = end - start;
+                    float length = std::sqrt(direction.x * direction.x + direction.y * direction.y);
+                    float angle = std::atan2(direction.y, direction.x) * 180.f / 3.14159265f;
+                    float segmentThickness = 0.0f;
+                    // Assuming 'segmentThickness' is a float and 'path[i]->data.p.strength' is also a float
+                    float thick = segmentThickness + path[i]->data.p.strength;
+
+                    if (thick > 1)
+                    {
+                        // Add the vertices to the pathTrace array
+                        pathTrace.append(sf::Vertex(start, sf::Color::White));  // Start point
+                        pathTrace.append(sf::Vertex(end, sf::Color::White));    // End point
+                    }
+                    else
+                    {
+                        // Remove the duplicate path if thickness is too small
+                        path.erase(path.begin() + i);
+                    }
+
+                        pathTraces.push_back(pathTrace);
+                }
             }
-            else{
-                path.erase(path.begin() + i);
+            else
+            {
+                window.draw(*j.get()->getHitbox());
             }
         }
     }
 
-    for(auto &e : waitList)
+    // Now draw the path trace using the accumulated vertex array
+    for (auto& pathTrace : pathTraces)
+    {
+        window.draw(pathTrace);
+    }
+
+    // Draw the waitList (RectangleShape for entities)
+    for (auto& e : waitList)
     {
         window.draw(*e);
     }
-
-          //  std::cout<<"Path trace check: " << pathTraces.size() <<std::endl;
-
-
-    
 }
 
 void World::createACO()
@@ -211,7 +197,8 @@ void World::createACO()
 void World::drawTerrain(sf::RenderWindow & window)
 {
     int drawCount = 0;
-    
+
+    std::vector<sf::VertexArray> allCircles;    
    
     for (int x = 0; x < width; x++) {
         for (int y = 0; y < height; y++) {
@@ -222,10 +209,27 @@ void World::drawTerrain(sf::RenderWindow & window)
             drawCount++;       
 
             Cell* dc = this->at(x,y).get();
-            float scaled = std::clamp(dc->data.p.strength, 0.0, 1.0);
-            dc->cs.get()->setScale(scaled, scaled);
-            window.draw(*dc->cs.get());
+            if(dc->cellShape)
+            {
+                Circle* circleShape = dynamic_cast<Circle*>(dc->cellShape.get());
+                if(circleShape)
+                {               
+                    // Create a copy of the Circle's VertexArray for this circle
+                    sf::VertexArray circleVA = circleShape->getVA();
+                    allCircles.push_back(circleVA);  // Add it to the batch
+                
+                }
+            }
+          //  float scaled = std::clamp(dc->data.p.strength, 0.0, 1.0);
+          //  dc->cs.get()->setScale(scaled, scaled);
+           // window.draw(*dc->cellShape.get()->draw());
+            
         }
+    }
+
+    for (auto& circle : allCircles) 
+    {
+        window.draw(circle);
     }
 //std::cout << "terrain drawn: " + std::to_string(drawCount) << std::endl;
 //std::cout << "terrain skipped: " + std::to_string(skippedCount) << std::endl;

@@ -7,6 +7,9 @@
 #include "../../utils/headers/TextureManager.h"
 #include "../../entities/Entity.h"
 #include "../../shapes/Shape.h"
+#include "../../shapes/Triangle.h"
+#include "../../shapes/Circle.h"
+
 
 class WorldGeneration
 {

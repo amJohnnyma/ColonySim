@@ -37,7 +37,7 @@ struct CellData
 struct Cell
 {
  //   std::unique_ptr<sf::CircleShape> cs = std::make_unique<sf::CircleShape>();
-    std::unique_ptr<Shape> cellShape = std::make_unique<Shape>();
+    std::unique_ptr<Shape> cellShape;
     //grid position
     int x,y;
     CellData data;

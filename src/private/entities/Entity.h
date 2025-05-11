@@ -78,7 +78,11 @@ void setMaxResource(int newMax) {
 }
 
 void setTarget(Entity* newTarget) { target = newTarget; }
+
+void addPath(Cell* newC);
 };
+
+
 
 
 #endif

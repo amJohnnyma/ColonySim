@@ -9,9 +9,9 @@ WorldGeneration::WorldGeneration(unsigned int seed, int xWidth, int yWidth, int 
     grid.clear();
 
     generateTerrain();
-    generateEntities(3,1);
+    generateEntities(conf::numAnts,conf::numBases);
     assignTextures();
-    generateLocations(1);
+    generateLocations(conf::numLocations);
 
 
 
@@ -31,12 +31,7 @@ void WorldGeneration::generateTerrain()
     {
         for(int y = 0; y < height; y++)
         {
-            std::unique_ptr<sf::CircleShape> shape = std::make_unique<sf::CircleShape>(cellSize/4);
-            shape->setOrigin(cellSize/4,cellSize/4);
-            shape->setPosition(
-                x * cellSize + cellSize / 2.f,
-                y * cellSize + cellSize / 2.f
-            );
+            std::unique_ptr<Shape> shape = std::make_unique<Circle>(x, y, cellSize/4, 8);
 
             std::unique_ptr<Cell> newC = std::make_unique<Cell>();     
             CellData cd;
@@ -60,7 +55,7 @@ void WorldGeneration::generateTerrain()
             shape->setFillColor(sf::Color(0,255,0, (randomVal*255)));    
 
             cd.p = p;
-            newC->cs = std::move(shape);   
+            newC->cellShape = std::move(shape);   
             newC->x = x;
             newC->y = y;
             newC->data = std::move(cd);

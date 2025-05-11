@@ -233,7 +233,7 @@ void ACO::findFood(Cell* cell, Entity *e)
                 cumulative += s.second;
                 if(randomVal <= cumulative)
                 {
-                    e->getPath().push_back(s.first);
+                    e->addPath(s.first);
 
                     bool containsTarget = std::any_of(
                         s.first->data.entities.begin(),
