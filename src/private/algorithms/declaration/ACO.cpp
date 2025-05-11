@@ -101,45 +101,22 @@ void ACO::getNewTarget(Entity* e)
 
 void ACO::update()
 {
-  //  std::cout << base->getResource() << std::endl;
     bool noBetterF = true;
     double runBest = 0;
- //   std::cout << "Updating aco" << std::endl;
-    //from start cell, look at each entity (ant)
     for(auto &cell:world)
     {
     for(auto &e : cell->data.entities)
     {
-      //  std::cout << "Checking entity" << std::endl;
         if(e)
         if(e->getName() == "ant")
         {
-         //   std::cout << "found ant" << std::endl;  
-         //   std::cout << "Target: " << e.get()->getTarget()->getName() << std::endl;
-         if(e->getTarget()->getName() == "Base")
-         {
-         //   std::cout << "Goinghome" << std::endl;
-       //  std::cout << "Target: (" << e.get()->getTarget()->getX() << ", " << e.get()->getTarget()->getY() << ")" << std::endl;
-         }
-         else{
-        //    std::cout << "finding food" << std::endl;
-         }
           findFood(cell,e.get());
-          /*
-            if(e.get()->getTarget() && e.get()->getTarget()->getName() == "Base")
-            {
-                returnHome(cell, e.get());
-            }
-            else{
-                findFood(cell, e.get());
-            }    
-*/
         }
     }
         //update pheremones of all cells
         double pLevel = cell->data.p.strength;
-        double updatedP = (1 - pheremoneEvap) * pLevel + 0.01;
-        cell->data.p.strength = updatedP;
+        double updatedP = (1 - pheremoneEvap) * pLevel;
+        cell->data.p.strength = std::max(0.001, updatedP);
 
     if (cell->data.p.strength > conf::maxPheromone)
     {
@@ -164,29 +141,19 @@ void ACO::update()
 
 void ACO::moveToCell(Cell* from, Cell* to, Entity* e)
 {
-  //  std::cout << "Moving from: (" << from->x << ", " << from->y << ") to: (" << to->x << ", " << to->y << ")" << std::endl;
 
-    // Loop through the entities in the "from" cell
     for (auto it = from->data.entities.begin(); it != from->data.entities.end(); ++it)
     {
-        if (it->get() == e) // Compare raw pointer inside unique_ptr
+        if (it->get() == e) 
         {
-            // Move ownership of the entity to the "to" cell
-            to->data.entities.push_back(std::move(*it));
-            
-            // Adjust entity position to match the "to" cell
-            // Assuming you're using grid positions for x, y (change logic if needed)
+            to->data.entities.push_back(std::move(*it));            
+
             e->setPos(to->x, to->y);
             
-            // Optionally, erase the entity from the "from" cell after moving
             from->data.entities.erase(it);
 
-          //  e->getPath().push_back(to);
 
-          //  curCell = to;
-
-            //curCell = to;
-            break; // Exit the loop after moving the entity
+            break; 
         }
     }
 }
@@ -200,36 +167,44 @@ void ACO::depositPheremones(Cell *c)
 void ACO::findFood(Cell* cell, Entity *e)
 {
 
-    curCell = cell;
-         //   std::cout<<"Getting adj cells"<<std::endl;
+            curCell = cell;
             getAdjCells(cell->y, cell->x); 
             if(adjCells.size() == 0)
             {
-           //     std::cout << "No adj cells" << std::endl;
-                return; // very temporary
+                return; 
             }
-            //compare all adjacent squares
             std::vector<std::pair<Cell*, double>> scores;
-            for(const auto & ac: adjCells)
-            {
 
+            // Calculate raw scores
+            for (const auto& ac : adjCells)
+            {
                 double score = pheromoneCalc(cell, e);
                 scores.push_back({ac, score});
-                
-
-            }       
+            }
 
             // Normalize scores
             double totalScore = 0.0;
-            for (auto& score : scores) totalScore += score.second;
+            for (auto& score : scores)
+                totalScore += score.second;
 
-            // Choose a random cell based on the weighted scores
-            double randomVal = rand() / (double)RAND_MAX * totalScore;
-            double cumulative = 0.0;
-          //  std::cout << "Scores count: " << scores.size() << std::endl;
+            if (totalScore == 0.0) {
+                // Handle edge case (e.g., equal probability or fallback)
+                double uniformProb = 1.0 / scores.size();
+                for (auto& score : scores)
+                    score.second = uniformProb;
+            } else {
+                for (auto& score : scores)
+                    score.second /= totalScore;
+            }
+
+            // Choose a cell based on normalized probabilities
+            double randomVal = static_cast<double>(rand()) / RAND_MAX;
+            double cumulative = 0.0;          
             for(const auto &s : scores)
             {
                 cumulative += s.second;
+               // std::cout << "rand: " << std::to_string(randomVal) << std::endl;
+               // std::cout << "Cum: " << std::to_string(cumulative) << std::endl;
                 if(randomVal <= cumulative)
                 {
                     e->addPath(s.first);
@@ -241,19 +216,23 @@ void ACO::findFood(Cell* cell, Entity *e)
                             return ent.get() == e->getTarget();
                         });
                     if(containsTarget)
-                    {
+                    {                        
                         for(auto &eg : s.first->data.entities)
-                        {
-                            if(e->getTarget() != base)
+                        {    
+                            if(eg.get()->getTarget() == e->getTarget())
                             {
-                                eg.get()->getHitbox()->setFillColor(sf::Color::Magenta);
-                                e->setTarget(base);
-                            }
-                            else{
-                                e->setTarget(target);
-                            }
-
+                                if(e->getTarget() != base)
+                                {
+                                    eg.get()->getHitbox()->setFillColor(sf::Color::Magenta);
+                                    e->setTarget(base);
+                                }
+                                else{
+                                    e->setTarget(target);
+                                }
                             break;
+                            }                        
+
+
                         }
                     }
 
@@ -262,9 +241,6 @@ void ACO::findFood(Cell* cell, Entity *e)
                     s.first->data.p.strength += updatedP;
         
                     moveToCell(curCell, s.first, e);
-
-
-
                     
                     break;
 
