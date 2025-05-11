@@ -32,7 +32,7 @@ class ACO
 
 
     private:
-        void getAdjCells(int x, int y);
+        void getAdjCells(int x, int y, Entity *e);
         /*
         • τij (t) is the pheromone value on edge (i, j) at time t.
         • ηij is the heuristic value (often the inverse of the distance) for edge (i, j).

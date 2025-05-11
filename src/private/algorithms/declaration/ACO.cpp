@@ -202,10 +202,11 @@ void ACO::findFood(Cell* cell, Entity *e)
 
     curCell = cell;
          //   std::cout<<"Getting adj cells"<<std::endl;
-            getAdjCells(cell->y, cell->x); 
+            getAdjCells(cell->y, cell->x, e); 
             if(adjCells.size() == 0)
             {
            //     std::cout << "No adj cells" << std::endl;
+                e->getPath().clear();
                 return; // very temporary
             }
             //compare all adjacent squares
@@ -278,7 +279,7 @@ void ACO::returnHome(Cell* cell, Entity * e)
 {
  //   std::cout << "Returning home!" << std::endl;
 }
-void ACO::getAdjCells(int x, int y)
+void ACO::getAdjCells(int x, int y,  Entity *e)
 {
     const int dx[] = {0, 0, -1, 1, -1, -1, 1, 1};
     const int dy[] = {1, -1, 0, 0, -1, 1, -1, 1};
@@ -294,8 +295,22 @@ void ACO::getAdjCells(int x, int y)
 
         // Check bounds
         if (nx >= 0 && nx < worldWidth && ny >= 0 && ny < worldHeight) {
-            int index = ny * worldWidth + nx;
-            adjCells.push_back(world[index]);
+            int index = ny * worldWidth + nx;  
+            bool inPath = false;
+            for(auto & p : e->getPath())
+            {
+                if(p->x == nx && p->y == ny)
+                {
+                    inPath = true;
+                    break;
+                }
+            }   
+            if(!inPath)
+            {
+                adjCells.push_back(world[index]);
+
+            }       
+
             
         }
     }
