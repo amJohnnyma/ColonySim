@@ -51,7 +51,7 @@ void Game::run()
      if (elapsedTime >= 1.0f) {
          float fps = frameCount / elapsedTime;
          fpsText.setString("FPS: " + std::to_string(static_cast<int>(fps)));
-         std::cout << "FPS: " << fps << std::endl;
+       //  std::cout << "FPS: " << fps << std::endl;
          frameCount = 0;
          elapsedTime = 0.f;
      }

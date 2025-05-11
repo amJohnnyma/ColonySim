@@ -49,7 +49,7 @@ void WorldGeneration::generateTerrain()
             double randomVal = dis(gen);
             cd.difficulty = randomVal;
 
-            p.strength = randomVal * 2; //arbitrary init
+            p.strength = randomVal; //arbitrary init
 
 
             shape->setFillColor(sf::Color(0,255,0, (randomVal*255)));    
