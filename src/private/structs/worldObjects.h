@@ -7,6 +7,7 @@
 #include <SFML/Graphics.hpp>
 #include "GlobalVars.h"
 #include "../entities/Entity.h"
+#include "../shapes/Shape.h"
 
 struct GridObject
 {
@@ -35,7 +36,8 @@ struct CellData
 
 struct Cell
 {
-    std::unique_ptr<sf::CircleShape> cs = std::make_unique<sf::CircleShape>();
+ //   std::unique_ptr<sf::CircleShape> cs = std::make_unique<sf::CircleShape>();
+    std::unique_ptr<Shape> cellShape = std::make_unique<Shape>();
     //grid position
     int x,y;
     CellData data;
@@ -43,7 +45,7 @@ struct Cell
     //need copy constructor and operator=
     void setColor(sf::Color col)
     {
-        this->cs->setFillColor(col);
+        this->cellShape->setFillColor(col);
     }
 };
 

@@ -14,6 +14,7 @@ class Shape //abstract
     public:
         Shape();
         virtual std::vector<sf::Vertex> & getVertexArray() = 0;
+        virtual void setFillColor(sf::Color col) = 0;
 };
 
 
