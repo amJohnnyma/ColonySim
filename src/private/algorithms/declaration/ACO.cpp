@@ -216,17 +216,20 @@ void ACO::findFood(Cell* cell, Entity *e)
                             return ent.get() == e->getTarget();
                         });
                     if(containsTarget)
-                    {                        
+                    {        
+                        std::cout<<"Contains target"<<std::endl;                
                         for(auto &eg : s.first->data.entities)
                         {    
-                            if(eg.get()->getTarget() == e->getTarget())
+                            if(eg.get() == e->getTarget())
                             {
                                 if(e->getTarget() != base)
                                 {
+                                    std::cout << "Found target, going home" << std::endl;
                                     eg.get()->getHitbox()->setFillColor(sf::Color::Magenta);
                                     e->setTarget(base);
                                 }
                                 else{
+                                    std::cout << "At home, going target" << std::endl;
                                     e->setTarget(target);
                                 }
                             break;
@@ -237,7 +240,7 @@ void ACO::findFood(Cell* cell, Entity *e)
                     }
 
                     // Update pheromone after choosing the cell
-                    double updatedP = Q / s.first->data.p.strength;
+                    double updatedP = Q / pheromoneCalc(s.first, e->getTarget());
                     s.first->data.p.strength += updatedP;
         
                     moveToCell(curCell, s.first, e);
