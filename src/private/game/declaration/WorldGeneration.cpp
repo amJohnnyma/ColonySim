@@ -95,22 +95,22 @@ void WorldGeneration::generateEntities(int num, int col)
     
     int xVal;
     int yVal;
+    xVal = conf::worldSize.x/2;
+    yVal = conf::worldSize.y/2;
+    std::pair<int, int> point = {xVal, yVal};
     for(int i = 0; i < col; i ++)
     {
-        std::random_device rd;
-        std::mt19937 gen(rd());
-        std::uniform_int_distribution<> xdis(0.0,width-1);
-        std::uniform_int_distribution<> ydis(0.0, height-1);
-        std::pair<int, int> point = {xdis(gen), ydis(gen)};
+    //    std::random_device rd;
+     //   std::mt19937 gen(rd());
+     //   std::uniform_int_distribution<> xdis(0.0,width-1);
+     //   std::uniform_int_distribution<> ydis(0.0, height-1);
+
         for(int k = 0; k < num; k ++)
         {
-            sf::RectangleShape* rs = new sf::RectangleShape();        
+            sf::RectangleShape* rs = new sf::RectangleShape();       
 
 
-            xVal = point.first;
-            yVal = point.second;
 
-            if (std::find(vis.begin(), vis.end(), point) == vis.end()) {
                 rs->setSize(sf::Vector2f(cellSize,cellSize));
                 rs->setPosition(xVal * cellSize, yVal * cellSize);  
                 rs->setOutlineThickness(1.f); 
@@ -119,7 +119,7 @@ void WorldGeneration::generateEntities(int num, int col)
                 Cell* cell = grid[xVal*width+yVal].get();
                 auto et = std::make_unique<Entity>(yVal, xVal, "ant", 10, std::make_unique<sf::RectangleShape>(*rs),cell); 
         
-                vis.push_back({yVal, xVal});            
+                vis.push_back({yVal, xVal});         
 
 
                 
@@ -127,14 +127,6 @@ void WorldGeneration::generateEntities(int num, int col)
 
                 grid[xVal*width+yVal].get()->data.entities.push_back(std::move(et));
 
-
-                
-                
-
-            }
-            else{
-                k--;
-            }
         
 
         }   
@@ -197,7 +189,7 @@ void WorldGeneration::generateLocations(int num)
         std::uniform_int_distribution<> xdis(0.0,width-1);
         std::uniform_int_distribution<> ydis(0.0, height-1);
 
-        std::pair<int, int> point = {xdis(gen), ydis(gen)};
+        std::pair<int, int> point = {xdis(gen)/4, ydis(gen)/4};
 
         if (std::find(vis.begin(), vis.end(), point) == vis.end()) {
     
