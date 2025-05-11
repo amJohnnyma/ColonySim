@@ -212,9 +212,8 @@ void ACO::findFood(Cell* cell, Entity *e)
             std::vector<std::pair<Cell*, double>> scores;
             for(const auto & ac: adjCells)
             {
-                double heuristic = calculateHeuristic(ac, e->getTarget());
-                double pheromone = ac->data.p.strength;
-                double score = std::pow(pheromone, pF) * std::pow(heuristic, hF);
+
+                double score = pheromoneCalc(cell, e);
                 scores.push_back({ac, score});
                 
 
