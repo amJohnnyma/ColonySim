@@ -134,11 +134,12 @@ void World::createACO()
                         }
                     }
                 }
-                ACO aco(s.get(), raw_goals, raw_grid, width, height);
-                sims.push_back(aco);
+
             }
         }
     }
+    ACO aco(raw_grid[0], raw_goals, raw_grid, width, height);
+    sims.push_back(aco);
     
 
 }

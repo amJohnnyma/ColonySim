@@ -4,7 +4,7 @@ void Game::run()
 {
     using clock = std::chrono::steady_clock;
     auto lastUpdate = clock::now();
-    const std::chrono::milliseconds updateInterval(conf::timestep); 
+    const std::chrono::milliseconds updateInterval(50); 
     ////////////////
     sf::Clock fpsClock;
     sf::Font font;
