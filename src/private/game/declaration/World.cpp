@@ -143,53 +143,6 @@ void World::createACO()
 
 }
 
-//temp draw function which shows lines between all entities
-/*
-   void World::drawEntities(sf::RenderWindow& window)
-   {
-       // Iterate through grid
-       for (auto &i : grid)
-       {
-           // Iterate through entities in the current grid cell
-           for (auto it1 = i.get()->data.entities.begin(); it1 != i.get()->data.entities.end(); ++it1)
-           {
-               // Get position of the first entity in current cell
-               sf::Vector2f pos1 = it1->get()->hitbox->getPosition() + sf::Vector2f(cellSize / 2.f, cellSize / 2.f);
-   
-               // Iterate through all other grid cells to compare with other entities
-               for (auto &j : grid)
-               {
-                   // Skip the same cell, we don't need to draw lines within the same cell
-                   if (i == j) continue;
-   
-                   // Iterate through entities in the other grid cell
-                   for (auto it2 = j.get()->data.entities.begin(); it2 != j.get()->data.entities.end(); ++it2)
-                   {
-                       // Get position of the second entity in the other cell
-                       sf::Vector2f pos2 = it2->get()->hitbox->getPosition()+ sf::Vector2f(cellSize / 2.f, cellSize / 2.f);
-   
-                       // Create a line using sf::VertexArray
-                       sf::VertexArray line(sf::Lines, 2);
-                       line[0].position = pos1;
-                       line[1].position = pos2;
-   
-                       // Optionally set the color for the line
-                       line[0].color = sf::Color::White;
-                       line[1].color = sf::Color::White;
-   
-                       // Draw the line between the two entities
-                       window.draw(line);
-                   }
-               }
-   
-               // Draw the hitbox of the current entity
-               window.draw(*it1->get()->hitbox);
-           }
-       }
-   }
-*/
-
-   
     
     
 
@@ -213,16 +166,18 @@ void World::drawTerrain(sf::RenderWindow & window)
             {
                 Circle* circleShape = dynamic_cast<Circle*>(dc->cellShape.get());
                 if(circleShape)
-                {               
-                    // Create a copy of the Circle's VertexArray for this circle
-                    sf::VertexArray circleVA = circleShape->getVA();
-                    allCircles.push_back(circleVA);  // Add it to the batch
+                {          
+                    float normalized = dc->data.p.strength; 
+
+                    sf::Uint8 redIntensity = static_cast<sf::Uint8>(normalized * 255);
+
+                    circleShape->setFillColor(sf::Color(redIntensity, 255,0,255*dc->data.difficulty));
+
+                    allCircles.push_back(circleShape->getVA());
                 
                 }
             }
-          //  float scaled = std::clamp(dc->data.p.strength, 0.0, 1.0);
-          //  dc->cs.get()->setScale(scaled, scaled);
-           // window.draw(*dc->cellShape.get()->draw());
+
             
         }
     }
