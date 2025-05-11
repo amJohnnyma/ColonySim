@@ -296,7 +296,7 @@ void World::render(sf::RenderWindow &window)
   //  window.display();
 }
 
-void World::handleInput(sf::RenderWindow &window)
+void World::handleInput(sf::RenderWindow &window, sf::Event &event)
 {
     window.setView(view);
 
@@ -338,6 +338,30 @@ void World::handleInput(sf::RenderWindow &window)
     if(sf::Keyboard::isKeyPressed(sf::Keyboard::Escape))
     {
         window.close();
+    }
+    if(event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::O)
+    {
+        std::cout << "Old pf: " << conf::pF << std::endl;
+        conf::pF += 0.1;
+        std::cout << "New pf: " << conf::pF << std::endl;
+    }
+        if(event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::P)
+    {
+        std::cout << "Old pf: " << conf::pF << std::endl;
+        conf::pF -= 0.1;
+        std::cout << "New pf: " << conf::pF << std::endl;
+    }
+        if(event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::K)
+    {
+        std::cout << "Old hf: " << conf::hF << std::endl;
+        conf::hF += 0.1;
+        std::cout << "New hf: " << conf::hF << std::endl;
+    }
+    if(event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::L)
+    {
+        std::cout << "Old hf: " << conf::hF << std::endl;
+        conf::hF -= 0.1;
+        std::cout << "New hf: " << conf::hF << std::endl;
     }
 }
 

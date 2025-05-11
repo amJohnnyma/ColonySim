@@ -45,7 +45,7 @@ class World
         void update();
         void render(sf::RenderWindow & window);
         //temp input
-        void handleInput(sf::RenderWindow& window);
+        void handleInput(sf::RenderWindow& window, sf::Event &event);
         bool isRunning() { return running;}
 
     

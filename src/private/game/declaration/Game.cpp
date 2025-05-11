@@ -33,7 +33,7 @@ void Game::run()
         }
 
         // Always run input and render
-        world->handleInput(*wind->wndw);
+        world->handleInput(*wind->wndw, event);
 
         // Only update every 500ms
         auto now = clock::now();

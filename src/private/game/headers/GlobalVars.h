@@ -17,6 +17,10 @@ namespace conf
     extern const int numBases;
     extern const int numLocations;
     extern const int antPathDrawLength;
+     extern int Q ;
+        extern double pF ; //pheremone influnce
+        extern double hF ; // heuristic influence
+        extern double pheremoneEvap ;
 }
 
 

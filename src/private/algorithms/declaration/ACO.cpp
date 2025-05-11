@@ -138,7 +138,7 @@ void ACO::update()
     }
         //update pheremones of all cells
         double pLevel = cell->data.p.strength;
-        double updatedP = (1 - pheremoneEvap) * pLevel + 0.01;
+        double updatedP = (1 - conf::pheremoneEvap) * pLevel + 0.01;
         cell->data.p.strength = updatedP;
 
     if (cell->data.p.strength > conf::maxPheromone)
@@ -214,7 +214,7 @@ void ACO::findFood(Cell* cell, Entity *e)
             {
                 double heuristic = calculateHeuristic(ac, e->getTarget());
                 double pheromone = ac->data.p.strength;
-                double score = std::pow(pheromone, pF) * std::pow(heuristic, hF);
+                double score = std::pow(pheromone, conf::pF) * std::pow(heuristic, conf::hF);
                 scores.push_back({ac, score});
                 
 
@@ -260,7 +260,7 @@ void ACO::findFood(Cell* cell, Entity *e)
                     }
 
                     // Update pheromone after choosing the cell
-                    double updatedP = Q / s.first->data.p.strength;
+                    double updatedP = conf::Q / s.first->data.p.strength;
                     s.first->data.p.strength += updatedP;
         
                     moveToCell(curCell, s.first, e);
@@ -318,7 +318,7 @@ double ACO::pheromoneCalc(Cell* cell, Entity* target)
     double Nij = calculateHeuristic(cell, target);
     double Tij = cell->data.p.strength;
 
-    double numerator = std::pow(Tij, pF) * std::pow(Nij, hF);
+    double numerator = std::pow(Tij, conf::pF) * std::pow(Nij, conf::hF);
     double denominator = sumOfFeasiblePheremoneProb(target);
 
    // std::cout << numerator / denominator << std::endl;
@@ -334,7 +334,7 @@ double ACO::sumOfFeasiblePheremoneProb(Entity *target)
         double pheromone = ac->data.p.strength;
      //   std::cout << "H: " << heuristic << " :hF: " << hF<<std::endl;
     //    std::cout << "P: " << pheromone <<" :pF: "<< pF<< std::endl;
-        sum += std::pow(heuristic, hF) * std::pow(pheromone, pF);
+        sum += std::pow(heuristic, conf::hF) * std::pow(pheromone, conf::pF);
     }
     //std::cout << "Sum: " << sum << std::endl;
     return sum + 1e-10;
