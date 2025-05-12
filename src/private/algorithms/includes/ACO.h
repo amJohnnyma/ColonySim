@@ -40,16 +40,17 @@ class ACO
         • β is a parameter that controls the influence of the heuristic value.
         • Ni is the set of feasible nodes that can be visited from node i.
         */
-        double pheromoneCalc(Cell* cell, Entity* target);   
-        double sumOfFeasiblePheremoneProb(Entity *target);     
+        double pheromoneCalc(Cell* cell, Entity* target, bool flag);   
+        double sumOfFeasiblePheremoneProb(Entity *target, bool flag);     
         double calculateHeuristic(Cell* next, Entity* target);
         //pair<cell, score>
-        std::vector<std::pair<Cell*, double>> computeScores();
         void moveToCell(Cell* from, Cell * to, Entity* e);
         void depositPheremones(Cell* c);
         void findFood(Cell* cell, Entity* e);
         void returnHome(Cell* cell, Entity* e);
         void getNewTarget(Entity* e);
+        void transferResource(Entity* from, Entity* to, int amount);
+
 
 
         

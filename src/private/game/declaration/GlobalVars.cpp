@@ -7,16 +7,16 @@ namespace conf
     double maxPheromone = 0;
     const sf::Vector2f window_size = {1000, 1000};
     const sf::Vector2f window_size_f = static_cast<sf::Vector2f>(window_size);
-    const sf::Vector2i worldSize = {100, 100};
+    const sf::Vector2i worldSize = {30, 30};
     const uint32_t max_framerate = 60;
     const float dt = 1.0f / static_cast<float>(max_framerate);
-    const int numAnts = 1000;
+    const int numAnts = 70;
     const int numBases = 1;
-    const int numLocations =3;
-    const int antPathDrawLength = 20;
-    int Q = 1;
-    double pF = 1.5; //pheremone influnce
-    double hF = 5; // heuristic influence
+    const int numLocations =1;
+    const int antPathDrawLength = 10;
+    int Q = 3;
+    double pF = 0.4; //pheremone influnce
+    double hF = 1; // heuristic influence
     double pheremoneEvap = 0.1;
     unsigned int timestep = 500;
 }

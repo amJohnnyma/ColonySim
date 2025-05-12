@@ -35,7 +35,7 @@ int Entity::giveResource(int amount)
     return 0; // if no excess, return 0 (no remaining)
 }
 
-Entity::Entity(int x, int y, std::string name, int maxResource)
+Entity::Entity(int x, int y, std::string name, double maxResource)
 {
     this->x = x;
     this->y = y;
@@ -44,7 +44,7 @@ Entity::Entity(int x, int y, std::string name, int maxResource)
 }
 
 
-Entity::Entity(int x, int y, std::string name, int maxResource, std::unique_ptr<sf::RectangleShape> hitbox, Cell* curCell)
+Entity::Entity(int x, int y, std::string name, double maxResource, std::unique_ptr<sf::RectangleShape> hitbox, Cell* curCell)
 {
     this->x = x;
     this->y = y;

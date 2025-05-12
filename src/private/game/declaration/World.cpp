@@ -72,7 +72,7 @@ void World::drawEntities(sf::RenderWindow& window)
                     float angle = std::atan2(direction.y, direction.x) * 180.f / 3.14159265f;
                     float segmentThickness = 0.0f;
                     // Assuming 'segmentThickness' is a float and 'path[i]->data.p.strength' is also a float
-                    float thick = segmentThickness + path[i]->data.p.strength;
+                    float thick = segmentThickness + path[i]->data.p[0].strength; //use find food pheremone for now
 
                     if (thick > 1)
                     {
@@ -176,7 +176,7 @@ void World::drawTerrain(sf::RenderWindow & window)
                 Circle* circleShape = dynamic_cast<Circle*>(dc->cellShape.get());
                 if(circleShape)
                 {          
-                    float normalized = dc->data.p.strength; 
+                    float normalized = dc->data.p[0].strength; //find food pheromone for now
 
                     sf::Uint8 redIntensity = static_cast<sf::Uint8>(normalized * 255);
 

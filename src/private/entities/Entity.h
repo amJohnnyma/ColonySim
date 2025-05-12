@@ -13,8 +13,8 @@ class Entity
 private:
     int x, y;
     std::string name;
-    int resource;
-    int maxResource;
+    double resource;
+    double maxResource;
     Entity* target;
     Entity* base;
    // Cell* currentCell;
@@ -24,8 +24,8 @@ private:
 
 public:
     // Constructor
-    Entity(int x, int y, std::string name, int maxResource);
-    Entity(int x, int y, std::string name, int maxResource, std::unique_ptr<sf::RectangleShape> hitbox, Cell* currentCell);
+    Entity(int x, int y, std::string name, double maxResource);
+    Entity(int x, int y, std::string name, double maxResource, std::unique_ptr<sf::RectangleShape> hitbox, Cell* currentCell);
 
     // Getter and setter for position
     void setPos(int x, int y);
@@ -72,11 +72,11 @@ void setY(int newY) {
 
 void setName(const std::string& newName) { name = newName; }
 
-void setResource(int newResource) {
+void setResource(double newResource) {
     resource = std::min(newResource, maxResource);
 }
 
-void setMaxResource(int newMax) {
+void setMaxResource(double newMax) {
     maxResource = newMax;
     if (resource > maxResource) resource = maxResource;
 }

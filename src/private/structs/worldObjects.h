@@ -28,7 +28,7 @@ struct CellData
     std::string type = "Default";
     std::string terrain ="flat";
     double difficulty = 0;
-    pheromone p;
+    pheromone p[2];
     std::vector<std::unique_ptr<Entity>> entities;
 
     

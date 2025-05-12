@@ -35,26 +35,32 @@ void WorldGeneration::generateTerrain()
 
             std::unique_ptr<Cell> newC = std::make_unique<Cell>();     
             CellData cd;
-            pheromone p;
+            pheromone p,p2;
             p.x = x;
             p.y = y;
-            p.type = "default";
+            p.type = "findFood";
+
+            p2.x = x;
+            p2.y = y;
+            p.type = "returnHome";
 
 
             cd.type = "(" + std::to_string(x) + ", " + std::to_string(y) + ")";
             //random between 0-1. 0 easy, 1 hard
             std::random_device rd;
             std::mt19937 gen(rd());
-            std::uniform_real_distribution<> dis(0.0,1.0);
+            std::uniform_real_distribution<> dis(0.001,1.0);
             double randomVal = dis(gen);
             cd.difficulty = randomVal;
 
-            p.strength = randomVal; //arbitrary init
+            p.strength = 0.1; //arbitrary init
+            p2.strength = 0.1;
 
 
             shape->setFillColor(sf::Color(0,255,0, (randomVal*255)));    
 
-            cd.p = p;
+            cd.p[0] = p;
+            cd.p[1] = p2;
             newC->cellShape = std::move(shape);   
             newC->x = x;
             newC->y = y;
@@ -205,10 +211,10 @@ void WorldGeneration::generateLocations(int num)
             rs->setFillColor(sf::Color(255,255,255,dif*100));   
 
 
-
             Cell* cell = grid[point.first*width+point.second].get();
 
             auto et = std::make_unique<Entity>(point.first, point.second, "location", 10000, std::make_unique<sf::RectangleShape>(*rs),cell);
+            et.get()->giveResource(10000);
 
             grid[point.first*width+point.second].get()->data.entities.push_back(std::move(et));
             
