@@ -443,7 +443,7 @@ double ACO::calculateHeuristic(Cell *next, Entity *target)
     double difficulty = next->data.difficulty;                                                 // [0, 1], where 1 is most difficult
 
     // Heuristic: prioritize shorter distance, lightly penalize difficulty
-    double heuristic = 1.0 / (distance + 1.0) /* * (1.0 - 0.5 * difficulty)*/;
+    double heuristic = 1.0 / (distance + 1.0) * (1.0 - 0.5 * difficulty);
 
     return heuristic;
 }
