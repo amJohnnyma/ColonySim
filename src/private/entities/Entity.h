@@ -45,8 +45,8 @@ public:
     // Additional getter methods for private members
     int getX() const { return x; }
     int getY() const { return y; }
-    int getResource() const { return resource; }
-    int getMaxResource() const { return maxResource; }
+    double getResource() const { return resource; }
+    double getMaxResource() const { return maxResource; }
     const std::string& getName() const { return name; }
     Entity* getTarget() const { return target; }
     sf::RectangleShape* getHitbox() { return hitbox.get(); }

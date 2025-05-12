@@ -18,6 +18,7 @@ ACO::ACO(Cell *startCell, std::vector<Cell *> &goals, std::vector<Cell *> &world
                 {
                     std::cout << "Ants have base" << std::endl;
                     base = e.get();
+                    break;
                 }
             }
         }
@@ -42,10 +43,11 @@ ACO::~ACO()
 }
 void ACO::assignRandomTarget(std::vector<Cell *> &raw_goals)
 {
-    for (auto &e : startCell->data.entities)
+    for (auto &cell : world)
     {
-        if (e)
-            if (e.get()->getName() == "location")
+        for(auto &e : cell->data.entities)
+        {
+                        if (e.get()->getName().find("location") != std::string::npos)
             {
                 // Check if e.get() is already in tl
                 bool alreadyAdded = std::any_of(tl.begin(), tl.end(), [&](Entity *existing)
@@ -58,6 +60,8 @@ void ACO::assignRandomTarget(std::vector<Cell *> &raw_goals)
                               << " ( " << e->getX() << ", " << e->getY() << " )" << std::endl;
                 }
             }
+        }
+
     }
 
     for (auto &cell : world)

@@ -213,8 +213,9 @@ void WorldGeneration::generateLocations(int num)
 
             Cell* cell = grid[point.first*width+point.second].get();
 
-            auto et = std::make_unique<Entity>(point.first, point.second, "location", 10000, std::make_unique<sf::RectangleShape>(*rs),cell);
-            et.get()->giveResource(10000);
+            std::string name = "location" + std::to_string(k);
+            auto et = std::make_unique<Entity>(point.first, point.second, name, 100, std::make_unique<sf::RectangleShape>(*rs),cell);
+            et.get()->giveResource(100.0);
 
             grid[point.first*width+point.second].get()->data.entities.push_back(std::move(et));
             
