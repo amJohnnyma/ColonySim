@@ -213,7 +213,9 @@ void ACO::findFood(Cell *cell, Entity *e)
                 s.first->data.entities.end(),
                 [&](const std::unique_ptr<Entity> &ent)
                 {
-                    bool hasFound = ent.get() == e->getTarget();
+                    bool hasFound = ent.get() == e->getTarget() ||
+                    std::find(tl.begin(), tl.end(), ent.get()) != tl.end();
+
                     if(hasFound)
                     {
                     transferResource(ent.get(),e,10);
@@ -286,7 +288,8 @@ void ACO::returnHome(Cell *cell, Entity *e)
                 s.first->data.entities.end(),
                 [&](const std::unique_ptr<Entity> &ent)
                 {
-                    bool hasFound = ent.get() == e->getTarget();
+                    bool hasFound = ent.get() == e->getTarget() ||
+                    std::find(tl.begin(), tl.end(), ent.get()) != tl.end();
                     if(hasFound)
                     {
                     transferResource(e,ent.get(),10);
