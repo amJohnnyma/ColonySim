@@ -15,8 +15,8 @@ namespace conf
     const int numLocations =10;
     const int antPathDrawLength = 10;
     int Q = 1;
-    double pF = 0.3; //pheremone influnce
-    double hF = 3; // heuristic influence
+    double pF = 0.5; //pheremone influnce
+    double hF = 1.2; // heuristic influence
     double pheremoneEvap = 0.1;
     unsigned int timestep = 500;
     double locationFoodRegenerationRate = 0.01;

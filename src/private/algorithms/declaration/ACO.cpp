@@ -166,9 +166,9 @@ void ACO::update()
         }
         // update pheremones of all cells
         double pLevel = cell->data.p[0].strength;
-        double updatedP = (1 - conf::pheremoneEvap) * pLevel + 0.01;
+        double updatedP = (1 - conf::pheremoneEvap) * pLevel + 0.02;
         double pLevel2 = cell->data.p[1].strength;
-        double updatedP2 = (1 - conf::pheremoneEvap) * pLevel2 + 0.01;
+        double updatedP2 = (1 - conf::pheremoneEvap) * pLevel2 + 0.1;
         cell->data.p[0].strength = updatedP;
         cell->data.p[1].strength = updatedP2;
         /*
@@ -324,8 +324,7 @@ void ACO::returnHome(Cell *cell, Entity *e)
                 s.first->data.entities.end(),
                 [&](const std::unique_ptr<Entity> &ent)
                 {
-                    bool hasFound = ent.get() == e->getTarget() ||
-                    std::find(tl.begin(), tl.end(), ent.get()) != tl.end();
+                    bool hasFound = ent.get() == e->getTarget();
                     if(hasFound)
                     {
                     transferResource(e,ent.get(),e->getResource());
@@ -394,10 +393,12 @@ double ACO::pheromoneCalc(Cell *cell, Entity *target, bool returningHome)
     // std::cout << cell->x << ", " << cell->y << " c:t " << target->getX() << ", " << target->getY() << std::endl;
     double Nij = calculateHeuristic(cell, target);
     double Tij;
+    double homeFac = 1;
     
     if(returningHome)
     {
     Tij = cell->data.p[1].strength;
+    homeFac = 2;
 
     }
     else{
@@ -405,7 +406,7 @@ double ACO::pheromoneCalc(Cell *cell, Entity *target, bool returningHome)
     Tij = cell->data.p[0].strength;
     }
 
-    double numerator = std::pow(Tij, conf::pF) * std::pow(Nij, conf::hF);
+    double numerator = std::pow(Tij, conf::pF) * std::pow(Nij * homeFac, conf::hF);
     double denominator = sumOfFeasiblePheremoneProb(target, returningHome);
 
     // std::cout << numerator / denominator << std::endl;
@@ -419,10 +420,12 @@ double ACO::sumOfFeasiblePheremoneProb(Entity *target, bool returningHome)
     {
         double heuristic = calculateHeuristic(ac, target);
         double Tij;
+        double homeFac = 1;
 
         if (returningHome)
         {
             Tij = ac->data.p[1].strength;
+            homeFac = 2;
         }
         else
         {
@@ -431,7 +434,7 @@ double ACO::sumOfFeasiblePheremoneProb(Entity *target, bool returningHome)
         }
         //   std::cout << "H: " << heuristic << " :hF: " << hF<<std::endl;
         //    std::cout << "P: " << pheromone <<" :pF: "<< pF<< std::endl;
-        sum += std::pow(heuristic, conf::hF) * std::pow(Tij, conf::pF);
+        sum += std::pow(heuristic * homeFac, conf::hF) * std::pow(Tij, conf::pF);
     }
     // std::cout << "Sum: " << sum << std::endl;
     return sum + 1e-10;
