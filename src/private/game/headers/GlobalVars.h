@@ -22,6 +22,7 @@ namespace conf
     extern double hF ; // heuristic influence
     extern double pheremoneEvap ;
     extern unsigned int timestep;
+    extern double locationFoodRegenerationRate;
 }
 
 

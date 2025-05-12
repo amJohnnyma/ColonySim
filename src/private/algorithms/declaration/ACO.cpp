@@ -47,7 +47,7 @@ void ACO::assignRandomTarget(std::vector<Cell *> &raw_goals)
     {
         for(auto &e : cell->data.entities)
         {
-                        if (e.get()->getName().find("location") != std::string::npos)
+            if (e.get()->getName().find("location") != std::string::npos)
             {
                 // Check if e.get() is already in tl
                 bool alreadyAdded = std::any_of(tl.begin(), tl.end(), [&](Entity *existing)
@@ -82,15 +82,39 @@ void ACO::getNewTarget(Entity *e)
 {
     std::random_device rd;
     std::mt19937 gen(rd());
+    
     //   std::cout << "tl.size(): " << tl.size() << std::endl;
     if (tl.empty())
         return;
     std::uniform_int_distribution<> dis(0, tl.size() - 1);
     int randomIndex = dis(gen);
+    int counter = 0;
+    while(tl[randomIndex]->getResource() <= 0 && counter < tl.size())
+    {
+        if(randomIndex == tl.size() - 1)
+        {
+            randomIndex =0;
+        }
+        else{
+            randomIndex++;
+        }
+
+        counter++;
+
+    }
     //   std::cout << "Assigned index: " << randomIndex << std::endl;
 
-    e->setTarget(tl[randomIndex]);
-    target = tl[randomIndex];
+    if(counter < tl.size())
+    {
+        e->setTarget(tl[randomIndex]);
+        possibleLocations = true;
+    }
+    else{
+       // std::cout << "No more locations with food" << std::endl;
+        possibleLocations = false;
+        e->setTarget(base);
+    }
+   // target = tl[randomIndex];
 }
 
 void ACO::update()
@@ -106,20 +130,39 @@ void ACO::update()
         {
             //  std::cout << "Checking entity" << std::endl;
             if (e)
+            {
+
                 if (e->getName() == "ant")
                 {
                     //   std::cout << "found ant" << std::endl;
                     //   std::cout << "Target: " << e.get()->getTarget()->getName() << std::endl;
+                    if(e.get()->getTarget()->getResource() <= 0 && e.get()->getTarget() != base)
+                    {
+                        getNewTarget(e.get());
+                    }
 
                     if (e.get()->getTarget() && e.get()->getTarget()->getName() == "Base")
                     {
+                        if((!possibleLocations) && (e.get()->getX() == e.get()->getTarget()->getX())&& (e.get()->getY() == e.get()->getTarget()->getY()))
+                        {
+                            getNewTarget(e.get());
+                            break;
+                        }
                         returnHome(cell, e.get());
                     }
                     else
                     {
                         findFood(cell, e.get());
                     }
+                } 
+                else if(e->getName().find("location")!=std::string::npos)
+                {
+                   e.get()->regenerate();
+                 // e.get()->giveResource(1);
+                 //   std::cout << e.get()->getName() << " : " << e.get()->getResource() << std::endl;
                 }
+            }
+
         }
         // update pheremones of all cells
         double pLevel = cell->data.p[0].strength;
@@ -219,21 +262,14 @@ void ACO::findFood(Cell *cell, Entity *e)
                     if(hasFound)
                     {
                     transferResource(ent.get(),e,10);
-                    std::cout << ent->getName() << " -> " << ent->getResource() << std::endl;
+                 //   std::cout << ent->getName() << " -> " << ent->getResource() << std::endl;
                     }
 
                     return hasFound;
                 });
             if (containsTarget)
             {
-                if (e->getTarget() != base)
-                {
-                    e->setTarget(base);
-                }
-                else
-                {
-                    e->setTarget(target);
-                }
+                e->setTarget(base);
             }
 
             // Update pheromone after choosing the cell
@@ -292,7 +328,7 @@ void ACO::returnHome(Cell *cell, Entity *e)
                     std::find(tl.begin(), tl.end(), ent.get()) != tl.end();
                     if(hasFound)
                     {
-                    transferResource(e,ent.get(),10);
+                    transferResource(e,ent.get(),e->getResource());
                     std::cout << ent->getName() << " -> " << ent->getResource() << std::endl;
                     }
 
@@ -300,14 +336,7 @@ void ACO::returnHome(Cell *cell, Entity *e)
                 });
             if (containsTarget)
             {
-                if (e->getTarget() != base)
-                {
-                    e->setTarget(base);
-                }
-                else
-                {
-                    e->setTarget(target);
-                }
+                getNewTarget(e);
             }
 
             // Update pheromone after choosing the cell

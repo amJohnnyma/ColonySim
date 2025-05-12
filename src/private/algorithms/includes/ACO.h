@@ -28,6 +28,7 @@ class ACO
         Entity* base;
         Entity* target;
         std::vector<Entity*> tl; // goals
+        bool possibleLocations = true;
 
 
 

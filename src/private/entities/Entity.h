@@ -51,6 +51,7 @@ public:
     Entity* getTarget() const { return target; }
     sf::RectangleShape* getHitbox() { return hitbox.get(); }
     std::vector<Cell*>& getPath() {return path;}
+    void regenerate() { giveResource(conf::locationFoodRegenerationRate * maxResource);}
 
 
     // Setters
