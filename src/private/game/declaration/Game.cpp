@@ -3,17 +3,9 @@
 
 void Game::run()
 {
-    Rect rect(2,5,8,10,100,100);
     using clock = std::chrono::steady_clock;
     auto lastUpdate = clock::now();
     const std::chrono::milliseconds updateInterval(50); 
-    sf::Font font;
-    if (!font.loadFromFile("src/fonts/pixel.ttf")) {
-        std::cerr << "Could not load font\n";
-        return;
-    }
-
-    FPSCounter fpsCounter(font, 58, sf::Color::Red, {10.0f, 10.0f});
 
     while (wind->wndw->isOpen())
     {
@@ -36,10 +28,9 @@ void Game::run()
 
         }
 
-        world->render(*wind->wndw);
-        fpsCounter.update();
-        fpsCounter.draw(*wind->wndw);
-        rect.draw(*wind->wndw);
+        uiMan->update();
+        world->render(*wind->wndw);   
+        uiMan->draw(*wind->wndw);    
         wind->wndw->display();
 
 
@@ -53,6 +44,7 @@ Game::Game(int windowWidth, int windowHeight, int worldWidth, int worldHeight)
     wind = new window(windowWidth,windowHeight);
     world = new World(worldWidth,worldHeight,*wind->wndw);
     inputManager = new inputs();    
+    uiMan = new UIManager();
 }
 
 Game::~Game()
@@ -60,4 +52,6 @@ Game::~Game()
     delete world;
     wind->wndw->close();   
     delete wind;
+    delete inputManager;
+    delete uiMan;
 }

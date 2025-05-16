@@ -3,8 +3,7 @@
 #include "World.h"
 #include "../../structs/gfx.h"
 #include "../../structs/inputManager.h"
-#include "../../UI/Rect.h"
-#include "../../UI/FPSCounter.h"
+#include "../../UI/UIManager.h"
 #include "GlobalVars.h"
 
 #include <thread>
@@ -16,6 +15,7 @@ class Game
         World* world;
         window* wind;        
         inputs* inputManager; //How am i going to use this in other classes?
+        UIManager* uiMan;
         
 
     public:

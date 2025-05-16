@@ -1,15 +1,17 @@
 #ifndef RECT_H
 #define RECT_H
 #include "../shapes/RoundedRectangle.h"
+#include "UIElement.h"
+#include <iostream>
 
-class Rect
+class Rect : public UIElement
 {
     private:
         RoundedRectangle* shape;
     public:
         Rect(int x, int y, int resolution, int radius, int width, int height);
         ~Rect();
-            void update() {
+        void update() {
 
         }
     
