@@ -47,17 +47,17 @@ void ACO::assignRandomTarget(std::vector<Cell *> &raw_goals)
     {
         for(auto &e : cell->data.entities)
         {
-            if (e.get()->getName().find("location") != std::string::npos)
+            if (FoodLocation* loc = dynamic_cast<FoodLocation*>(e.get()))
             {
                 // Check if e.get() is already in tl
                 bool alreadyAdded = std::any_of(tl.begin(), tl.end(), [&](Entity *existing)
-                                                { return existing == e.get(); });
+                    { return existing == loc; });
 
                 if (!alreadyAdded)
                 {
-                    tl.push_back(e.get());
-                    std::cout << "Added possible location: " << e->getName()
-                              << " ( " << e->getX() << ", " << e->getY() << " )" << std::endl;
+                    tl.push_back(loc);
+                    std::cout << "Added possible location: " << loc->getName()
+                              << " ( " << loc->getX() << ", " << loc->getY() << " )" << std::endl;
                 }
             }
         }
@@ -69,21 +69,25 @@ void ACO::assignRandomTarget(std::vector<Cell *> &raw_goals)
         for (auto &entity : cell->data.entities)
         {
             //    std::cout << "e" << std::endl;
-            if (entity.get()->getName() == "ant")
+            if (Ant* ant = dynamic_cast<Ant*>(entity.get()))
             {
-                getNewTarget(entity.get());
-                entity.get()->getPath().push_back(cell);
+              //  std::cout << "Ant target get" << std::endl;
+                getNewTarget(ant);
+                ant->getPath().push_back(cell);
             }
         }
     }
+   // std::cout << "Construct fin" << std::endl;
 }
 
-void ACO::getNewTarget(Entity *e)
+void ACO::getNewTarget(Ant *ant)
 {
+
+        
     std::random_device rd;
     std::mt19937 gen(rd());
     
-    //   std::cout << "tl.size(): " << tl.size() << std::endl;
+     //  std::cout << "tl.size(): " << tl.size() << std::endl;
     if (tl.empty())
         return;
     std::uniform_int_distribution<> dis(0, tl.size() - 1);
@@ -102,18 +106,19 @@ void ACO::getNewTarget(Entity *e)
         counter++;
 
     }
-    //   std::cout << "Assigned index: " << randomIndex << std::endl;
+   //    std::cout << "Assigned index: " << randomIndex << std::endl;
 
     if(counter < tl.size())
     {
-        e->setTarget(tl[randomIndex]);
+        ant->setTarget(tl[randomIndex]);
         possibleLocations = true;
     }
     else{
        // std::cout << "No more locations with food" << std::endl;
         possibleLocations = false;
-        e->setTarget(base);
+        ant->setTarget(base);
     }
+    
    // target = tl[randomIndex];
 }
 
@@ -122,7 +127,7 @@ void ACO::update()
     //  std::cout << base->getResource() << std::endl;
     bool noBetterF = true;
     double runBest = 0;
-    //   std::cout << "Updating aco" << std::endl;
+  //     std::cout << "Updating aco" << std::endl;
     // from start cell, look at each entity (ant)
     for (auto &cell : world)
     {
@@ -131,33 +136,32 @@ void ACO::update()
             //  std::cout << "Checking entity" << std::endl;
             if (e)
             {
-
-                if (e->getName() == "ant")
+                if (Ant* ant = dynamic_cast<Ant*>(e.get()))
                 {
                     //   std::cout << "found ant" << std::endl;
                     //   std::cout << "Target: " << e.get()->getTarget()->getName() << std::endl;
-                    if(e.get()->getTarget()->getResource() <= 0 && e.get()->getTarget() != base)
+                    if(ant->getTarget()->getResource() <= 0 && ant->getTarget() != base)
                     {
-                        getNewTarget(e.get());
+                        getNewTarget(ant);
                     }
 
-                    if (e.get()->getTarget() && e.get()->getTarget()->getName() == "Base")
+                    if (ant->getTarget() && ant->getTarget()->getName() == "Base")
                     {
-                        if((!possibleLocations) && (e.get()->getX() == e.get()->getTarget()->getX())&& (e.get()->getY() == e.get()->getTarget()->getY()))
+                        if((!possibleLocations) && (e.get()->getX() == ant->getTarget()->getX())&& (e.get()->getY() == ant->getTarget()->getY()))
                         {
-                            getNewTarget(e.get());
+                            getNewTarget(ant);
                             break;
                         }
-                        returnHome(cell, e.get());
+                        returnHome(cell, ant);
                     }
                     else
                     {
-                        findFood(cell, e.get());
+                        findFood(cell, ant);
                     }
                 } 
-                else if(e->getName().find("location")!=std::string::npos)
+                else if(FoodLocation* fl = dynamic_cast<FoodLocation*>(e.get()))
                 {
-                   e.get()->regenerate();
+                   fl->regenerate();
                  // e.get()->giveResource(1);
                  //   std::cout << e.get()->getName() << " : " << e.get()->getResource() << std::endl;
                 }
@@ -214,7 +218,7 @@ void ACO::depositPheremones(Cell *c)
     double pheremones = 0.0;
 }
 
-void ACO::findFood(Cell *cell, Entity *e)
+void ACO::findFood(Cell *cell, Ant *e)
 {
 
     curCell = cell;
@@ -282,7 +286,7 @@ void ACO::findFood(Cell *cell, Entity *e)
         }
     }
 }
-void ACO::returnHome(Cell *cell, Entity *e)
+void ACO::returnHome(Cell *cell, Ant *e)
 {
     //   std::cout << "Returning home!" << std::endl;
     curCell = cell;

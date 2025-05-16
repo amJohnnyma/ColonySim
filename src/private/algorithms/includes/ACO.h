@@ -6,7 +6,10 @@
 #include <cmath>
 #include <random>
 #include <unordered_set>
-
+#include "../../entities/Entity.h"
+#include "../../entities/Ant.h"
+#include "../../entities/Location.h"
+#include "../../entities/FoodLocation.h"
 
 
 
@@ -47,9 +50,9 @@ class ACO
         //pair<cell, score>
         void moveToCell(Cell* from, Cell * to, Entity* e);
         void depositPheremones(Cell* c);
-        void findFood(Cell* cell, Entity* e);
-        void returnHome(Cell* cell, Entity* e);
-        void getNewTarget(Entity* e);
+        void findFood(Cell* cell, Ant* e);
+        void returnHome(Cell* cell, Ant* e);
+        void getNewTarget(Ant* e);
         void transferResource(Entity* from, Entity* to, int amount);
 
 

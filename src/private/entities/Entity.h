@@ -10,17 +10,12 @@ class Cell;
 
 class Entity
 {
-private:
+protected:
     int x, y;
     std::string name;
     double resource;
     double maxResource;
-    Entity* target;
-    Entity* base;
-   // Cell* currentCell;
     std::unique_ptr<sf::RectangleShape> hitbox;
-    std::vector<Cell*> path;
-    bool returningHome = false;
 
 public:
     // Constructor
@@ -29,30 +24,18 @@ public:
 
     // Getter and setter for position
     void setPos(int x, int y);
-
-    bool getStatus() {return returningHome;}
-    void setStatus(bool stat) {returningHome = stat;}
-
-
     // Function to take resources
     int takeResource(int amount);
-
-
     // Function to give resources
     int giveResource(int amount);
-
-
     // Additional getter methods for private members
     int getX() const { return x; }
     int getY() const { return y; }
     double getResource() const { return resource; }
     double getMaxResource() const { return maxResource; }
     const std::string& getName() const { return name; }
-    Entity* getTarget() const { return target; }
     sf::RectangleShape* getHitbox() { return hitbox.get(); }
-    std::vector<Cell*>& getPath() {return path;}
-    void regenerate() { giveResource(conf::locationFoodRegenerationRate * maxResource);}
-
+    virtual std::vector<Cell*>& getPath();
 
     // Setters
 
@@ -82,12 +65,9 @@ void setMaxResource(double newMax) {
     if (resource > maxResource) resource = maxResource;
 }
 
-void setTarget(Entity* newTarget) { target = newTarget; }
 
-void addPath(Cell* newC);
+
+
+
 };
-
-
-
-
 #endif

@@ -46,13 +46,14 @@ void World::drawEntities(sf::RenderWindow& window)
     {
         for (auto& j : i.get()->data.entities)
         {
-            if (j->getName() == "ant")
+            if (j.get() && dynamic_cast<Ant*>(j.get()))
             {
+                Ant* ant = dynamic_cast<Ant*>(j.get());
                 waitList.push_back(j->getHitbox());
                 sf::VertexArray pathTrace(sf::LinesStrip);
 
                 // Adding path vertices to the VertexArray (no duplicates)
-                std::vector<Cell*> path = j.get()->getPath();
+                std::vector<Cell*> path = ant->getPath();
 
                 
                 // Loop through the path and add segments to pathTrace
@@ -91,7 +92,7 @@ void World::drawEntities(sf::RenderWindow& window)
             }
             else
             {
-                window.draw(*j.get()->getHitbox());
+                window.draw(*j->getHitbox());
             }
         }
     }

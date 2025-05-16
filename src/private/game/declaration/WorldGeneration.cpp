@@ -123,7 +123,7 @@ void WorldGeneration::generateEntities(int num, int col)
                 rs->setOutlineColor(sf::Color::Red); 
                 rs->setFillColor(sf::Color::White);   
                 Cell* cell = grid[xVal*width+yVal].get();
-                auto et = std::make_unique<Entity>(yVal, xVal, "ant", 10, std::make_unique<sf::RectangleShape>(*rs),cell); 
+                auto et = std::make_unique<Ant>(yVal, xVal, "ant", 10, std::make_unique<sf::RectangleShape>(*rs),cell); 
         
                 vis.push_back({yVal, xVal});         
 
@@ -145,7 +145,7 @@ void WorldGeneration::generateEntities(int num, int col)
         rs2->setFillColor(sf::Color::Yellow);   
         Cell* cell = grid[xVal*width+yVal].get();
     
-        auto et2 = std::make_unique<Entity>(xVal, yVal, "Base", 100000, std::make_unique<sf::RectangleShape>(*rs2),cell); //make ant entity
+        auto et2 = std::make_unique<Location>(xVal, yVal, "Base", 100000, std::make_unique<sf::RectangleShape>(*rs2),cell); //make ant entity
         grid[xVal*width+yVal].get()->data.entities.push_back(std::move(et2));
     
     
@@ -214,7 +214,7 @@ void WorldGeneration::generateLocations(int num)
             Cell* cell = grid[point.first*width+point.second].get();
 
             std::string name = "location" + std::to_string(k);
-            auto et = std::make_unique<Entity>(point.first, point.second, name, 100, std::make_unique<sf::RectangleShape>(*rs),cell);
+            auto et = std::make_unique<FoodLocation>(point.first, point.second, name, 100, std::make_unique<sf::RectangleShape>(*rs),cell);
             et.get()->giveResource(100.0);
 
             grid[point.first*width+point.second].get()->data.entities.push_back(std::move(et));
