@@ -13,8 +13,8 @@ private:
     sf::Font font;
 
 public:
-    FPSCounter(unsigned int charSize = 24, sf::Color color = sf::Color::Red, sf::Vector2f position = {10.f, 10.f})
-        : frameCount(0), elapsedTime(0.f), lastFPS(0)
+    FPSCounter(World* world, unsigned int charSize = 24, sf::Color color = sf::Color::Red, sf::Vector2f position = {10.f, 10.f})
+        :UIElement(world), frameCount(0), elapsedTime(0.f), lastFPS(0)
     {
         if (!font.loadFromFile("src/fonts/pixel.ttf")) {
             std::cerr << "Could not load font\n";

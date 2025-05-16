@@ -1,10 +1,10 @@
 #include "UIManager.h"
 
-UIManager::UIManager()
+UIManager::UIManager(World* world)
 {       
 
-    FPSCounter* fpsc = new FPSCounter(58, sf::Color::Red, sf::Vector2f{10.f, 10.f});
-    Rect* rec = new Rect(0,2,4,5,100,50);
+    UIElement* fpsc = new FPSCounter(world, 58, sf::Color::Red, sf::Vector2f{10.f, 10.f});
+    UIElement* rec = new Rect(world, 0,2,4,5,100,50);
     addElement(fpsc);
     addElement(rec);   
 

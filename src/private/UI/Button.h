@@ -2,6 +2,7 @@
 #define BUTTON_H
 
 #include <SFML/Graphics.hpp>
+#include <functional>
 
 class Button {
 private:
@@ -9,9 +10,11 @@ private:
         mutable sf::Clock clickClock;  // tracks last click time
     mutable bool wasPressed = false; // to track previous button state
     const sf::Time clickDelay = sf::milliseconds(50);
+        std::function<void()> onClick;  // callback for what happens on click
 
 public:
-    Button(int x, int y, int width, int height) {
+    Button(int x, int y, int width, int height, std::function<void()> clickFunc)
+    : onClick(clickFunc) {
         shape.setSize(sf::Vector2f(width, height));
         shape.setPosition(sf::Vector2f(x, y));
     }
@@ -29,6 +32,9 @@ public:
                 if (clickClock.getElapsedTime() >= clickDelay) {
                     clickClock.restart();
                     wasPressed = true;
+                    if (onClick) {
+                        onClick();  // call the backend action
+                    }   
                     return true;
                 }
             }

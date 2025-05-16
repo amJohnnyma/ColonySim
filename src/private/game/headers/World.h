@@ -47,6 +47,7 @@ class World
         //temp input
         void handleInput(sf::RenderWindow& window, sf::Event &event);
         bool isRunning() { return running;}
+        void testClick() { std::cout << "Clicked in the world!" << std::endl;}
 
     
 };

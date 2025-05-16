@@ -12,7 +12,7 @@ class UIManager
     private:
             std::vector<UIElement*> elements;
     public:
-        UIManager();
+        UIManager(World* world);
         ~UIManager();
         void draw(sf::RenderWindow& window);
         void update(sf::RenderWindow& window);
