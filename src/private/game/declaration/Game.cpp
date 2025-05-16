@@ -1,27 +1,18 @@
 #include "../headers/Game.h"
+#include "../../UI/FPSCounter.h"
 
 void Game::run()
 {
     using clock = std::chrono::steady_clock;
     auto lastUpdate = clock::now();
     const std::chrono::milliseconds updateInterval(50); 
-    ////////////////
-    sf::Clock fpsClock;
     sf::Font font;
     if (!font.loadFromFile("src/fonts/pixel.ttf")) {
         std::cerr << "Could not load font\n";
         return;
     }
 
-    sf::Text fpsText;
-    fpsText.setFont(font);
-    fpsText.setCharacterSize(58);
-    fpsText.setFillColor(sf::Color::Red);
-    fpsText.setPosition(10.f, 10.f);
-
-    int frameCount = 0;
-    float elapsedTime = 0.f; 
-//////////////////////
+    FPSCounter fpsCounter(font, 58, sf::Color::Red, {10.0f, 10.0f});
 
     while (wind->wndw->isOpen())
     {
@@ -44,24 +35,12 @@ void Game::run()
 
         }
 
-            world->render(*wind->wndw);
+        world->render(*wind->wndw);
+        fpsCounter.update();
+        fpsCounter.draw(*wind->wndw);
 
-    /////////////////
-     elapsedTime += fpsClock.restart().asSeconds();
-     frameCount++;
-     if (elapsedTime >= 1.0f) {
-         float fps = frameCount / elapsedTime;
-         fpsText.setString("FPS: " + std::to_string(static_cast<int>(fps)));
-       //  std::cout << "FPS: " << fps << std::endl;
-         frameCount = 0;
-         elapsedTime = 0.f;
-     }
-     sf::View originalView = wind->wndw->getView();
-     wind->wndw->setView(wind->wndw->getDefaultView());
-     wind->wndw->draw(fpsText);
-     wind->wndw->setView(originalView);
-     wind->wndw->display();
-     ////////////////////
+        wind->wndw->display();
+
 
 
     }
