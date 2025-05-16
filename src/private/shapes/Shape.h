@@ -18,7 +18,7 @@ class Shape //abstract
             virtual ~Shape() = default;  // Virtual destructor
       //  virtual std::vector<sf::Vertex> & getVertexArray() = 0;
         virtual void setFillColor(sf::Color col) = 0;
-        virtual void draw(sf::RenderTarget& target) const;
+        void draw(sf::RenderTarget& target) const;
 
 
         //Getters

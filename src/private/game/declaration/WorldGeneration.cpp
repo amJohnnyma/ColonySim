@@ -31,7 +31,8 @@ void WorldGeneration::generateTerrain()
     {
         for(int y = 0; y < height; y++)
         {
-            std::unique_ptr<Shape> shape = std::make_unique<Circle>(x, y, cellSize/4, 4);
+          //  std::unique_ptr<Shape> shape = std::make_unique<Circle>(x, y, cellSize/4, 4);
+          std::unique_ptr<Circle> shape = std::make_unique<Circle>(x,y,cellSize/4, 8);
 
             std::unique_ptr<Cell> newC = std::make_unique<Cell>();     
             CellData cd;
@@ -68,6 +69,8 @@ void WorldGeneration::generateTerrain()
             grid.push_back(std::move(newC));
         }
     }
+
+
 }
 
 void WorldGeneration::generateEntities(int num, int col)

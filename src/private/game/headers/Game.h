@@ -3,6 +3,9 @@
 #include "World.h"
 #include "../../structs/gfx.h"
 #include "../../structs/inputManager.h"
+#include "../../UI/Rect.h"
+#include "../../UI/FPSCounter.h"
+#include "GlobalVars.h"
 
 #include <thread>
 #include <chrono>

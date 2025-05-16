@@ -9,6 +9,7 @@
 #include "../../shapes/Shape.h"
 #include "../../shapes/Triangle.h"
 #include "../../shapes/Circle.h"
+#include "../../shapes/RoundedRectangle.h"
 #include "../../entities/Ant.h"
 #include "../../entities/Location.h"
 #include "../../entities/FoodLocation.h"

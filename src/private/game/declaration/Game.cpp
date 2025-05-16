@@ -1,8 +1,9 @@
 #include "../headers/Game.h"
-#include "../../UI/FPSCounter.h"
+
 
 void Game::run()
 {
+    Rect rect(2,5,8,10,100,100);
     using clock = std::chrono::steady_clock;
     auto lastUpdate = clock::now();
     const std::chrono::milliseconds updateInterval(50); 
@@ -38,7 +39,7 @@ void Game::run()
         world->render(*wind->wndw);
         fpsCounter.update();
         fpsCounter.draw(*wind->wndw);
-
+        rect.draw(*wind->wndw);
         wind->wndw->display();
 
 

@@ -2,51 +2,122 @@
 //#include "RoundedRectangle.h"
 
 RoundedRectangle::RoundedRectangle(int xg, int yg, double radius, int resolution, int width, int height)
-: Shape(xg,yg), width(width), height(height)
+: Shape(xg,yg), width(width), height(height), resolution(resolution), radius(radius) 
 {
-    //for each resolution/4 add a line with width or height
-        getVA().setPrimitiveType(sf::Triangles);
+    buildShape();
 
-    float left = xg * conf::cellSize + conf::cellSize / 2 - width / 2.f;
-    float top = yg * conf::cellSize + conf::cellSize / 2 - height / 2.f;
+}
+void RoundedRectangle::setFillColor(sf::Color col) {
+    for (size_t i = 0; i < getVA().getVertexCount(); ++i) {
+        getVA()[i].color = col;  // Change color of all vertices in the shape
+    }
+}
+
+void RoundedRectangle::drawCorner(float cx, float cy, float startAngleDeg, float endAngleDeg) {
+    sf::Vector2f center(cx, cy);
+    for (int i = 0; i < resolution; ++i) {
+        float a1 = startAngleDeg + (endAngleDeg - startAngleDeg) * (i / (float)resolution);
+        float a2 = startAngleDeg + (endAngleDeg - startAngleDeg) * ((i + 1) / (float)resolution);
+
+        float rad1 = a1 * M_PI / 180.f;
+        float rad2 = a2 * M_PI / 180.f;
+
+        sf::Vector2f p1(cx + radius * std::cos(rad1), cy + radius * std::sin(rad1));
+        sf::Vector2f p2(cx + radius * std::cos(rad2), cy + radius * std::sin(rad2));
+
+        getVA().append(sf::Vertex(center, sf::Color::White));
+        getVA().append(sf::Vertex(p1, sf::Color::White));
+        getVA().append(sf::Vertex(p2, sf::Color::White));
+    }
+}
+
+void RoundedRectangle::buildShape() {
+    getVA().clear();
+    getVA().setPrimitiveType(sf::Triangles);
+
+    float left = xg * conf::cellSize;
+    float top = yg * conf::cellSize;
     float right = left + width;
     float bottom = top + height;
 
-    auto addCorner = [&](float cx, float cy, float startAngle, float endAngle) {
+    float r = static_cast<float>(radius);
+
+    auto addTriangle = [&](sf::Vector2f a, sf::Vector2f b, sf::Vector2f c) {
+        getVA().append(sf::Vertex(a, sf::Color::White));
+        getVA().append(sf::Vertex(b, sf::Color::White));
+        getVA().append(sf::Vertex(c, sf::Color::White));
+    };
+
+    auto drawCorner = [&](float cx, float cy, float startDeg, float endDeg) {
+        sf::Vector2f center(cx, cy);
         for (int i = 0; i < resolution; ++i) {
-            float angle1 = startAngle + (endAngle - startAngle) * (i / (float)resolution);
-            float angle2 = startAngle + (endAngle - startAngle) * ((i + 1) / (float)resolution);
+            float a1 = startDeg + (endDeg - startDeg) * (i / (float)resolution);
+            float a2 = startDeg + (endDeg - startDeg) * ((i + 1) / (float)resolution);
 
-            sf::Vector2f center(cx, cy);
-            sf::Vector2f p1(cx + radius * std::cos(angle1), cy + radius * std::sin(angle1));
-            sf::Vector2f p2(cx + radius * std::cos(angle2), cy + radius * std::sin(angle2));
+            float rad1 = a1 * M_PI / 180.f;
+            float rad2 = a2 * M_PI / 180.f;
 
-            getVA().append(sf::Vertex(center));
-            getVA().append(sf::Vertex(p1));
-            getVA().append(sf::Vertex(p2));
+            sf::Vector2f p1(cx + r * std::cos(rad1), cy + r * std::sin(rad1));
+            sf::Vector2f p2(cx + r * std::cos(rad2), cy + r * std::sin(rad2));
+
+            addTriangle(center, p1, p2);
         }
     };
 
-    // Top-left corner (180° to 270°)
-    addCorner(left + radius, top + radius, M_PI, 1.5 * M_PI);
+    // Draw 4 corner arcs
+    drawCorner(right - r, top + r,   270, 360);  // Top-right
+    drawCorner(left + r,  top + r,   180, 270);  // Top-left
+    drawCorner(left + r,  bottom - r, 90, 180);  // Bottom-left
+    drawCorner(right - r, bottom - r, 0, 90);    // Bottom-right
 
-    // Top-right corner (270° to 360°)
-    addCorner(right - radius, top + radius, 1.5 * M_PI, 2.0 * M_PI);
+    // Fill side rectangles
+    // Top side (between top-left and top-right arcs)
+    addTriangle(
+        sf::Vector2f(left + r, top),
+        sf::Vector2f(right - r, top),
+        sf::Vector2f(left + r, top + r));
+    addTriangle(
+        sf::Vector2f(right - r, top),
+        sf::Vector2f(right - r, top + r),
+        sf::Vector2f(left + r, top + r));
 
-    // Bottom-right corner (0° to 90°)
-    addCorner(right - radius, bottom - radius, 0.0, 0.5 * M_PI);
+    // Bottom side
+    addTriangle(
+        sf::Vector2f(left + r, bottom - r),
+        sf::Vector2f(right - r, bottom - r),
+        sf::Vector2f(left + r, bottom));
+    addTriangle(
+        sf::Vector2f(right - r, bottom - r),
+        sf::Vector2f(right - r, bottom),
+        sf::Vector2f(left + r, bottom));
 
-    // Bottom-left corner (90° to 180°)
-    addCorner(left + radius, bottom - radius, 0.5 * M_PI, M_PI);
+    // Left side
+    addTriangle(
+        sf::Vector2f(left, top + r),
+        sf::Vector2f(left + r, top + r),
+        sf::Vector2f(left, bottom - r));
+    addTriangle(
+        sf::Vector2f(left + r, top + r),
+        sf::Vector2f(left + r, bottom - r),
+        sf::Vector2f(left, bottom - r));
 
-    // Add rectangles for the sides and center
-    // Top rectangle
-    getVA().append(sf::Vertex(sf::Vector2f(left + radius, top)));
-    getVA().append(sf::Vertex(sf::Vector2f(right - radius, top)));
-    getVA().append(sf::Vertex(sf::Vector2f(left + radius, top + radius)));
+    // Right side
+    addTriangle(
+        sf::Vector2f(right - r, top + r),
+        sf::Vector2f(right, top + r),
+        sf::Vector2f(right - r, bottom - r));
+    addTriangle(
+        sf::Vector2f(right, top + r),
+        sf::Vector2f(right, bottom - r),
+        sf::Vector2f(right - r, bottom - r));
 
-    getVA().append(sf::Vertex(sf::Vector2f(right - radius, top)));
-    getVA().append(sf::Vertex(sf::Vector2f(right - radius, top + radius)));
-    getVA().append(sf::Vertex(sf::Vector2f(left + radius, top + radius)));
-
+    // Fill center rectangle
+    addTriangle(
+        sf::Vector2f(left + r, top + r),
+        sf::Vector2f(right - r, top + r),
+        sf::Vector2f(left + r, bottom - r));
+    addTriangle(
+        sf::Vector2f(right - r, top + r),
+        sf::Vector2f(right - r, bottom - r),
+        sf::Vector2f(left + r, bottom - r));
 }
