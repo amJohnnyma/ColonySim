@@ -28,7 +28,7 @@ void Game::run()
 
         }
 
-        uiMan->update();
+        uiMan->update(*wind->wndw);
         world->render(*wind->wndw);   
         uiMan->draw(*wind->wndw);    
         wind->wndw->display();

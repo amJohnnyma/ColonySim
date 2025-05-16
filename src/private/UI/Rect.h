@@ -2,27 +2,22 @@
 #define RECT_H
 #include "../shapes/RoundedRectangle.h"
 #include "UIElement.h"
+#include "Button.h"
 #include <iostream>
 
 class Rect : public UIElement
 {
     private:
         RoundedRectangle* shape;
+        Button* button;
     public:
         Rect(int x, int y, int resolution, int radius, int width, int height);
         ~Rect();
-        void update() {
-
-        }
+        void update(sf::RenderWindow& window) override;
+        void onClick() override;
     
 
-    void draw(sf::RenderWindow& window) {
-        // Draw in default view so it overlays UI properly
-        sf::View originalView = window.getView();
-        window.setView(window.getDefaultView());
-        shape->draw(window);
-        window.setView(originalView);
-    }
+    void draw(sf::RenderWindow& window) override;
 };
 
 #endif

@@ -10,7 +10,8 @@ class UIElement
         UIElement();
         ~UIElement() {};
         virtual void draw(sf::RenderWindow& window) = 0;
-        virtual void update() = 0;
+        virtual void update(sf::RenderWindow& window) = 0;
+        virtual void onClick() = 0;
 };
 
 #endif

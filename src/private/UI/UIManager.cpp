@@ -17,10 +17,11 @@ UIManager::~UIManager()
         delete elem;
 }
 
-void UIManager::update()
+void UIManager::update(sf::RenderWindow& window)
 {
+
     for (auto& elem : elements)
-        elem->update();
+        elem->update(window);
     
 }
 

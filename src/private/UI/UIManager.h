@@ -15,7 +15,7 @@ class UIManager
         UIManager();
         ~UIManager();
         void draw(sf::RenderWindow& window);
-        void update();
+        void update(sf::RenderWindow& window);
         void addElement(UIElement* elem) {
             elements.push_back(elem);
     }
