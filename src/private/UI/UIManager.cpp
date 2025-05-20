@@ -17,7 +17,6 @@ UIManager::UIManager(World* world)
     simControl->setColor(sf::Color::Red);
     FunctionArgs sArgs;
   //  std::cout << "simControl pointer: " << simControl << std::endl;
-
     sArgs.element = simControl;   
     simControl->setArgs(sArgs);
   

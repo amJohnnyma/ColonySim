@@ -35,7 +35,7 @@ public:
     double getMaxResource() const { return maxResource; }
     const std::string& getName() const { return name; }
     sf::RectangleShape* getHitbox() { return hitbox.get(); }
-    virtual std::vector<Cell*>& getPath();
+    virtual std::vector<Cell*>& getPath() = 0;
 
     // Setters
 

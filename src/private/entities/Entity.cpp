@@ -61,7 +61,3 @@ void Entity::setPos(int x, int y)
     this->y = y;
 }
 
-std::vector<Cell*>& Entity::getPath()
-{
-
-}
