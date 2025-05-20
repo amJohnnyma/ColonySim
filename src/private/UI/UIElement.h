@@ -8,10 +8,12 @@
 #include "Button.h"
 #include <optional>
 
+class UIElement;
 struct FunctionArgs
 {
     std::optional<std::string> name;
     std::optional<int> count;
+    std::optional<UIElement*> element;
 };
 
 using FunctionType = std::function<void(World*, const FunctionArgs&)>;
@@ -24,12 +26,12 @@ class UIElement
 
     public:
         UIElement(World* world) : world(world) {}
-        ~UIElement() {};
+        virtual ~UIElement();
         virtual void draw(sf::RenderWindow& window) = 0;
         virtual void update(sf::RenderWindow& window) = 0;
         virtual void onClick() = 0;
         void setArgs(const FunctionArgs& newArgs) {args = newArgs;}
-
+        virtual void setColor(sf::Color col) = 0;
 };
 
 #endif

@@ -1,6 +1,7 @@
 #ifndef ROUNDED_RECTANGLE_H
 #define ROUNDED_RECTANGLE_H
 #include "Shape.h"
+#include <iostream>
 class RoundedRectangle : public Shape // will be a circle with four corners split up
 {
     private:

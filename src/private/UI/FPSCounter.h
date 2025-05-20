@@ -33,4 +33,6 @@ public:
 
     void onClick() override;
 
+    void setColor(sf::Color col);
+
 };

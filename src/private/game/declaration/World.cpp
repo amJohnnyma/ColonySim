@@ -373,7 +373,10 @@ void World::handleInput(sf::RenderWindow &window, sf::Event &event)
     }
 }
 
-
+void World::toggleSimState()
+{
+    running = !running;
+}
 
 World::~World()
 {

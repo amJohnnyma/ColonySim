@@ -2,6 +2,7 @@
 
 WorldUIElement::WorldUIElement(World* world, int x, int y, int resolution, int radius, int width, int height, std::string function) : UIElement(world)
 {
+
    // std::cout << "rect" << std::endl;
     shape = new RoundedRectangle(x,y,radius,resolution,width, height);
     shape->setFillColor(sf::Color::White);
@@ -21,6 +22,7 @@ WorldUIElement::WorldUIElement(World* world, int x, int y, int resolution, int r
             }
         );
     }
+
 
 }
 
@@ -66,7 +68,7 @@ void WorldUIElement::onClick()
 }
 
 const std::unordered_map<std::string, std::function<void(World*, const FunctionArgs&)>>& WorldUIElement::getFunctionMap() {
-    static std::unordered_map<std::string, std::function<void(World*, const FunctionArgs&)>> functionMap = {
+   static const std::unordered_map<std::string, std::function<void(World*, const FunctionArgs&)>> functionMap = {
         {"testClick", [](World* w, const FunctionArgs&) {
             w->testClick();
         }},
@@ -74,7 +76,28 @@ const std::unordered_map<std::string, std::function<void(World*, const FunctionA
             if (args.name && args.count) {
                 w->spawn(args.name.value(), args.count.value());
             }
+        }},
+        {"toggleSimState", [](World* w, const FunctionArgs& args){
+            w->toggleSimState();
+            std::cout << "Calling setColor on UIElement at " << *args.element << std::endl;
+            bool running = w->isRunning();
+            if (args.element) {
+                UIElement* elem = *args.element;
+                std::cout << "Lambda called with element pointer: " << elem << std::endl;
+                if (elem) {
+                    elem->setColor(running ? sf::Color::Green : sf::Color::Red);
+                } else {
+                    std::cout << "element pointer is null\n";
+                }
+            } else {
+                std::cout << "args.element not set\n";
+            }
         }}
     };
     return functionMap;
+}
+
+void WorldUIElement::setColor(sf::Color col)
+{
+    shape->setFillColor(col);
 }

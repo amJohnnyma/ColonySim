@@ -30,3 +30,8 @@
     void FPSCounter::onClick()
     {
     }
+
+    void FPSCounter::setColor(sf::Color col)
+    {
+        fpsText.setFillColor(col);
+    }

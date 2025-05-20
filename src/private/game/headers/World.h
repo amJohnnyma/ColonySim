@@ -49,9 +49,12 @@ class World
         //temp input
         void handleInput(sf::RenderWindow& window, sf::Event &event);
         bool isRunning() { return running;}
+        void toggleSimState();
+
+
+
         void testClick() { std::cout << "Clicked in the world!" << std::endl;}
         void spawn(std::string name, int count) { std::cout << "Spawning: " << count << " " << name << "'s. " << " with " << trackedVars.getNumAnts()  << std::endl;}
-
     
 };
 
