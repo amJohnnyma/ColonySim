@@ -18,7 +18,11 @@ ACO::ACO(Cell *startCell, std::vector<Cell *> &goals, std::vector<Cell *> &world
                 {
                     std::cout << "Ants have base" << std::endl;
                     base = e.get();
-                    break;
+                   // break;
+                }
+                if(e.get()->getName() == "ant")
+                {
+                    numberAnts++;
                 }
             }
         }
@@ -33,7 +37,6 @@ ACO::ACO(Cell *startCell, std::vector<Cell *> &goals, std::vector<Cell *> &world
     worldWidth = width;
     worldHeight = height;
     curCell = startCell;
-    numberAnts = startCell->data.entities.size();
 
     assignRandomTarget(goals);
 }

@@ -27,7 +27,7 @@ class ACO
         int worldWidth;
         int worldHeight;
         std::unordered_set<Cell*> visited;
-        int numberAnts = 1;
+        int numberAnts = 0;
         Entity* base;
         Entity* target;
         std::vector<Entity*> tl; // goals
@@ -68,6 +68,7 @@ class ACO
         ~ACO();
         void update();
         void assignRandomTarget(std::vector<Cell*> &raw_goals);
+        int getNumberAnts() {return numberAnts;}
  
 };
 

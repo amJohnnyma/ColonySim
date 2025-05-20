@@ -28,12 +28,15 @@ const std::unique_ptr<Cell> &World::at(int x, int y) const
 
 void World::update()
 {
+    int numAnts = 0;
     //this is aco
     for(auto &a : sims)
     {
         //if(in simulated) -> i.e. not manually controlled
         a.update();
+        numAnts += a.getNumberAnts();
     }
+    trackedVars.setNumAnts(numAnts);
 
 }
 
@@ -119,16 +122,16 @@ void World::createACO()
         raw_grid.push_back(cell_ptr.get());  // raw pointer to the same object
     }
 
-                for(auto &g : grid)
-                {
-                    for(auto &eg : g.get()->data.entities)
-                    {
-                        if(eg->getName() == "location")
-                        {
-                            raw_goals.push_back(g.get());
-                        }
-                    }
-                }
+    for(auto &g : grid)
+    {
+        for(auto &eg : g.get()->data.entities)
+        {
+            if(eg->getName() == "location")
+            {
+                raw_goals.push_back(g.get());
+            }            
+        }
+    }
 
     ACO aco(raw_grid[0], raw_goals, raw_grid, width, height);
     sims.push_back(aco);

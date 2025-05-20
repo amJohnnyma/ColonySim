@@ -7,6 +7,7 @@
 #include "../../algorithms/includes/ACO.h"
 #include <array>
 #include <algorithm>
+#include "TrackedVariables.h"
 
 
 
@@ -25,6 +26,7 @@ class World
         float speed;
         std::vector<ACO> sims;
         bool running = false;
+        TrackedVariables trackedVars;
 
     public:
     private:
@@ -48,7 +50,7 @@ class World
         void handleInput(sf::RenderWindow& window, sf::Event &event);
         bool isRunning() { return running;}
         void testClick() { std::cout << "Clicked in the world!" << std::endl;}
-        void spawn(std::string name, int count) { std::cout << "Spawning: " << count << " " << name << "'s"  << std::endl;}
+        void spawn(std::string name, int count) { std::cout << "Spawning: " << count << " " << name << "'s. " << " with " << trackedVars.getNumAnts()  << std::endl;}
 
     
 };
