@@ -8,7 +8,7 @@ World::World(int w, int h, sf::RenderWindow& window)
     height = h;
     view = window.getDefaultView();
     WorldGeneration gen(0,w,h,cellSize);
-    grid = gen.getResult();
+    grid = gen.getResult();    
     createACO();
 
    // gen.~WorldGeneration();
@@ -118,13 +118,7 @@ void World::createACO()
     for (const auto& cell_ptr : grid) {
         raw_grid.push_back(cell_ptr.get());  // raw pointer to the same object
     }
-    for(auto &s : grid)
-    {
-        for(auto &e : s.get()->data.entities)
-        {
-            if(e->getName() == "ant")
-            {
-                
+
                 for(auto &g : grid)
                 {
                     for(auto &eg : g.get()->data.entities)
@@ -136,9 +130,6 @@ void World::createACO()
                     }
                 }
 
-            }
-        }
-    }
     ACO aco(raw_grid[0], raw_goals, raw_grid, width, height);
     sims.push_back(aco);
     
