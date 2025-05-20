@@ -30,7 +30,10 @@ class UIElement
         virtual void draw(sf::RenderWindow& window) = 0;
         virtual void update(sf::RenderWindow& window) = 0;
         virtual void onClick() = 0;
-        void setArgs(const FunctionArgs& newArgs) {args = newArgs;}
+        void setArgs(const FunctionArgs& newArgs) {
+            args = newArgs;
+        
+        }
         virtual void setColor(sf::Color col) = 0;
 };
 

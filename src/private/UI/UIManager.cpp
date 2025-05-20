@@ -16,7 +16,7 @@ UIManager::UIManager(World* world)
     UIElement* simControl = new WorldUIElement(world, 0,3,4,5,100,50, "toggleSimState");
     simControl->setColor(sf::Color::Red);
     FunctionArgs sArgs;
-    std::cout << "simControl pointer: " << simControl << std::endl;
+  //  std::cout << "simControl pointer: " << simControl << std::endl;
 
     sArgs.element = simControl;   
     simControl->setArgs(sArgs);

@@ -52,14 +52,6 @@ void WorldUIElement::update(sf::RenderWindow& window)
             onClick();
         }
     }
-
-    //temporary testing logic
-    int nC = args.count.value_or(0) + 1;
-    FunctionArgs na = {
-        args.name,
-        nC
-    };
-    setArgs(na);
 }
 
 void WorldUIElement::onClick()
@@ -79,11 +71,11 @@ const std::unordered_map<std::string, std::function<void(World*, const FunctionA
         }},
         {"toggleSimState", [](World* w, const FunctionArgs& args){
             w->toggleSimState();
-            std::cout << "Calling setColor on UIElement at " << *args.element << std::endl;
+           // std::cout << "Calling setColor on UIElement at " << *args.element << std::endl;
             bool running = w->isRunning();
             if (args.element) {
                 UIElement* elem = *args.element;
-                std::cout << "Lambda called with element pointer: " << elem << std::endl;
+               // std::cout << "Lambda called with element pointer: " << elem << std::endl;
                 if (elem) {
                     elem->setColor(running ? sf::Color::Green : sf::Color::Red);
                 } else {
