@@ -15,7 +15,7 @@ class WorldUIElement : public UIElement
 
     public:
         WorldUIElement(World* world, int x, int y, int resolution, int radius, int width, int height, std::string function, std::string textArea);
-        ~WorldUIElement();
+        ~WorldUIElement() override;
         void update(sf::RenderWindow& window) override;
         void onClick() override;
 
