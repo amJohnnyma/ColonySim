@@ -1,5 +1,5 @@
 #include "../headers/GlobalVars.h"
-
+//put in wrapper to modify vars at runtime
 namespace conf
 {
     const int cellSize = 50;
