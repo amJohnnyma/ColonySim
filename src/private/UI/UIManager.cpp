@@ -4,16 +4,14 @@ UIManager::UIManager(World* world)
 {       
 
     
-    UIElement* fpsc = new FPSCounter(world, 58, sf::Color::Red, sf::Vector2f{10.f, 10.f});
-    UIElement* rec = new WorldUIElement(world, 0,2,4,5,100,50, "spawnEntity", "");
+    UIElement* fpsc = new FPSCounter(world, 12, sf::Color::Red, sf::Vector2f{conf::window_size.x - (conf::window_size.x * 0.1), (conf::window_size.y * 0.02)});
+    UIElement* stats = new WorldUIElement(world, 0,0,4,5,200,300, "testClick", "Stats");
 
-    FunctionArgs args = {
-        "Orc",
-        5
-    };    
-    rec->setArgs(args);
+    FunctionArgs args;
+    args.element = stats;
+    stats->setArgs(args);
 
-    UIElement* simControl = new WorldUIElement(world, 0,3,4,5,100,50, "toggleSimState", "Start");
+    UIElement* simControl = new WorldUIElement(world, 0,6,4,5,70,70, "toggleSimState", "Start");
     simControl->setColor(sf::Color::Red);
     FunctionArgs sArgs;
   //  std::cout << "simControl pointer: " << simControl << std::endl;
@@ -22,7 +20,7 @@ UIManager::UIManager(World* world)
   
     
     addElement(fpsc);
-    addElement(rec);   
+    addElement(stats);   
     addElement(simControl);
 
 
