@@ -38,7 +38,7 @@
 
     void FPSCounter::setText(std::string text)
     {
-
+        this->fpsText.setString(text);
     }
 
     std::string FPSCounter::getText()

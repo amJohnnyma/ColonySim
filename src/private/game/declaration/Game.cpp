@@ -19,7 +19,7 @@ void Game::run()
         // Always run input and render
         world->handleInput(*wind->wndw, event);
 
-        // Only update every 500ms
+        // Only update every x ms
         auto now = clock::now();
         if (now - lastUpdate >= updateInterval && world->isRunning())
         {
