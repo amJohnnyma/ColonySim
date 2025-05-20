@@ -35,4 +35,8 @@ public:
 
     void setColor(sf::Color col);
 
+    void setText(std::string text);
+
+    std::string getText();
+
 };

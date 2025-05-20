@@ -1,6 +1,6 @@
 #include "WorldUIElement.h"
 
-WorldUIElement::WorldUIElement(World* world, int x, int y, int resolution, int radius, int width, int height, std::string function) : UIElement(world)
+WorldUIElement::WorldUIElement(World* world, int x, int y, int resolution, int radius, int width, int height, std::string function, std::string textArea) : UIElement(world)
 {
 
    // std::cout << "rect" << std::endl;
@@ -22,7 +22,19 @@ WorldUIElement::WorldUIElement(World* world, int x, int y, int resolution, int r
             }
         );
     }
+    if(textArea != "")
+    {
 
+        if (!font.loadFromFile("src/fonts/pixel.ttf")) {
+            std::cerr << "Could not load font\n";
+            return;
+        }
+        text.setFont(this->font);
+        text.setCharacterSize(20);
+        text.setFillColor(sf::Color::Black);
+        text.setPosition(sf::Vector2f{x * conf::cellSize, y*conf::cellSize});
+        text.setString(textArea);
+    }
 
 }
 
@@ -38,6 +50,8 @@ void WorldUIElement::draw(sf::RenderWindow& window)
     sf::View originalView = window.getView();
     window.setView(window.getDefaultView());
     shape->draw(window);
+    if(text.getString() != "")
+    window.draw(text);
     window.setView(originalView);
 }
 
@@ -72,12 +86,14 @@ const std::unordered_map<std::string, std::function<void(World*, const FunctionA
         {"toggleSimState", [](World* w, const FunctionArgs& args){
             w->toggleSimState();
            // std::cout << "Calling setColor on UIElement at " << *args.element << std::endl;
-            bool running = w->isRunning();
+            bool running = w->isRunning();            
             if (args.element) {
                 UIElement* elem = *args.element;
                // std::cout << "Lambda called with element pointer: " << elem << std::endl;
                 if (elem) {
+                    std::string text = elem->getText();
                     elem->setColor(running ? sf::Color::Green : sf::Color::Red);
+                    elem->setText(text == "Start" ? "Pause" : "Start");
                 } else {
                     std::cout << "element pointer is null\n";
                 }
@@ -92,4 +108,14 @@ const std::unordered_map<std::string, std::function<void(World*, const FunctionA
 void WorldUIElement::setColor(sf::Color col)
 {
     shape->setFillColor(col);
+}
+
+void WorldUIElement::setText(std::string text)
+{
+    this->text.setString(text);
+}
+
+std::string WorldUIElement::getText()
+{
+    return this->text.getString();
 }

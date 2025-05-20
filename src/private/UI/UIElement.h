@@ -13,7 +13,7 @@ struct FunctionArgs
 {
     std::optional<std::string> name;
     std::optional<int> count;
-    std::optional<UIElement*> element;
+    std::optional<UIElement*> element = nullptr;
 };
 
 using FunctionType = std::function<void(World*, const FunctionArgs&)>;
@@ -35,6 +35,8 @@ class UIElement
         
         }
         virtual void setColor(sf::Color col) = 0;
+        virtual void setText(std::string text) = 0;
+        virtual std::string getText() = 0;
 };
 
 #endif

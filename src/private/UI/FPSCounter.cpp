@@ -35,3 +35,13 @@
     {
         fpsText.setFillColor(col);
     }
+
+    void FPSCounter::setText(std::string text)
+    {
+
+    }
+
+    std::string FPSCounter::getText()
+    {
+        return fpsText.getString();
+    }
