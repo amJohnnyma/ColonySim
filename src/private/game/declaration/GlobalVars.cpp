@@ -10,7 +10,7 @@ namespace conf
     const sf::Vector2i worldSize = {5, 5};
     const uint32_t max_framerate = 60;
     const float dt = 1.0f / static_cast<float>(max_framerate);
-    const int numAnts = 1;
+    const int numAnts = 10;
     const int numBases = 1;
     const int numLocations =1;
     const int antPathDrawLength = 10;
