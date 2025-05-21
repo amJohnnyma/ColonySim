@@ -26,7 +26,8 @@ class World
         float speed;
         std::vector<ACO> sims;
         bool running = false;
-        TrackedVariables trackedVars;
+        TrackedVariables* trackedVars;
+        Entity* antBase; //temporary
 
     public:
     private:
@@ -54,7 +55,8 @@ class World
 
 
         void testClick() { std::cout << "Clicked in the world!" << std::endl;}
-        void spawn(std::string name, int count) { std::cout << "Spawning: " << count << " " << name << "'s. " << " with " << trackedVars.getNumAnts()  << std::endl;}
+        void spawn(std::string name, int count) { std::cout << "Spawning: " << count << " " << name << "'s. " << " with " << trackedVars->getNumAnts()  << std::endl;}
+        TrackedVariables* getWorldStats() { return trackedVars; }
     
 };
 

@@ -7,6 +7,7 @@ World::World(int w, int h, sf::RenderWindow& window)
     width = w;
     height = h;
     view = window.getDefaultView();
+    trackedVars = new TrackedVariables();
     WorldGeneration gen(0,w,h,cellSize);
     grid = gen.getResult();    
     createACO();
@@ -36,7 +37,27 @@ void World::update()
         a.update();
         numAnts += a.getNumberAnts();
     }
-    trackedVars.setNumAnts(numAnts);
+    trackedVars->setNumAnts(numAnts);
+    //this sucks only update when the world has changed
+    /*
+    std::vector<Cell*> rawPointers;
+    rawPointers.reserve(grid.size());
+    for (const auto& cellPtr : grid) {
+        rawPointers.push_back(cellPtr.get());
+        for(const auto& e : cellPtr.get()->data.entities)
+        {
+            if(e.get()->getName() == "Base")
+            {
+                antBase = {cellPtr.get()->x, cellPtr.get()->y};
+            }
+        }
+    }
+    trackedVars.setWorld(rawPointers);
+    */
+    
+    
+
+
 
 }
 
@@ -129,7 +150,12 @@ void World::createACO()
             if(eg->getName() == "location")
             {
                 raw_goals.push_back(g.get());
-            }            
+            }           
+            if(eg->getName() == "Base") //this only works for one base
+            {
+                antBase = eg.get();
+                trackedVars->setBase(antBase);
+            } 
         }
     }
 

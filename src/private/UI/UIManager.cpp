@@ -5,7 +5,7 @@ UIManager::UIManager(World* world)
 
     
     UIElement* fpsc = new FPSCounter(world, 12, sf::Color::Red, sf::Vector2f{conf::window_size.x - (conf::window_size.x * 0.1), (conf::window_size.y * 0.02)});
-    UIElement* stats = new WorldUIElement(world, 0,0,4,5,200,300, "testClick", "Stats");
+    UIElement* stats = new WorldUIElement(world, 0,0,4,5,200,300, "updateWorldStats", "Stats:");
 
     FunctionArgs args;
     args.element = stats;

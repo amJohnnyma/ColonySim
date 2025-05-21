@@ -7,16 +7,20 @@
 class TrackedVariables
 {
     private:
-        std::pair<int, int> base; //grid coordinates of base
-        std::vector<Cell*> world; //The entire world -> might be useful later
+        Entity* base; //grid coordinates of base
+        const std::vector<Cell*>* world = nullptr; //The entire world -> might be useful later
         int numAnts;
     public:
         TrackedVariables() {};
         ~TrackedVariables() {};
-        void setBase(std::pair<int, int> loc) {base = loc;}
-        void setWorld(std::vector<Cell*> w) {world = w;}
+        void setBase(Entity* loc) {base = loc;}
+        void setWorld(const std::vector<Cell*>& w) {world = &w;}
         void setNumAnts(int na) {numAnts = na;}
         int getNumAnts() {return numAnts;}
+        int getBaseFood() {
+    return base->getResource();
+}
+
 };
 
 #endif

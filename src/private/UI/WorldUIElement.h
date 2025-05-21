@@ -12,7 +12,7 @@ class WorldUIElement : public UIElement
         Button* button;
         sf::Font font;
         sf::Text text;
-
+        std::function<void(World*, const FunctionArgs&)> updateFunc;
     public:
         WorldUIElement(World* world, int x, int y, int resolution, int radius, int width, int height, std::string function, std::string textArea);
         ~WorldUIElement() override;
