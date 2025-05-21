@@ -213,8 +213,10 @@ void WorldGeneration::generateLocations(int num)
     int created = 0;
     while (created < num)
     {
-        int x = xdist(gen);
-        int y = ydist(gen);
+       // int x = xdist(gen);
+      //  int y = ydist(gen);
+      int x = 5;
+      int y =5;
 
 
         // Avoid duplicates
