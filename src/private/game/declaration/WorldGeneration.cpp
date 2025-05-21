@@ -66,8 +66,8 @@ std::unique_ptr<Cell> WorldGeneration::createCell(int x, int y, float cellSize)
 
     CellData cd;
     cd.type = "(" + std::to_string(x) + ", " + std::to_string(y) + ")";
-    //cd.difficulty = generateDifficulty();
-    cd.difficulty = 1;
+    cd.difficulty = generateDifficulty();
+   // cd.difficulty = 1;
 
     auto pheromones = createPheromones(x, y);
     cd.p[0] = pheromones[0];
@@ -213,10 +213,9 @@ void WorldGeneration::generateLocations(int num)
     int created = 0;
     while (created < num)
     {
-    //    int x = xdist(gen);
-     //   int y = ydist(gen);
-     int x = 5;
-     int y = 5;
+        int x = xdist(gen);
+        int y = ydist(gen);
+
 
         // Avoid duplicates
         if (visited.count({x, y}) == 0)
