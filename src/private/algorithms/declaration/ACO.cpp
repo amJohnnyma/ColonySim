@@ -257,7 +257,7 @@ void ACO::findFood(Cell *cell, Ant *e)
     if (adjCells.size() == 0)
     {
         //     std::cout << "No adj cells" << std::endl;
-        e->getPath().clear();
+     //   e->getPath().clear();
         return; // very temporary
     }
     // compare all adjacent squares
@@ -325,7 +325,7 @@ void ACO::returnHome(Cell *cell, Ant *e)
     if (adjCells.size() == 0)
     {
         //     std::cout << "No adj cells" << std::endl;
-        e->getPath().clear();
+     //   e->getPath().clear();
         return; // very temporary
     }
     // compare all adjacent squares
