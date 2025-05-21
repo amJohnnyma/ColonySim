@@ -372,6 +372,20 @@ void ACO::getAdjCells(int x, int y, Entity *e)
         {
             int index = ny * worldWidth + nx;
             bool inPath = false;
+            bool hasAnt = false;
+            Cell* tmp = world[index];
+            for(auto &ae:tmp->data.entities)
+            {
+                if(ae.get()->getName() == "ant" && e != ae.get())
+                {
+                    hasAnt = true;
+                    break;
+                }
+            }
+            if(hasAnt)
+            {
+                continue;
+            }
             for (auto &p : e->getPath())
             {
                 if (p->x == nx && p->y == ny)
@@ -380,12 +394,13 @@ void ACO::getAdjCells(int x, int y, Entity *e)
                     break;
                 }
             }
-            if (!inPath)
+             if (!inPath)
             {
-                adjCells.push_back(world[index]);
+                adjCells.push_back(tmp);
             }
         }
     }
+
 }
 
 /*
