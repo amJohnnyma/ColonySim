@@ -21,9 +21,8 @@ class Game
     public:
         Game(int windowWidth, int windowHeight, int worldWidth, int worldHeight);
         ~Game();
+        void fixedrun();
         void run();
-        
-
 };
 
 #endif
