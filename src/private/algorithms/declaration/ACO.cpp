@@ -127,6 +127,33 @@ void ACO::getNewTarget(Ant *ant)
 
 void ACO::update()
 {
+    /////////////////testing
+    /*
+    int baseAnts = 0;
+    int foodAnts = 0;
+    for (auto &cell : world)
+    {
+        for (auto &e : cell->data.entities)
+        {
+            if (e)
+            {
+                if (Ant *ant = dynamic_cast<Ant *>(e.get()))
+                {
+                    if(ant->getTarget()->getName() == "Base")
+                    {
+                        baseAnts++;
+                    }
+                    else{
+                        foodAnts++;
+                    }
+                }
+            }
+        }
+    }
+    std::cout << "Base: " << std::to_string(baseAnts) << "\t Food: " << std::to_string(foodAnts) << std::endl;
+    */
+/////////////////////
+
     //  std::cout << base->getResource() << std::endl;
     bool noBetterF = true;
     double runBest = 0;
@@ -335,7 +362,7 @@ void ACO::returnHome(Cell *cell, Ant *e)
                     if(hasFound)
                     {
                     transferResource(e,ent.get(),e->getResource());
-                    std::cout << ent->getName() << " -> " << ent->getResource() << std::endl;
+                   // std::cout << ent->getName() << " -> " << ent->getResource() << std::endl;
                     }
 
                     return hasFound;
