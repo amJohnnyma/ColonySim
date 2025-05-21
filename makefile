@@ -36,3 +36,5 @@ clean:
 
 run: $(TARGET)
 	./$(TARGET)
+
+#valgrind --leak-check=full --track-origins=yes 

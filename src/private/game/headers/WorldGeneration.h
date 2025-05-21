@@ -13,6 +13,7 @@
 #include "../../entities/Ant.h"
 #include "../../entities/Location.h"
 #include "../../entities/FoodLocation.h"
+#include <array>
 
 
 class WorldGeneration
@@ -25,9 +26,18 @@ class WorldGeneration
         WorldGeneration(unsigned int seed, int xWidth, int yWidth, int cellSize);
         ~WorldGeneration();
         std::vector<std::unique_ptr<Cell>> getResult();
+
     private:
+        std::array<pheromone, 2> createPheromones(int x, int y);
+        double generateDifficulty();
+        std::unique_ptr<Circle> createCellShape(int x, int y, float size, double difficulty);
+        std::unique_ptr<Cell> createCell(int x, int y, float cellSize);
         void generateTerrain();
-        void generateEntities(int num,int col);
+        std::unique_ptr<sf::RectangleShape> createShape(sf::Color fillColor, int x, int y, float cellSize);
+        std::unique_ptr<Ant> createAnt(int x, int y);
+        std::unique_ptr<Location> createBase(int x, int y);
+        void logAllEntities();
+        void generateEntities(int num, int col);
         void assignTextures();
         void generateLocations(int num);
 

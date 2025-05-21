@@ -46,6 +46,7 @@ struct Cell
     {
         this->cellShape->setFillColor(col);
     }
+    ~Cell() {}
 };
 
 

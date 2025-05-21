@@ -2,4 +2,5 @@
 
 UIElement::~UIElement()
 {
+    args.element = nullptr;
 }

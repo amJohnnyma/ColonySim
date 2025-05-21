@@ -51,8 +51,14 @@ WorldUIElement::WorldUIElement(World* world, int x, int y, int resolution, int r
 
 WorldUIElement::~WorldUIElement()
 {
-    delete shape;
-    delete button;
+   // std::cout << "Destructing worldUI" << std::endl;
+    this->updateFunc = nullptr;
+    this->args.element = nullptr;
+    if(shape)
+        delete shape;
+    if(button)
+        delete button;
+
 }
 
 void WorldUIElement::draw(sf::RenderWindow& window)
@@ -77,8 +83,9 @@ void WorldUIElement::update(sf::RenderWindow& window)
             onClick();
         }
     }
-    if(updateFunc)
+    if(updateFunc && this->args.element)
     {
+     //   std::cout << "updatefunc" << std::endl;
         updateFunc(this->world, this->args);
     }
 }
@@ -100,11 +107,11 @@ const std::unordered_map<std::string, std::function<void(World*, const FunctionA
         }},
         {"toggleSimState", [](World* w, const FunctionArgs& args){
             w->toggleSimState();
-            std::cout << "Calling setColor on UIElement at " << *args.element << std::endl;
+          //  std::cout << "Calling setColor on UIElement at " << *args.element << std::endl;
             bool running = w->isRunning();            
-            if (args.element) {
+            if (args.element && *args.element) {
                 UIElement* elem = *args.element;
-                std::cout << "Lambda called with element pointer: " << elem << std::endl;
+             //   std::cout << "Lambda called with element pointer: " << elem << std::endl;
                 if (elem) {
                     std::string text = elem->getText();
                     elem->setColor(running ? sf::Color::Green : sf::Color::Red);
@@ -117,18 +124,18 @@ const std::unordered_map<std::string, std::function<void(World*, const FunctionA
             }
         }},
         {"updateWorldStats", [](World* w, const FunctionArgs& args){
-         //   std::cout << "Getting tracked vars.." << std::endl;
-            TrackedVariables* tv = w->getWorldStats();
+          //  std::cout << "Getting tracked vars.." << std::endl;
+            TrackedVariables tv = *w->getWorldStats();
           //  std::cout << "Checking element validitry" <<std::endl;
             if (args.element) {
                 UIElement* elem = *args.element;
-               // std::cout << "Making magic" << std::endl;
+            //    std::cout << "Making magic" << std::endl;
                 if (elem) {
-                //    std::cout << "Magic trying" << std::endl;
-                    elem->setText("Stats:\nBase: " + std::to_string(tv->getBaseFood()));
-                  //  std::cout << "Made magic" << std::endl;
+              //      std::cout << "Magic trying" << std::endl;
+                    elem->setText("Stats:\nBase: " + std::to_string(tv.getBaseFood()));
+              //      std::cout << "Made magic" << std::endl;
                 } else {
-                  //  std::cout << "No magic today" << std::endl;
+                    std::cout << "No magic today" << std::endl;
                   elem->setText("Stats:\nBase: 0");
                 }
             } else {

@@ -21,6 +21,7 @@ public:
     // Constructor
     Entity(int x, int y, std::string name, double maxResource);
     Entity(int x, int y, std::string name, double maxResource, std::unique_ptr<sf::RectangleShape> hitbox, Cell* currentCell);
+    virtual ~Entity() {}
 
     // Getter and setter for position
     void setPos(int x, int y);
