@@ -34,7 +34,15 @@ clean:
 
 
 
+runv: $(TARGET)
+	valgrind \
+	--leak-check=full \
+	--show-leak-kinds=reachable \
+	--track-origins=yes \
+	--log-file=valgrind.log \
+   ./$(TARGET)
+
 run: $(TARGET)
-	valgrind --leak-check=full --track-origins=yes --tool=memcheck --show-leak-kinds=all ./$(TARGET)
+	./$(TARGET)
 
 #valgrind --leak-check=full --track-origins=yes 
