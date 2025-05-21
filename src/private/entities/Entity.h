@@ -13,8 +13,8 @@ class Entity
 protected:
     int x, y;
     std::string name;
-    double resource;
-    double maxResource;
+    double resource = 0;
+    double maxResource =0;
     std::unique_ptr<sf::RectangleShape> hitbox;
 
 public:

@@ -1,5 +1,6 @@
 #include "../headers/WorldGeneration.h"
 #include "WorldGeneration.h"
+#include <unordered_set>
 
 WorldGeneration::WorldGeneration(unsigned int seed, int xWidth, int yWidth, int cellSize)
 {
@@ -174,46 +175,66 @@ void WorldGeneration::assignTextures()
     }
 }
 
+// Helper to create a random engine once
+std::mt19937& getRandomEngine() {
+    static std::random_device rd;
+    static std::mt19937 gen(rd());
+    return gen;
+}
+
+// Hash function for pairs so we can use unordered_set
+struct pair_hash {
+    template <class T1, class T2>
+    std::size_t operator() (const std::pair<T1,T2>& p) const {
+        return std::hash<T1>()(p.first) ^ (std::hash<T2>()(p.second) << 1);
+    }
+};
+
+// Create rectangle shape for a location
+std::unique_ptr<sf::RectangleShape> WorldGeneration::createLocationShape(int x, int y, float cellSize, double difficulty)
+{
+    auto rs = std::make_unique<sf::RectangleShape>(sf::Vector2f(cellSize, cellSize));
+    rs->setPosition(x * cellSize, y * cellSize);
+    rs->setOutlineThickness(1.f);
+    rs->setOutlineColor(sf::Color::White);
+    rs->setFillColor(sf::Color(255, 255, 255, static_cast<sf::Uint8>(difficulty * 100)));
+    return rs;
+}
+
 void WorldGeneration::generateLocations(int num)
 {
-    std::vector<std::pair<int,int>> vis;
-    for(int k = 0; k < num; k ++)
+    std::unordered_set<std::pair<int,int>, pair_hash> visited;
+
+    auto& gen = getRandomEngine();
+    std::uniform_int_distribution<> xdist(0, width - 1);
+    std::uniform_int_distribution<> ydist(0, height - 1);
+
+    int created = 0;
+    while (created < num)
     {
-        sf::RectangleShape* rs = new sf::RectangleShape();
+        int x = xdist(gen);
+        int y = ydist(gen);
 
-        std::random_device rd;
-        std::mt19937 gen(rd());
-        std::uniform_int_distribution<> xdis(0.0,width-1);
-        std::uniform_int_distribution<> ydis(0.0, height-1);
+        // Avoid duplicates
+        if (visited.count({x, y}) == 0)
+        {
+            visited.insert({x, y});
 
-        std::pair<int, int> point = {xdis(gen)/4, ydis(gen)/4};
+            double difficulty = grid[y * width + x]->data.difficulty;  // consistent indexing: row major
 
-        if (std::find(vis.begin(), vis.end(), point) == vis.end()) {
-    
-            vis.push_back({point.first, point.second});
+            auto rs = createLocationShape(x, y, cellSize, difficulty);
 
+            Cell* cell = grid[y * width + x].get();
 
-            double dif = grid[point.second*width+point.first].get()->data.difficulty;
+            std::string name = "location" + std::to_string(created);
 
-            rs->setSize(sf::Vector2f(cellSize,cellSize));
-            rs->setPosition(point.first * cellSize, point.second * cellSize);  
-            rs->setOutlineThickness(1.f); 
-            rs->setOutlineColor(sf::Color::White);
-            rs->setFillColor(sf::Color(255,255,255,dif*100));   
+            auto locationEntity = std::make_unique<FoodLocation>(x, y, name, 100, std::move(rs), cell);
+            locationEntity->giveResource(100.0);
 
+            cell->data.entities.push_back(std::move(locationEntity));
 
-            Cell* cell = grid[point.first*width+point.second].get();
-
-            std::string name = "location" + std::to_string(k);
-            auto et = std::make_unique<FoodLocation>(point.first, point.second, name, 100, std::make_unique<sf::RectangleShape>(*rs),cell);
-            et.get()->giveResource(100.0);
-
-            grid[point.first*width+point.second].get()->data.entities.push_back(std::move(et));
-            
+            created++;
         }
-        else{
-            k --; //retry this step
-        }       
-
-    }  
+        // else retry without incrementing created
+    }
 }

@@ -39,8 +39,8 @@ class WorldGeneration
         void logAllEntities();
         void generateEntities(int num, int col);
         void assignTextures();
+        std::unique_ptr<sf::RectangleShape> createLocationShape(int x, int y, float cellSize, double difficulty);
         void generateLocations(int num);
-
 };
 
 #endif

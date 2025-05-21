@@ -406,6 +406,7 @@ void World::toggleSimState()
 
 World::~World()
 {
+    delete trackedVars;
 }
 
 int World::getWidth()

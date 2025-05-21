@@ -1,12 +1,15 @@
 #include "WorldUIElement.h"
 
-WorldUIElement::WorldUIElement(World* world, int x, int y, int resolution, int radius, int width, int height, std::string function, std::string textArea) : UIElement(world)
+WorldUIElement::WorldUIElement(World* world, int x, int y, int resolution, int radius, int width, int height, std::string function, std::string textArea)
+ : UIElement(world), shape(nullptr), button(nullptr), updateFunc(nullptr)
 {
 
    // std::cout << "rect" << std::endl;
     shape = new RoundedRectangle(x,y,radius,resolution,width, height);
     shape->setFillColor(sf::Color::White);
     this->function = function;
+    this->args = FunctionArgs{};
+
     if (function != "null")
     {
 
@@ -51,13 +54,16 @@ WorldUIElement::WorldUIElement(World* world, int x, int y, int resolution, int r
 
 WorldUIElement::~WorldUIElement()
 {
-   // std::cout << "Destructing worldUI" << std::endl;
-    this->updateFunc = nullptr;
-    this->args.element = nullptr;
-    if(shape)
+    updateFunc = nullptr;
+    args.element = std::nullopt; // reset optional safely
+    if (shape) {
         delete shape;
-    if(button)
+        shape = nullptr;
+    }
+    if (button) {
         delete button;
+        button = nullptr;
+    }
 
 }
 
@@ -109,8 +115,8 @@ const std::unordered_map<std::string, std::function<void(World*, const FunctionA
             w->toggleSimState();
           //  std::cout << "Calling setColor on UIElement at " << *args.element << std::endl;
             bool running = w->isRunning();            
-            if (args.element && *args.element) {
-                UIElement* elem = *args.element;
+            if (args.element.has_value() && args.element.value() != nullptr) {
+                UIElement* elem = args.element.value();
              //   std::cout << "Lambda called with element pointer: " << elem << std::endl;
                 if (elem) {
                     std::string text = elem->getText();
@@ -127,8 +133,8 @@ const std::unordered_map<std::string, std::function<void(World*, const FunctionA
           //  std::cout << "Getting tracked vars.." << std::endl;
             TrackedVariables tv = *w->getWorldStats();
           //  std::cout << "Checking element validitry" <<std::endl;
-            if (args.element) {
-                UIElement* elem = *args.element;
+            if (args.element.has_value() && args.element.value() != nullptr) {
+                UIElement* elem = args.element.value();
             //    std::cout << "Making magic" << std::endl;
                 if (elem) {
               //      std::cout << "Magic trying" << std::endl;

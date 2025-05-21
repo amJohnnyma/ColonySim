@@ -35,6 +35,6 @@ clean:
 
 
 run: $(TARGET)
-	valgrind --leak-check=full --track-origins=yes ./$(TARGET)
+	valgrind --leak-check=full --track-origins=yes --tool=memcheck --show-leak-kinds=all ./$(TARGET)
 
 #valgrind --leak-check=full --track-origins=yes 
