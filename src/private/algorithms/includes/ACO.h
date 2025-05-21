@@ -29,7 +29,6 @@ class ACO
         std::unordered_set<Cell*> visited;
         int numberAnts = 0;
         Entity* base;
-        Entity* target;
         std::vector<Entity*> tl; // goals
         bool possibleLocations = true;
 
