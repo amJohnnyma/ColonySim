@@ -128,7 +128,7 @@ void ACO::getNewTarget(Ant *ant)
 void ACO::update()
 {
     /////////////////testing
-    
+    /*
     int baseAnts = 0;
     int foodAnts = 0;
     for (auto &cell : world)
@@ -151,7 +151,7 @@ void ACO::update()
         }
     }
     std::cout << "Base: " << std::to_string(baseAnts) << "\t Food: " << std::to_string(foodAnts) << std::endl;
-    
+    */
 /////////////////////
 
     //  std::cout << base->getResource() << std::endl;
@@ -362,7 +362,7 @@ void ACO::returnHome(Cell *cell, Ant *e)
                     if(hasFound)
                     {
                     transferResource(e,ent.get(),e->getResource());
-                   // std::cout << ent->getName() << " -> " << ent->getResource() << std::endl;
+                    std::cout << ent->getName() << " -> " << ent->getResource() << std::endl;
                     }
 
                     return hasFound;
