@@ -25,6 +25,7 @@ class WorldUIElement : public UIElement
         void setColor(sf::Color col);
         void setText(std::string text);
         std::string getText();
+        void setFontSize(int size) override;
 
 
 

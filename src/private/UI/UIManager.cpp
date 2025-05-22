@@ -5,23 +5,41 @@ UIManager::UIManager(World* world)
 
     
     UIElement* fpsc = new FPSCounter(world, 12, sf::Color::Red, sf::Vector2f{conf::window_size.x - (conf::window_size.x * 0.1), (conf::window_size.y * 0.02)});
-    UIElement* stats = new WorldUIElement(world, 0,0,4,5,200,300, "updateWorldStats", "Stats:");
+    UIElement* stats = new WorldUIElement(world, 0,0,4,5,conf::cellSize*4,conf::cellSize*6, "updateWorldStats", "Stats:");
+    UIElement* simControl = new WorldUIElement(world, 0,6,4,5,conf::cellSize,conf::cellSize, "toggleSimState", "S");
+    UIElement* incPher = new WorldUIElement(world, 1,7,4,5,conf::cellSize,conf::cellSize, "incrementPheremone", "+p");
+    UIElement* decPher = new WorldUIElement(world, 0,7,4,5,conf::cellSize,conf::cellSize, "decrementPheremone", "-p");
+    UIElement* incHeur = new WorldUIElement(world, 1,8,4,5,conf::cellSize,conf::cellSize, "incrementHeuristic", "+h");
+    UIElement* decHeur = new WorldUIElement(world, 0,8,4,5,conf::cellSize,conf::cellSize, "decrementHeuristic", "-h");
 
     FunctionArgs args;
     args.element = stats;
     stats->setArgs(args);
 
-    UIElement* simControl = new WorldUIElement(world, 0,6,4,5,70,70, "toggleSimState", "Start");
     simControl->setColor(sf::Color::Red);
     FunctionArgs sArgs;
-  //  std::cout << "simControl pointer: " << simControl << std::endl;
     sArgs.element = simControl;   
     simControl->setArgs(sArgs);
+    simControl->setFontSize(40);
+
+    incPher->setColor(sf::Color::Green);
+    decPher->setColor(sf::Color::Red);
+    incHeur->setColor(sf::Color::Green);
+    decHeur->setColor(sf::Color::Red);
+    incPher->setFontSize(40);
+    decPher->setFontSize(40);
+    incHeur->setFontSize(40);
+    decHeur->setFontSize(40);
+
   
     
     addElement(fpsc);
     addElement(stats);   
     addElement(simControl);
+    addElement(incPher);
+    addElement(decPher);
+    addElement(incHeur);
+    addElement(decHeur);
 
 
 }

@@ -45,3 +45,8 @@
     {
         return fpsText.getString();
     }
+
+    void FPSCounter::setFontSize(int size)
+    {
+        this->fpsText.setCharacterSize(size);
+    }

@@ -39,4 +39,7 @@ public:
 
     std::string getText();
 
+    void setFontSize(int size) override;
+
 };
+

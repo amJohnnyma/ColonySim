@@ -20,6 +20,8 @@ class TrackedVariables
         int getBaseFood() {
     return base->getResource();
 }
+    double getPF() {return conf::pF;}
+    double getHF() { return conf::hF;}
 
 };
 

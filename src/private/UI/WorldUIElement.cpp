@@ -121,7 +121,7 @@ const std::unordered_map<std::string, std::function<void(World*, const FunctionA
                 if (elem) {
                     std::string text = elem->getText();
                     elem->setColor(running ? sf::Color::Green : sf::Color::Red);
-                    elem->setText(text == "Start" ? "Pause" : "Start");
+                    elem->setText(text == "S" ? "P" : "S");
                 } else {
                     std::cout << "element pointer is null\n";
                 }
@@ -138,16 +138,33 @@ const std::unordered_map<std::string, std::function<void(World*, const FunctionA
             //    std::cout << "Making magic" << std::endl;
                 if (elem) {
               //      std::cout << "Magic trying" << std::endl;
-                    elem->setText("Stats:\nBase: " + std::to_string(tv.getBaseFood()));
+                    elem->setText("Stats:\nBase: "
+                         + std::to_string(tv.getBaseFood())
+                         +"\nPF: " + std::to_string(tv.getPF())
+                         +"\nHF: " + std::to_string(tv.getHF())
+                        );
               //      std::cout << "Made magic" << std::endl;
                 } else {
                     std::cout << "No magic today" << std::endl;
-                  elem->setText("Stats:\nBase: 0");
+                  elem->setText("Stats:\nerror");
                 }
             } else {
                 std::cout << "args.element not set\n";
             }
         }},
+        {"incrementPheremone", [](World* w, const FunctionArgs& args){
+            w->changePF(0.1);
+        }},
+        {"decrementPheremone", [](World* w, const FunctionArgs& args){
+            w->changePF(-0.1);
+        }},
+        {"incrementHeuristic", [](World* w, const FunctionArgs& args){
+            w->changeHF(0.1);
+        }},
+        {"decrementHeuristic", [](World* w, const FunctionArgs& args){
+            w->changeHF(-0.1);
+        }},
+
     };
     return functionMap;
 }
@@ -165,4 +182,9 @@ void WorldUIElement::setText(std::string text)
 std::string WorldUIElement::getText()
 {
     return this->text.getString();
+}
+
+void WorldUIElement::setFontSize(int size)
+{
+    this->text.setCharacterSize(size);
 }

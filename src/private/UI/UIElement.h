@@ -37,6 +37,7 @@ class UIElement
         virtual void setColor(sf::Color col) = 0;
         virtual void setText(std::string text) = 0;
         virtual std::string getText() = 0;
+        virtual void setFontSize(int size) = 0;
 };
 
 #endif
