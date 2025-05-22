@@ -46,6 +46,7 @@ UIManager::UIManager(World* world)
 
 UIManager::~UIManager()
 {
+    //IF THIS IS HERE YOU DIDNT RUN VALGRIND TO ENSURE NO LEAKS
     for (auto& elem : elements)
         delete elem;
 }
