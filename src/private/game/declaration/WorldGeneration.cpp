@@ -213,10 +213,10 @@ void WorldGeneration::generateLocations(int num)
     int created = 0;
     while (created < num)
     {
-     //   int x = xdist(gen);
-    //    int y = ydist(gen);
-      int x = 5;
-      int y =5;
+       int x = xdist(gen);
+        int y = ydist(gen);
+     // int x = 5;
+     // int y =5;
 
 
         // Avoid duplicates
@@ -224,11 +224,11 @@ void WorldGeneration::generateLocations(int num)
         {
             visited.insert({x, y});
 
-            double difficulty = grid[y * width + x]->data.difficulty;  // consistent indexing: row major
+            double difficulty = grid[x * width + y]->data.difficulty;  // consistent indexing: row major
 
             auto rs = createLocationShape(x, y, cellSize, difficulty);
 
-            Cell* cell = grid[y * width + x].get();
+            Cell* cell = grid[x * width + y].get();
 
             std::string name = "location" + std::to_string(created);
 
