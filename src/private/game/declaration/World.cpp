@@ -173,7 +173,7 @@ void World::drawTerrain(sf::RenderWindow & window)
 {
     int drawCount = 0;
 
-    std::vector<sf::VertexArray> allCircles;    
+    std::vector<sf::VertexArray> allgridshapes;    
     std::vector<sf::Text> allTexts;
 
     sf::Font font;
@@ -194,16 +194,16 @@ void World::drawTerrain(sf::RenderWindow & window)
             Cell* dc = this->at(x,y).get();
             if(dc->cellShape)
             {
-                Circle* circleShape = dynamic_cast<Circle*>(dc->cellShape.get());
-                if(circleShape)
+                Rectangle* shape = dynamic_cast<Rectangle*>(dc->cellShape.get());
+                if(shape)
                 {          
                     float normalized = dc->data.p[0].strength; //find food pheromone for now
 
                     sf::Uint8 redIntensity = static_cast<sf::Uint8>(normalized * 255);
 
-                    circleShape->setFillColor(sf::Color(redIntensity, 255,0,255*dc->data.difficulty));
+                    shape->setFillColor(sf::Color(redIntensity, 255,0,255*dc->data.difficulty));
 
-                    allCircles.push_back(circleShape->getVA());
+                    allgridshapes.push_back(shape->getVA());
 
                     /*
                     
@@ -231,9 +231,9 @@ void World::drawTerrain(sf::RenderWindow & window)
         }
     }
 
-    for (auto& circle : allCircles) 
+    for (auto& shape : allgridshapes) 
     {
-        window.draw(circle);
+        window.draw(shape);
     }
 
         for (auto& text : allTexts) {
@@ -311,7 +311,7 @@ void World::drawGrid(sf::RenderWindow & window)
 void World::render(sf::RenderWindow &window)
 {
     window.clear();
-    drawGrid(window);
+ //   drawGrid(window);
     drawTerrain(window);
     drawEntities(window);
 
