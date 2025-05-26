@@ -24,6 +24,7 @@ namespace conf
     extern unsigned int timestep;
     extern double locationFoodRegenerationRate;
     extern float antSpeed;
+    extern float terrainDifficultyScale;
 }
 
 

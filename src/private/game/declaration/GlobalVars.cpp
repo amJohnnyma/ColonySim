@@ -21,4 +21,5 @@ namespace conf
     unsigned int timestep = 500;
     double locationFoodRegenerationRate = 0.01;
     float antSpeed = 500.0f;
+    float terrainDifficultyScale = 0.05f;
 }
