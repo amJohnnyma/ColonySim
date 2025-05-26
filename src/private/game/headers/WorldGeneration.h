@@ -31,7 +31,7 @@ class WorldGeneration
     private:
         std::array<pheromone, 2> createPheromones(int x, int y);
         double generateDifficulty();
-        std::unique_ptr<Rectangle> createCellShape(int x, int y, float size, double difficulty);
+        std::unique_ptr<Rectangle> createCellShape(int x, int y, float size);
         std::unique_ptr<Cell> createCell(int x, int y, float cellSize);
         void generateTerrain();
         std::unique_ptr<sf::RectangleShape> createShape(sf::Color fillColor, int x, int y, float cellSize);

@@ -12,6 +12,7 @@ class Controller
         World* world;         
         std::vector<Cell*> selectedCells;
         std::vector<std::string> selectFilter = {"Null"};
+        sf::Color selectOverlay = sf::Color(100,100,100,100);
     public:
         Controller(World* world);
         virtual void update() = 0; //Whatever a controller needs to update
@@ -19,6 +20,7 @@ class Controller
         //select cells from to
         void selectCells(sf::Vector2i from, sf::Vector2i to,std::vector<std::string> filter);
     private: //helper functions    
+        void clearSelectedCells();
 };
 
 #endif

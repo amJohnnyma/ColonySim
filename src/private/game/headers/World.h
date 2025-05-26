@@ -59,7 +59,7 @@ class World
         void spawn(std::string name, int count) { std::cout << "Spawning: " << count << " " << name << "'s. " << " with " << trackedVars->getNumAnts()  << std::endl;}
         TrackedVariables* getWorldStats() { return trackedVars; }
         void changePF(double amnt) {conf::pF += amnt;}
-        void changeHF(double amnt) {conf::hF += amnt;}
+        void changeHF(double amnt) {conf::hF += amnt;}        
     
 };
 

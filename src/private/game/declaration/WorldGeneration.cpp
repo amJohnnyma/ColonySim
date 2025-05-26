@@ -52,11 +52,10 @@ double WorldGeneration::generateDifficulty()
     return dis(gen);
 }
 
-std::unique_ptr<Rectangle> WorldGeneration::createCellShape(int x, int y, float size, double difficulty)
+std::unique_ptr<Rectangle> WorldGeneration::createCellShape(int x, int y, float size)
 {
     auto shape = std::make_unique<Rectangle>(x, y, size, size);
     // Set the fill color with difficulty affecting alpha channel
-    shape->setFillColor(sf::Color(0, 255, 0, static_cast<sf::Uint8>(difficulty * 255)));
     return shape;
 }
 
@@ -73,7 +72,8 @@ std::unique_ptr<Cell> WorldGeneration::createCell(int x, int y, float cellSize)
     cd.p[0] = pheromones[0];
     cd.p[1] = pheromones[1];
 
-    cell->cellShape = createCellShape(x, y, cellSize, cd.difficulty);
+    cell->cellShape = createCellShape(x, y, cellSize);
+    cell->setColor(sf::Color(0, 255, 0, static_cast<sf::Uint8>(cd.difficulty * 255)));
     cell->x = x;
     cell->y = y;
     cell->data = std::move(cd);

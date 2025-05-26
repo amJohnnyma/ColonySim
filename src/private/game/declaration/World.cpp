@@ -199,16 +199,13 @@ void World::drawTerrain(sf::RenderWindow & window)
             drawCount++;       
 
             Cell* dc = this->at(x,y).get();
+            //draw pheromone on dc at some point
             if(dc->cellShape)
             {
                 Rectangle* shape = dynamic_cast<Rectangle*>(dc->cellShape.get());
                 if(shape)
                 {          
-                    float normalized = dc->data.p[0].strength; //find food pheromone for now
-
-                    sf::Uint8 redIntensity = static_cast<sf::Uint8>(normalized * 255);
-
-                    shape->setFillColor(sf::Color(redIntensity, 255,0,255*dc->data.difficulty));
+                 //   float normalized = dc->data.p[0].strength; //find food pheromone for now          
 
                     allgridshapes.push_back(shape->getVA());
 
