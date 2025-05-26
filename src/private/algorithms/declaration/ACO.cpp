@@ -86,7 +86,8 @@ void ACO::assignRandomTarget(std::vector<Cell *> &raw_goals)
 void ACO::getNewTarget(Ant *ant)
 {
 
-        
+    //when assigning a target dont change it if not needed (still has food)
+
     std::random_device rd;
     std::mt19937 gen(rd());
     
@@ -110,7 +111,7 @@ void ACO::getNewTarget(Ant *ant)
 
     }
    //    std::cout << "Assigned index: " << randomIndex << std::endl;
-
+    
     if(counter < tl.size())
     {
         ant->setTarget(tl[randomIndex]);
@@ -168,6 +169,10 @@ void ACO::update()
             {
                 if (Ant* ant = dynamic_cast<Ant*>(e.get()))
                 {
+                    if(ant->stillAnimating())
+                    {
+                        break;
+                    }
                     //   std::cout << "found ant" << std::endl;
                     //   std::cout << "Target: " << e.get()->getTarget()->getName() << std::endl;
                     if(ant->getTarget()->getResource() <= 0 && ant->getTarget() != base)
@@ -216,29 +221,26 @@ void ACO::update()
 
 void ACO::moveToCell(Cell *from, Cell *to, Entity *e)
 {
-    //  std::cout << "Moving from: (" << from->x << ", " << from->y << ") to: (" << to->x << ", " << to->y << ")" << std::endl;
-
-    // Loop through the entities in the "from" cell
     for (auto it = from->data.entities.begin(); it != from->data.entities.end(); ++it)
     {
-        if (it->get() == e) // Compare raw pointer inside unique_ptr
+        if (it->get() == e)
         {
-            // Move ownership of the entity to the "to" cell
+            // Move ownership of entity to 'to' cell
             to->data.entities.push_back(std::move(*it));
-
-            // Adjust entity position to match the "to" cell
-            // Assuming you're using grid positions for x, y (change logic if needed)
-            e->setPos(to->x, to->y);
-
-            // Optionally, erase the entity from the "from" cell after moving
             from->data.entities.erase(it);
 
-            //  e->getPath().push_back(to);
+            if (Ant* ant = dynamic_cast<Ant*>(e)) {
+                float toX = to->x * conf::cellSize;  // center of the cell
+                float toY = to->y * conf::cellSize;
 
-            //  curCell = to;
+                ant->startMovingTo(toX, toY);
 
-            // curCell = to;
-            break; // Exit the loop after moving the entity
+             //   float fromX = ant->getHitbox()->getPosition().x;
+             //   float fromY = ant->getHitbox()->getPosition().y;
+            //    float angleDeg = std::atan2(toY - fromY, toX - fromX) * 180.f / M_PI;
+             //   ant->setRotation(angleDeg);
+            }
+            break;
         }
     }
 }
@@ -481,7 +483,7 @@ double ACO::calculateHeuristic(Cell *next, Entity *target)
     double difficulty = next->data.difficulty;                                                 // [0, 1], where 1 is most difficult
 
     // Heuristic: prioritize shorter distance, lightly penalize difficulty
-    double heuristic = 1.0 / (distance + 1.0) * (1.0 - 0.5 * difficulty);
+    double heuristic = 1.0 / (distance + 1.0 + conf::terrainDifficultyScale * difficulty);
 
     return heuristic;
 }

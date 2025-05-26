@@ -10,6 +10,7 @@
 #include "../../shapes/Triangle.h"
 #include "../../shapes/Circle.h"
 #include "../../shapes/RoundedRectangle.h"
+#include "../../shapes/Rectangle.h"
 #include "../../entities/Ant.h"
 #include "../../entities/Location.h"
 #include "../../entities/FoodLocation.h"
@@ -30,7 +31,7 @@ class WorldGeneration
     private:
         std::array<pheromone, 2> createPheromones(int x, int y);
         double generateDifficulty();
-        std::unique_ptr<Circle> createCellShape(int x, int y, float size, double difficulty);
+        std::unique_ptr<Rectangle> createCellShape(int x, int y, float size, double difficulty);
         std::unique_ptr<Cell> createCell(int x, int y, float cellSize);
         void generateTerrain();
         std::unique_ptr<sf::RectangleShape> createShape(sf::Color fillColor, int x, int y, float cellSize);
