@@ -324,87 +324,74 @@ void World::render(sf::RenderWindow &window)
   //  window.display();
 }
 
-void World::handleInput(sf::RenderWindow &window, sf::Event &event)
-{
+// Usage in World::handleInput
+void World::handleInput(InputManager& inputManager, sf::RenderWindow& window) {
     window.setView(view);
+    speed = baseSpeed * currentZoom;
 
-    speed = baseSpeed * currentZoom; // Scale speed based on zoom
+    if (inputManager.isKeyHeld(sf::Keyboard::W)) view.move(0, -speed);
+    if (inputManager.isKeyHeld(sf::Keyboard::S)) view.move(0, speed);
+    if (inputManager.isKeyHeld(sf::Keyboard::A)) view.move(-speed * 0.5f, 0);
+    if (inputManager.isKeyHeld(sf::Keyboard::D)) view.move(speed * 0.5f, 0);
 
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::W))
-        view.move(0, -speed);
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::S))
-        view.move(0, speed);
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::A))
-        view.move(-speed * 0.5f, 0);
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::D))
-        view.move(speed * 0.5f, 0);
-
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Q)) {
+    if (inputManager.isKeyHeld(sf::Keyboard::Q)) {
         view.zoom(1.001f);
         currentZoom *= 1.001f;
     }
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::E)) {
+    if (inputManager.isKeyHeld(sf::Keyboard::E)) {
         view.zoom(0.999f);
         currentZoom *= 0.999f;
     }
-    if(sf::Keyboard::isKeyPressed(sf::Keyboard::Num1))
-    {
-        running = true;
-    }
-    if(sf::Keyboard::isKeyPressed(sf::Keyboard::Num2))
-    {
-        running = false;
-    }
-    if(sf::Keyboard::isKeyPressed(sf::Keyboard::R))
-    {
+
+    if (inputManager.isKeyHeld(sf::Keyboard::Num1)) running = true;
+    if (inputManager.isKeyHeld(sf::Keyboard::Num2)) running = false;
+
+    if (inputManager.isKeyHeld(sf::Keyboard::R)) {
         sims.clear();
         grid.clear();
-        WorldGeneration gen(0,width,height,cellSize);
+        WorldGeneration gen(0, width, height, cellSize);
         grid = gen.getResult();
         createACO();
     }
-    if(sf::Keyboard::isKeyPressed(sf::Keyboard::Escape))
-    {
-        window.close();
-    }
-    if(event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::O)
-    {
+
+    if (inputManager.isKeyHeld(sf::Keyboard::Escape)) window.close();
+
+    if (inputManager.isKeyPressedOnce(sf::Keyboard::O)) {
         std::cout << "Old pf: " << conf::pF << std::endl;
         conf::pF += 0.1;
         std::cout << "New pf: " << conf::pF << std::endl;
     }
-        if(event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::P)
-    {
+
+    if (inputManager.isKeyPressedOnce(sf::Keyboard::P)) {
         std::cout << "Old pf: " << conf::pF << std::endl;
         conf::pF -= 0.1;
         std::cout << "New pf: " << conf::pF << std::endl;
     }
-        if(event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::K)
-    {
+
+    if (inputManager.isKeyPressedOnce(sf::Keyboard::K)) {
         std::cout << "Old hf: " << conf::hF << std::endl;
         conf::hF += 0.1;
         std::cout << "New hf: " << conf::hF << std::endl;
     }
-    if(event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::L)
-    {
+
+    if (inputManager.isKeyPressedOnce(sf::Keyboard::L)) {
         std::cout << "Old hf: " << conf::hF << std::endl;
         conf::hF -= 0.1;
         std::cout << "New hf: " << conf::hF << std::endl;
     }
-            if(event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Up)
-    {
+
+    if (inputManager.isKeyPressedOnce(sf::Keyboard::Up)) {
         std::cout << "Old timestep: " << conf::timestep << std::endl;
         conf::timestep += 1;
         std::cout << "New timestep: " << conf::timestep << std::endl;
     }
-    if(event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Down)
-    {
+
+    if (inputManager.isKeyPressedOnce(sf::Keyboard::Down)) {
         std::cout << "Old timestep: " << conf::timestep << std::endl;
         conf::timestep -= 1;
         std::cout << "New timestep: " << conf::timestep << std::endl;
     }
 }
-
 void World::toggleSimState()
 {
     running = !running;

@@ -13,12 +13,12 @@ void Game::run()
         sf::Event event;
         while (wind->wndw->pollEvent(event))
         {
+            inputManager->processEvent(event,*wind->wndw);
             if (event.type == sf::Event::Closed)
                 wind->wndw->close();
         }
-
-        // Always run input and render
-        world->handleInput(*wind->wndw, event);
+        world->handleInput(*inputManager, *wind->wndw);
+        inputManager->update();
 
         // Only update every x ms
         auto now = clock::now();
@@ -44,7 +44,7 @@ Game::Game(int windowWidth, int windowHeight, int worldWidth, int worldHeight)
 {
     wind = new window(windowWidth,windowHeight);
     world = new World(worldWidth,worldHeight,*wind->wndw);
-    inputManager = new inputs();    
+    inputManager = new InputManager();    
     uiMan = new UIManager(world);
 }
 
@@ -75,7 +75,7 @@ void Game::fixedrun()
                 wind->wndw->close();
         }
 
-        world->handleInput(*wind->wndw, event);
+       // world->handleInput(*wind->wndw, event);
 
         auto now = clock::now();
         if (now - lastUpdate >= updateInterval && world->isRunning())

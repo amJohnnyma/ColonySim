@@ -4,6 +4,7 @@
 #include "../../structs/gfx.h"
 #include "../../structs/inputManager.h"
 #include "../../UI/UIManager.h"
+#include "../../controller/InputManager.h"
 #include "GlobalVars.h"
 
 #include <thread>
@@ -14,7 +15,7 @@ class Game
     private:
         World* world;
         window* wind;        
-        inputs* inputManager; //How am i going to use this in other classes?
+        InputManager* inputManager; //How am i going to use this in other classes? -> great difficulty
         UIManager* uiMan;
         
 

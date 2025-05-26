@@ -8,7 +8,7 @@
 #include <array>
 #include <algorithm>
 #include "TrackedVariables.h"
-
+#include "../../controller/InputManager.h"
 
 
 class World
@@ -49,7 +49,7 @@ class World
         void update();
         void render(sf::RenderWindow & window);
         //temp input
-        void handleInput(sf::RenderWindow& window, sf::Event &event);
+        void handleInput(InputManager& inputmanager, sf::RenderWindow& window);
         bool isRunning() { return running;}
         void toggleSimState();
 
