@@ -87,8 +87,8 @@ std::unique_ptr<sf::RectangleShape> WorldGeneration::createShape(sf::Color fillC
     auto shape = std::make_unique<sf::RectangleShape>();
     shape->setSize(sf::Vector2f(cellSize, cellSize));
     shape->setPosition(x * cellSize, y * cellSize);
-    shape->setOutlineThickness(1.f);
-    shape->setOutlineColor(sf::Color::Red);
+  //  shape->setOutlineThickness(1.f);
+   // shape->setOutlineColor(sf::Color::Red);
     shape->setFillColor(fillColor);
     return shape;
 }
