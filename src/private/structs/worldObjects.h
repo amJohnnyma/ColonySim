@@ -48,20 +48,18 @@ struct Cell
         originalColor = col;
         this->cellShape->setFillColor(col);
     }
-    void setFilterOverlay(sf::Color col)
+    void setFilterOverlay(sf::Color overlay, float weight = 0.5f)
     {
-        sf::Color current = this->cellShape->getColor();
-        if(current!=originalColor)
-        {
-            setColor(originalColor);
-        }
-
-        sf::Uint8 r = std::min(255, current.r + col.r);
-        sf::Uint8 g = std::min(255, current.g + col.g);
-        sf::Uint8 b = std::min(255, current.b + col.b);
-        sf::Uint8 a = std::min(255, current.a + col.a);
-
-        this->cellShape->setFillColor(sf::Color(r, g, b, a));
+        sf::Color base = this->cellShape->getColor();
+        this->cellShape->setFillColor(lerpColor(base, overlay, weight));
+    }
+        sf::Color lerpColor(sf::Color base, sf::Color overlay, float weight)
+    {
+        sf::Uint8 r = static_cast<sf::Uint8>(base.r * (1.0f - weight) + overlay.r * weight);
+        sf::Uint8 g = static_cast<sf::Uint8>(base.g * (1.0f - weight) + overlay.g * weight);
+        sf::Uint8 b = static_cast<sf::Uint8>(base.b * (1.0f - weight) + overlay.b * weight);
+        sf::Uint8 a = static_cast<sf::Uint8>(base.a * (1.0f - weight) + overlay.a * weight);
+        return sf::Color(r, g, b, a);
     }
     void restoreColor()
     {
