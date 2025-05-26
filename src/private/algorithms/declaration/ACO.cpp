@@ -86,7 +86,8 @@ void ACO::assignRandomTarget(std::vector<Cell *> &raw_goals)
 void ACO::getNewTarget(Ant *ant)
 {
 
-        
+    //when assigning a target dont change it if not needed (still has food)
+
     std::random_device rd;
     std::mt19937 gen(rd());
     
@@ -110,7 +111,7 @@ void ACO::getNewTarget(Ant *ant)
 
     }
    //    std::cout << "Assigned index: " << randomIndex << std::endl;
-
+    
     if(counter < tl.size())
     {
         ant->setTarget(tl[randomIndex]);
@@ -482,7 +483,7 @@ double ACO::calculateHeuristic(Cell *next, Entity *target)
     double difficulty = next->data.difficulty;                                                 // [0, 1], where 1 is most difficult
 
     // Heuristic: prioritize shorter distance, lightly penalize difficulty
-    double heuristic = 1.0 / (distance + 1.0 + conf::difficultyScale * difficulty);
+    double heuristic = 1.0 / (distance + 1.0 + conf::terrainDifficultyScale * difficulty);
 
     return heuristic;
 }
