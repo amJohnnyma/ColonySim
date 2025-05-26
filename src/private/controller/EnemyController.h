@@ -7,7 +7,8 @@ class EnemyController : public Controller
 {
     private:
     public:
-        EnemyController();
+        EnemyController(World* world);
+        void update() override;
     private:
 };
 

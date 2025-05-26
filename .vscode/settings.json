@@ -59,5 +59,6 @@
         "stop_token": "cpp",
         "thread": "cpp",
         "variant": "cpp"
-    }
+    },
+    "makefile.configureOnOpen": false
 }

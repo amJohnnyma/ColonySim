@@ -11,23 +11,30 @@ void InputManager::processEvent(const sf::Event& event, sf::RenderWindow& window
         keysPressedOnce.erase(event.key.code);
     }
 
-    if (event.type == sf::Event::MouseButtonPressed) {
-        mouseStates[event.mouseButton.button] = true;
-        if (event.mouseButton.button == sf::Mouse::Left) {
-            mouseStart = sf::Mouse::getPosition(window);
-            selecting = true;
-        }
-    } else if (event.type == sf::Event::MouseButtonReleased) {
-        mouseStates[event.mouseButton.button] = false;
-        if (event.mouseButton.button == sf::Mouse::Left) {
-            mouseEnd = sf::Mouse::getPosition(window);
-            selecting = false;
+        if (event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left) {
+        sf::Vector2f worldPos = window.mapPixelToCoords(sf::Mouse::getPosition(window));
+        selectionBox->startDrag(static_cast<sf::Vector2i>(worldPos));
+    }
+
+    if (event.type == sf::Event::MouseButtonReleased && event.mouseButton.button == sf::Mouse::Left) {
+        sf::Vector2i start, end;
+        if (selectionBox->endDrag(start, end)) {
+            // Selection drag is complete — call controller
+            controller->selectCells(start, end, {}); // Pass your filter if needed
         }
     }
 }
 
-void InputManager::update() {
+void InputManager::update(sf::RenderWindow& window) {
+    if (sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
+        sf::Vector2f worldPos = window.mapPixelToCoords(sf::Mouse::getPosition(window));
+        selectionBox->updateDrag(static_cast<sf::Vector2i>(worldPos));
+    }
     keysPressedOnce.clear();
+}
+
+void InputManager::draw(sf::RenderWindow& window) {
+    selectionBox->draw(window);
 }
 
 bool InputManager::isKeyHeld(sf::Keyboard::Key key) const {
@@ -50,4 +57,14 @@ std::optional<std::pair<sf::Vector2i, sf::Vector2i>> InputManager::getSelectionB
     return std::nullopt;
 }
 
+InputManager::InputManager(World *world)
+{
+    controller = new PlayerController(world);
+    selectionBox = new SelectionBox();
+}
 
+InputManager::~InputManager()
+{
+    delete controller;
+    delete selectionBox;
+}

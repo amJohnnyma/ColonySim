@@ -7,7 +7,8 @@ class PlayerController : public Controller
 {
     private:
     public:
-        PlayerController();
+        PlayerController(World* world);
+        void update() override;
     private:
 };
 

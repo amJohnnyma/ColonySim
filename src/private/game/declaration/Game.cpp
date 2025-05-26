@@ -18,7 +18,7 @@ void Game::run()
                 wind->wndw->close();
         }
         world->handleInput(*inputManager, *wind->wndw);
-        inputManager->update();
+        inputManager->update(*wind->wndw);
 
         // Only update every x ms
         auto now = clock::now();
@@ -31,7 +31,8 @@ void Game::run()
 
         uiMan->update(*wind->wndw);
         world->render(*wind->wndw);   
-        uiMan->draw(*wind->wndw);    
+        uiMan->draw(*wind->wndw);   
+        inputManager->draw(*wind->wndw); 
         wind->wndw->display();
 
 
@@ -44,8 +45,8 @@ Game::Game(int windowWidth, int windowHeight, int worldWidth, int worldHeight)
 {
     wind = new window(windowWidth,windowHeight);
     world = new World(worldWidth,worldHeight,*wind->wndw);
-    inputManager = new InputManager();    
     uiMan = new UIManager(world);
+    inputManager = new InputManager(world);    
 }
 
 Game::~Game()

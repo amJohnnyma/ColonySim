@@ -8,9 +8,9 @@
 #include <array>
 #include <algorithm>
 #include "TrackedVariables.h"
-#include "../../controller/InputManager.h"
+//#include "../../controller/InputManager.h"
 
-
+class InputManager;
 class World
 {
     private:

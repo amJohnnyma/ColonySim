@@ -1,22 +1,15 @@
 #ifndef INPUT_MANAGER_H
 #define INPUT_MANAGER_H
+#include "../game/headers/GlobalVars.h"
 #include <SFML/Graphics.hpp>
 #include <optional>
 #include <map>
 #include <set>
-#include "../../game/headers/GlobalVars.h"
+#include "PlayerController.h"
+#include "SelectionBox.h"
 
+class World;
 class InputManager {
-public:
-    void processEvent(const sf::Event& event, sf::RenderWindow& window);
-    void update();
-
-    bool isKeyHeld(sf::Keyboard::Key key) const;
-    bool isKeyPressedOnce(sf::Keyboard::Key key);
-    bool isMouseHeld(sf::Mouse::Button button) const;
-
-    std::optional<std::pair<sf::Vector2i, sf::Vector2i>> getSelectionBox(const sf::RenderWindow& window);
-
 private:
     std::map<sf::Keyboard::Key, bool> keyStates;
     std::set<sf::Keyboard::Key> keysPressedOnce;
@@ -25,6 +18,24 @@ private:
     sf::Vector2i mouseStart;
     sf::Vector2i mouseEnd;
     bool selecting = false;
+    PlayerController* controller;
+    SelectionBox* selectionBox;
+
+public:
+    void processEvent(const sf::Event& event, sf::RenderWindow& window);
+    void update(sf::RenderWindow& window);
+
+    bool isKeyHeld(sf::Keyboard::Key key) const;
+    bool isKeyPressedOnce(sf::Keyboard::Key key);
+    bool isMouseHeld(sf::Mouse::Button button) const;
+    void draw(sf::RenderWindow& window);
+
+
+    std::optional<std::pair<sf::Vector2i, sf::Vector2i>> getSelectionBox(const sf::RenderWindow& window);
+
+    InputManager(World* world);
+    ~InputManager();
+
 };
 
 #endif

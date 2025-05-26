@@ -2,7 +2,6 @@
 #define GAME_H
 #include "World.h"
 #include "../../structs/gfx.h"
-#include "../../structs/inputManager.h"
 #include "../../UI/UIManager.h"
 #include "../../controller/InputManager.h"
 #include "GlobalVars.h"
@@ -15,8 +14,8 @@ class Game
     private:
         World* world;
         window* wind;        
-        InputManager* inputManager; //How am i going to use this in other classes? -> great difficulty
         UIManager* uiMan;
+        InputManager* inputManager; //How am i going to use this in other classes? -> great difficulty
         
 
     public:
