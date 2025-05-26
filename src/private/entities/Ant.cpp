@@ -18,5 +18,36 @@ void Ant::addPath(Cell *newC)
 
 void Ant::setRotation(double angle)
 {
-    this->hitbox.get()->setRotation(static_cast<float>(angle));
+ //   sf::Vector2f size = this->getHitbox()->getSize(); // local size of the rectangle
+ //   this->getHitbox()->setOrigin(size.x / 2.0f, size.y / 2.0f); // set origin to center
+  //  this->getHitbox()->setRotation(static_cast<float>(angle));
+}
+
+void Ant::startMovingTo(float x, float y)
+{
+    startPos = hitbox->getPosition();
+    targetPos = sf::Vector2f(x, y);
+    elapsedTime = 0.0f;
+    isMoving = true;
+}
+
+void Ant::updateMovement(float dt)
+{
+    if (!isMoving) return;
+
+    sf::Vector2f pos = hitbox->getPosition();
+    sf::Vector2f direction = targetPos - pos;
+    float distance = std::sqrt(direction.x * direction.x + direction.y * direction.y);
+
+    if (distance < 1.0f)
+    {
+        hitbox->setPosition(targetPos); // Snap to final target
+        isMoving = false;
+        return;
+    }
+
+    sf::Vector2f normalizedDir = direction / distance;
+    sf::Vector2f velocity = normalizedDir * conf::antSpeed * dt;
+
+    hitbox->move(velocity);
 }

@@ -28,6 +28,7 @@ class World
         bool running = false;
         TrackedVariables* trackedVars;
         Entity* antBase; //temporary
+        sf::Clock antClock;
 
     public:
     private:

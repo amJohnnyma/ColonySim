@@ -168,6 +168,10 @@ void ACO::update()
             {
                 if (Ant* ant = dynamic_cast<Ant*>(e.get()))
                 {
+                    if(ant->stillAnimating())
+                    {
+                        break;
+                    }
                     //   std::cout << "found ant" << std::endl;
                     //   std::cout << "Target: " << e.get()->getTarget()->getName() << std::endl;
                     if(ant->getTarget()->getResource() <= 0 && ant->getTarget() != base)
@@ -216,33 +220,26 @@ void ACO::update()
 
 void ACO::moveToCell(Cell *from, Cell *to, Entity *e)
 {
-    //  std::cout << "Moving from: (" << from->x << ", " << from->y << ") to: (" << to->x << ", " << to->y << ")" << std::endl;
-
-    // Loop through the entities in the "from" cell
     for (auto it = from->data.entities.begin(); it != from->data.entities.end(); ++it)
     {
-        if (it->get() == e) // Compare raw pointer inside unique_ptr
+        if (it->get() == e)
         {
-            // Move ownership of the entity to the "to" cell
+            // Move ownership of entity to 'to' cell
             to->data.entities.push_back(std::move(*it));
-
-            e->setPos(to->x, to->y);
-
             from->data.entities.erase(it);
 
-            if (Ant* ant = dynamic_cast<Ant*>(e))
-            {
-                // Calculate angle to face destination
-                float dx = static_cast<float>(to->x - from->x);
-                float dy = static_cast<float>(to->y - from->y);
+            if (Ant* ant = dynamic_cast<Ant*>(e)) {
+                float toX = to->x * conf::cellSize;  // center of the cell
+                float toY = to->y * conf::cellSize;
 
-                float angleRad = std::atan2(dy, dx);
-                float angleDeg = angleRad * 180.0f / static_cast<float>(M_PI);
+                ant->startMovingTo(toX, toY);
 
-                ant->setRotation(angleDeg); 
+             //   float fromX = ant->getHitbox()->getPosition().x;
+             //   float fromY = ant->getHitbox()->getPosition().y;
+            //    float angleDeg = std::atan2(toY - fromY, toX - fromX) * 180.f / M_PI;
+             //   ant->setRotation(angleDeg);
             }
-
-            break; // Exit the loop after moving the entity
+            break;
         }
     }
 }

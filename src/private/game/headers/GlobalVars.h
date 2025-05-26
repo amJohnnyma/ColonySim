@@ -23,6 +23,7 @@ namespace conf
     extern double pheremoneEvap ;
     extern unsigned int timestep;
     extern double locationFoodRegenerationRate;
+    extern float antSpeed;
 }
 
 

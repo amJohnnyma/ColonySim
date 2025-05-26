@@ -63,7 +63,7 @@ void World::update()
 
 void World::drawEntities(sf::RenderWindow& window)
 {
-    std::vector<sf::RectangleShape*> waitList;
+    std::vector<Entity*> waitList;
     std::vector<sf::VertexArray> pathTraces;  // Each ants path
 
     for (auto& i : grid)
@@ -72,12 +72,11 @@ void World::drawEntities(sf::RenderWindow& window)
         {
             if (j.get() && dynamic_cast<Ant*>(j.get()))
             {
-                Ant* ant = dynamic_cast<Ant*>(j.get());
-                waitList.push_back(j->getHitbox());
+                waitList.push_back(j.get());
                 sf::VertexArray pathTrace(sf::LinesStrip);
 
                 // Adding path vertices to the VertexArray (no duplicates)
-                std::vector<Cell*> path = ant->getPath();
+                std::vector<Cell*> path = j->getPath();
 
                 
                 // Loop through the path and add segments to pathTrace
@@ -127,10 +126,17 @@ void World::drawEntities(sf::RenderWindow& window)
         window.draw(pathTrace);
     }
 
+    float dt = antClock.restart().asSeconds();
     // Draw the waitList (RectangleShape for entities)
     for (auto& e : waitList)
     {
-        window.draw(*e);
+        if(Ant* ant = dynamic_cast<Ant*>(e))
+        {
+            if(ant->stillAnimating())
+                ant->updateMovement(dt);
+        }
+        sf::RectangleShape* hb = e->getHitbox();
+        window.draw(*hb);
     }
 }
 
@@ -311,7 +317,7 @@ void World::drawGrid(sf::RenderWindow & window)
 void World::render(sf::RenderWindow &window)
 {
     window.clear();
- //   drawGrid(window);
+    drawGrid(window);
     drawTerrain(window);
     drawEntities(window);
 
