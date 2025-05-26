@@ -226,18 +226,22 @@ void ACO::moveToCell(Cell *from, Cell *to, Entity *e)
             // Move ownership of the entity to the "to" cell
             to->data.entities.push_back(std::move(*it));
 
-            // Adjust entity position to match the "to" cell
-            // Assuming you're using grid positions for x, y (change logic if needed)
             e->setPos(to->x, to->y);
 
-            // Optionally, erase the entity from the "from" cell after moving
             from->data.entities.erase(it);
 
-            //  e->getPath().push_back(to);
+            if (Ant* ant = dynamic_cast<Ant*>(e))
+            {
+                // Calculate angle to face destination
+                float dx = static_cast<float>(to->x - from->x);
+                float dy = static_cast<float>(to->y - from->y);
 
-            //  curCell = to;
+                float angleRad = std::atan2(dy, dx);
+                float angleDeg = angleRad * 180.0f / static_cast<float>(M_PI);
 
-            // curCell = to;
+                ant->setRotation(angleDeg); 
+            }
+
             break; // Exit the loop after moving the entity
         }
     }

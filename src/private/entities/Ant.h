@@ -19,6 +19,7 @@ class Ant : public Entity
         std::vector<Cell*>& getPath() override {return path;}
         void setTarget(Entity* newTarget) { target = newTarget; }
         void addPath(Cell *newC);
+        void setRotation(double angle);
 };
 
 #endif

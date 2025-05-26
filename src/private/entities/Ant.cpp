@@ -15,3 +15,8 @@ void Ant::addPath(Cell *newC)
             this->path.erase(path.begin());  // Removes the front element in a vector        
         }
 }
+
+void Ant::setRotation(double angle)
+{
+    this->hitbox.get()->setRotation(static_cast<float>(angle));
+}

@@ -61,7 +61,7 @@ void Game::fixedrun()
 {
     using clock = std::chrono::steady_clock;
     auto lastUpdate = clock::now();
-    const std::chrono::milliseconds updateInterval(50);
+    const std::chrono::milliseconds updateInterval(5000);
 
     int updatesDone = 0;
     const int maxUpdates = 1;

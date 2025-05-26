@@ -52,6 +52,8 @@ Entity::Entity(int x, int y, std::string name, double maxResource, std::unique_p
     this->maxResource = maxResource;
     this->hitbox = std::move(hitbox);
   //  this->currentCell = curCell;
+    sf::Vector2f size = this->getHitbox()->getSize();
+    this->getHitbox()->setOrigin(size.x, size.y);
 }
 
 void Entity::setPos(int x, int y)
