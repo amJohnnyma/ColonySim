@@ -20,4 +20,6 @@ namespace conf
     double pheremoneEvap = 0.1;
     unsigned int timestep = 500;
     double locationFoodRegenerationRate = 0.01;
+    float antSpeed = 500.0f;
+    float terrainDifficultyScale = 0.05f;
 }

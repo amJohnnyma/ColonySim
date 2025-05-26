@@ -52,9 +52,9 @@ double WorldGeneration::generateDifficulty()
     return dis(gen);
 }
 
-std::unique_ptr<Circle> WorldGeneration::createCellShape(int x, int y, float size, double difficulty)
+std::unique_ptr<Rectangle> WorldGeneration::createCellShape(int x, int y, float size, double difficulty)
 {
-    auto shape = std::make_unique<Circle>(x, y, size, 8);
+    auto shape = std::make_unique<Rectangle>(x, y, size, size);
     // Set the fill color with difficulty affecting alpha channel
     shape->setFillColor(sf::Color(0, 255, 0, static_cast<sf::Uint8>(difficulty * 255)));
     return shape;
@@ -66,14 +66,14 @@ std::unique_ptr<Cell> WorldGeneration::createCell(int x, int y, float cellSize)
 
     CellData cd;
     cd.type = "(" + std::to_string(x) + ", " + std::to_string(y) + ")";
-   // cd.difficulty = generateDifficulty();
-    cd.difficulty = 1; //uniform for now
+    cd.difficulty = generateDifficulty();
+  
 
     auto pheromones = createPheromones(x, y);
     cd.p[0] = pheromones[0];
     cd.p[1] = pheromones[1];
 
-    cell->cellShape = createCellShape(x, y, cellSize / 4, cd.difficulty);
+    cell->cellShape = createCellShape(x, y, cellSize, cd.difficulty);
     cell->x = x;
     cell->y = y;
     cell->data = std::move(cd);
@@ -81,14 +81,14 @@ std::unique_ptr<Cell> WorldGeneration::createCell(int x, int y, float cellSize)
     return cell;
 }
 
-
+//convert to use custom rectangle at some point
 std::unique_ptr<sf::RectangleShape> WorldGeneration::createShape(sf::Color fillColor, int x, int y, float cellSize)
 {
     auto shape = std::make_unique<sf::RectangleShape>();
     shape->setSize(sf::Vector2f(cellSize, cellSize));
     shape->setPosition(x * cellSize, y * cellSize);
-    shape->setOutlineThickness(1.f);
-    shape->setOutlineColor(sf::Color::Red);
+  //  shape->setOutlineThickness(1.f);
+   // shape->setOutlineColor(sf::Color::Red);
     shape->setFillColor(fillColor);
     return shape;
 }
@@ -159,7 +159,7 @@ void WorldGeneration::generateEntities(int num, int col)
 void WorldGeneration::assignTextures()
 {
     auto& manager = TextureManager::getInstance();
-    sf::Texture* antTexture = manager.loadTexture("ant", "src/textures/entities/ants/ant.png");
+    sf::Texture* antTexture = manager.loadTexture("ant", "src/textures/entities/ants/ant-top-down.png");
 
     if (!antTexture) return;
 
