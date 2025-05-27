@@ -14,11 +14,16 @@ struct GridObject
     virtual ~GridObject() = default;
 };
 
+struct perTeamPheromone
+{
+
+};
+
 struct pheromone
 {
-    double strength;
-    int x,y; //coords
-    std::string type;
+
+    std::map<int, double> pheromoneMap;
+
 };
 
 
@@ -27,7 +32,7 @@ struct CellData
     std::string type = "Default";
     std::string terrain ="flat";
     double difficulty = 0;
-    pheromone p[2];
+    pheromone p[2]; // home and base
     std::vector<std::unique_ptr<Entity>> entities;
 
     

@@ -30,16 +30,8 @@ std::vector<std::unique_ptr<Cell>> WorldGeneration::getResult() {
 std::array<pheromone,2> WorldGeneration::createPheromones(int x, int y)
 {
     pheromone p1;
-    p1.x = x;
-    p1.y = y;
-    p1.type = "findFood";
-    p1.strength = 0.1;
 
     pheromone p2;
-    p2.x = x;
-    p2.y = y;
-    p2.type = "returnHome";
-    p2.strength = 0.1;
 
     return {p1, p2};
 }
