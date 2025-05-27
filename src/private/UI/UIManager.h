@@ -2,7 +2,6 @@
 #define UIMANAGER_H
 
 #include <SFML/Graphics.hpp>
-#include "UIElement.h"
 
 
 class UIElement;
