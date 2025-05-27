@@ -5,6 +5,7 @@
 #include <optional>
 #include <map>
 #include <set>
+#include "Controller.h"
 #include "PlayerController.h"
 #include "SelectionBox.h"
 
@@ -18,7 +19,7 @@ private:
     sf::Vector2i mouseStart;
     sf::Vector2i mouseEnd;
     bool selecting = false;
-    PlayerController* controller;
+    Controller* controller;
     SelectionBox* selectionBox;
 
 public:
