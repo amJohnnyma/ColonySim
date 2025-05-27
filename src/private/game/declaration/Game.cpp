@@ -13,12 +13,12 @@ void Game::run()
         sf::Event event;
         while (wind->wndw->pollEvent(event))
         {
+            inputManager->processEvent(event,*wind->wndw);
             if (event.type == sf::Event::Closed)
                 wind->wndw->close();
         }
-
-        // Always run input and render
-        world->handleInput(*wind->wndw, event);
+        world->handleInput(*inputManager, *wind->wndw);
+        inputManager->update(*wind->wndw);
 
         // Only update every x ms
         auto now = clock::now();
@@ -31,7 +31,8 @@ void Game::run()
 
         uiMan->update(*wind->wndw);
         world->render(*wind->wndw);   
-        uiMan->draw(*wind->wndw);    
+        uiMan->draw(*wind->wndw);   
+        inputManager->draw(*wind->wndw); 
         wind->wndw->display();
 
 
@@ -44,8 +45,8 @@ Game::Game(int windowWidth, int windowHeight, int worldWidth, int worldHeight)
 {
     wind = new window(windowWidth,windowHeight);
     world = new World(worldWidth,worldHeight,*wind->wndw);
-    inputManager = new inputs();    
     uiMan = new UIManager(world);
+    inputManager = new InputManager(world);    
 }
 
 Game::~Game()
@@ -65,17 +66,21 @@ void Game::fixedrun()
 
     int updatesDone = 0;
     const int maxUpdates = 1;
+    
+    sf::Event event;   
 
     while (wind->wndw->isOpen())
     {
-        sf::Event event;
+        inputManager->processEvent(event,*wind->wndw);
         while (wind->wndw->pollEvent(event))
         {
             if (event.type == sf::Event::Closed)
                 wind->wndw->close();
         }
 
-        world->handleInput(*wind->wndw, event);
+        world->handleInput(*inputManager, *wind->wndw);
+        inputManager->update(*wind->wndw);
+
 
         auto now = clock::now();
         if (now - lastUpdate >= updateInterval && world->isRunning())
@@ -94,6 +99,7 @@ void Game::fixedrun()
         uiMan->update(*wind->wndw);
         world->render(*wind->wndw);
         uiMan->draw(*wind->wndw);
+        inputManager->draw(*wind->wndw); 
         wind->wndw->display();
     }
 }
