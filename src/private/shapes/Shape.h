@@ -12,6 +12,7 @@ class Shape //abstract
         int xg,yg; //gridspace
         int xr, yr; // window space
         sf::VertexArray va;
+        sf::Color col;
 
     public:
         Shape(int xg, int yg):xg(xg),yg(yg) {xr = xg * conf::cellSize; yr = xg * conf::cellSize;}
@@ -27,6 +28,7 @@ class Shape //abstract
         int getXR() {return xr;}
         int getYR() {return yr;}
         sf::VertexArray & getVA() {return va;}
+        sf::Color getColor() { return this->col;}
         //Setters
         void setXG(int xg) {this->xg = xg;}
         void setYG(int yg) {this->yg = yg;}
