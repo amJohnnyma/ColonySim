@@ -25,6 +25,8 @@ namespace conf
     extern double locationFoodRegenerationRate;
     extern float antSpeed;
     extern float terrainDifficultyScale;
+    extern int baseSeparationDistance;
+
 }
 
 
