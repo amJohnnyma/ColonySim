@@ -31,6 +31,7 @@ std::cout << "ACO const" << std::endl;
     */
 
     this->base = base;
+    std::cout << this->base->getTeam() << std::endl;
     for (auto &g : goals)
     {
         this->goals.insert(g);
