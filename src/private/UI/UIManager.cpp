@@ -1,5 +1,8 @@
 #include "UIManager.h"
-
+#include "WorldUIElement.h"
+#include "FPSCounter.h"
+#include <vector>
+#include <memory>
 UIManager::UIManager(World* world)
 {       
 
