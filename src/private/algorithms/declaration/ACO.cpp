@@ -317,7 +317,7 @@ void ACO::findFood(Cell *cell, Ant *e)
                 });
             if (containsTarget)
             {
-                std::cout << "Target base " << base->getTeam() << std::endl;
+               // std::cout << "Target base " << base->getTeam() << std::endl;
                 e->setTarget(base);
             }
 
