@@ -2,13 +2,10 @@
 #define UIMANAGER_H
 
 #include <SFML/Graphics.hpp>
-#include "UIElement.h"
-#include "FPSCounter.h"
-#include "WorldUIElement.h"
-#include <vector>
-#include <memory>
 
 
+class UIElement;
+class World;
 
 class UIManager
 {

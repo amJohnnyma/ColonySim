@@ -5,10 +5,10 @@
 #include <optional>
 #include <map>
 #include <set>
-#include "Controller.h"
 #include "PlayerController.h"
 #include "SelectionBox.h"
 
+class Controller;
 class World;
 class InputManager {
 private:
