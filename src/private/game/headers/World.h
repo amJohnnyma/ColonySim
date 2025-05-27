@@ -61,6 +61,7 @@ class World
         void changePF(double amnt) {conf::pF += amnt;}
         void changeHF(double amnt) {conf::hF += amnt;}        
         void buildBuilding(std::string type); 
+        void destroyBuilding(std::string type);
 };
 
 

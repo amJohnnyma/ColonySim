@@ -177,6 +177,18 @@ const std::unordered_map<std::string, std::function<void(World*, const FunctionA
                 }
 
             
+        }},
+        {"deleteBuilding", [](World* w, const FunctionArgs& args){
+
+                if(args.name.has_value())
+                {
+                    w->getWorldStats()->setBuildingMode(true);
+                    std::string name = args.name.value_or("Unnamed"); 
+                    w->destroyBuilding("");            
+                    w->getWorldStats()->setBuildingMode(false);
+                }
+
+            
         }}
 
     };

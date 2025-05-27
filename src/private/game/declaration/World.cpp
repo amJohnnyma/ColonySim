@@ -1,6 +1,7 @@
 #include "../headers/World.h"
 #include "../headers/GlobalVars.h"
 #include "../../controller/InputManager.h" 
+#include "World.h"
 
 World::World(int w, int h, sf::RenderWindow& window)
 {
@@ -418,6 +419,24 @@ void World::buildBuilding(std::string type)
 
 }
 
+void World::destroyBuilding(std::string type)
+{
+    if(trackedVars->isInBuildingMode())
+    {
+        for(auto & sc : trackedVars->getSelectedCells())
+        {
+            //std::cout << "Building in cell: " + std::to_string(sc->x) + ", " + std::to_string(sc->y) << std::endl;
+            Cell* cell = at(sc->x, sc->y).get();
+            auto& entities = cell->data.entities;
+            entities.erase(std::remove_if(entities.begin(), entities.end(),
+                [](const std::unique_ptr<Entity>& e) {
+                    return dynamic_cast<BuildingLocation*>(e.get()) != nullptr;
+                }),
+                entities.end());
+
+        }
+    }    
+}
 World::~World()
 {
     delete trackedVars;
