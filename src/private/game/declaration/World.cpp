@@ -1,5 +1,4 @@
 #include "../headers/World.h"
-#include "World.h"
 #include "../headers/GlobalVars.h"
 #include "../../controller/InputManager.h" 
 
@@ -409,7 +408,11 @@ void World::buildBuilding(std::string type)
     {
         for(auto & sc : trackedVars->getSelectedCells())
         {
-            std::cout << "Building in cell: " + std::to_string(sc->x) + ", " + std::to_string(sc->y) << std::endl;
+            //std::cout << "Building in cell: " + std::to_string(sc->x) + ", " + std::to_string(sc->y) << std::endl;
+            auto building = std::make_unique<BuildingLocation>(sc->x, sc->y, "Building");
+            Cell* cell = at(sc->x, sc->y).get();
+
+            cell->data.entities.push_back(std::unique_ptr<Entity>(building.release()));
         }
     }    
 
