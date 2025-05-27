@@ -486,7 +486,6 @@ double ACO::sumOfFeasiblePheremoneProb(Entity *target, bool returningHome)
         }
         else
         {
-
             Tij = ac->data.p[0].pheromoneMap[team];
         }
         //   std::cout << "H: " << heuristic << " :hF: " << hF<<std::endl;
