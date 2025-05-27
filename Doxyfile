@@ -2847,7 +2847,7 @@ GENERATE_LEGEND        = YES
 # files.
 # The default value is: YES.
 
-DOT_CLEANUP            = YES
+DOT_CLEANUP            = NO
 
 # You can define message sequence charts within doxygen comments using the \msc
 # command. If the MSCGEN_TOOL tag is left empty (the default), then doxygen will
