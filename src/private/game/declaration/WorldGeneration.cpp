@@ -30,16 +30,8 @@ std::vector<std::unique_ptr<Cell>> WorldGeneration::getResult() {
 std::array<pheromone,2> WorldGeneration::createPheromones(int x, int y)
 {
     pheromone p1;
-    p1.x = x;
-    p1.y = y;
-    p1.type = "findFood";
-    p1.strength = 0.1;
 
     pheromone p2;
-    p2.x = x;
-    p2.y = y;
-    p2.type = "returnHome";
-    p2.strength = 0.1;
 
     return {p1, p2};
 }
@@ -52,11 +44,10 @@ double WorldGeneration::generateDifficulty()
     return dis(gen);
 }
 
-std::unique_ptr<Rectangle> WorldGeneration::createCellShape(int x, int y, float size, double difficulty)
+std::unique_ptr<Rectangle> WorldGeneration::createCellShape(int x, int y, float size)
 {
     auto shape = std::make_unique<Rectangle>(x, y, size, size);
     // Set the fill color with difficulty affecting alpha channel
-    shape->setFillColor(sf::Color(0, 255, 0, static_cast<sf::Uint8>(difficulty * 255)));
     return shape;
 }
 
@@ -66,14 +57,15 @@ std::unique_ptr<Cell> WorldGeneration::createCell(int x, int y, float cellSize)
 
     CellData cd;
     cd.type = "(" + std::to_string(x) + ", " + std::to_string(y) + ")";
-    cd.difficulty = generateDifficulty();
-  
+    cd.difficulty = std::clamp(generateDifficulty() * 2, 0.5, 1.0);
+   // cd.difficulty = 1;
 
     auto pheromones = createPheromones(x, y);
     cd.p[0] = pheromones[0];
     cd.p[1] = pheromones[1];
 
-    cell->cellShape = createCellShape(x, y, cellSize, cd.difficulty);
+    cell->cellShape = createCellShape(x, y, cellSize);
+    cell->setColor(sf::Color(0, 255, 0, static_cast<sf::Uint8>(cd.difficulty * 255)));
     cell->x = x;
     cell->y = y;
     cell->data = std::move(cd);
@@ -115,7 +107,9 @@ void WorldGeneration::logAllEntities()
         {
             std::cout << entityPtr->getName() << ", "
                       << entityPtr->getX() << ", "
-                      << entityPtr->getY() << std::endl;
+                      << entityPtr->getY() << ", "
+                      << entityPtr->getTeam()
+                      << std::endl;
         }
     }
 }
@@ -133,28 +127,68 @@ void WorldGeneration::generateTerrain()
     }
 }
 
+int getEdgeBiased(int max) {
+    static std::mt19937 rng(std::random_device{}());
+    std::uniform_real_distribution<float> dist(0.0f, 1.0f);
+    float r = dist(rng);
 
-void WorldGeneration::generateEntities(int num, int col)
-{
-    int xVal = conf::worldSize.x - 3;
-    int yVal = conf::worldSize.y - 3;
+    // Skew toward edges
+    float edgeBias = std::pow(std::abs(r - 0.5f) * 2, 1.5f); // 1.5 = strength of bias
+    bool leftSide = (dist(rng) < 0.5f); // flip a coin
 
-    for (int i = 0; i < col; i++)
-    {
-        for (int k = 0; k < num; k++)
-        {
-            auto ant = createAnt(xVal, yVal);
-            grid[xVal * width + yVal]->data.entities.push_back(std::move(ant));
-        }
-
-        auto base = createBase(xVal, yVal);
-        grid[xVal * width + yVal]->data.entities.push_back(std::move(base));
-
-        // Logging moved to separate function
-        logAllEntities();
+    if (leftSide) {
+        return static_cast<int>(edgeBias * (max));
+    } else {
+        return static_cast<int>((1.0f - edgeBias) * (max));
     }
 }
+void WorldGeneration::generateEntities(int num, int col)
+{
+    std::vector<std::pair<int, int>> previousLocations;
 
+    for (int b = 1; b <= conf::numBases; b++)
+    {
+        int xVal = 0;
+        int yVal = 0;
+
+        bool tooClose;
+        do
+        {
+            xVal = getEdgeBiased(conf::worldSize.x);
+            yVal = getEdgeBiased(conf::worldSize.y);
+
+            // Check if this (xVal, yVal) is within 10 units of any previous location
+            tooClose = std::any_of(previousLocations.begin(), previousLocations.end(),
+                                   [&](const std::pair<int, int> &loc)
+                                   {
+                                       double dist = std::hypot(loc.first - xVal, loc.second - yVal);
+                                       return dist < conf::baseSeparationDistance;
+                                   });
+
+        } while (tooClose);
+
+        previousLocations.emplace_back(xVal, yVal);
+        TeamInfo p = 0;
+        p = setTeam(p, b);
+
+        for (int i = 0; i < col; i++)
+        {
+            for (int k = 0; k < num; k++)
+            {
+                auto ant = createAnt(xVal, yVal);
+                ant->setTeam(p);
+                grid[xVal * width + yVal]->data.entities.push_back(std::move(ant));
+            }
+
+        }
+            auto base = createBase(xVal, yVal);
+            base->setTeam(p);
+            grid[xVal * width + yVal]->data.entities.push_back(std::move(base));
+
+            // Logging moved to separate function
+    }
+           // logAllEntities();
+}
 
 void WorldGeneration::assignTextures()
 {

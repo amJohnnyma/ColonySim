@@ -22,6 +22,7 @@ Circle::Circle(int xg, int yg, double radius, int resolution)
 }
 
 void Circle::setFillColor(sf::Color col) {
+    this->col = col;
     for (size_t i = 0; i < getVA().getVertexCount(); ++i) {
         getVA()[i].color = col;  // Change color of all vertices in the shape
     }

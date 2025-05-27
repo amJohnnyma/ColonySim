@@ -8,9 +8,9 @@
 #include <array>
 #include <algorithm>
 #include "TrackedVariables.h"
+//#include "../../controller/InputManager.h"
 
-
-
+class InputManager;
 class World
 {
     private:
@@ -49,7 +49,7 @@ class World
         void update();
         void render(sf::RenderWindow & window);
         //temp input
-        void handleInput(sf::RenderWindow& window, sf::Event &event);
+        void handleInput(InputManager& inputmanager, sf::RenderWindow& window);
         bool isRunning() { return running;}
         void toggleSimState();
 
@@ -59,7 +59,7 @@ class World
         void spawn(std::string name, int count) { std::cout << "Spawning: " << count << " " << name << "'s. " << " with " << trackedVars->getNumAnts()  << std::endl;}
         TrackedVariables* getWorldStats() { return trackedVars; }
         void changePF(double amnt) {conf::pF += amnt;}
-        void changeHF(double amnt) {conf::hF += amnt;}
+        void changeHF(double amnt) {conf::hF += amnt;}        
     
 };
 

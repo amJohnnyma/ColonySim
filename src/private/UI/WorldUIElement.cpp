@@ -1,5 +1,6 @@
 #include "WorldUIElement.h"
-
+#include <iostream>
+#include <unordered_map>
 WorldUIElement::WorldUIElement(World* world, int x, int y, int resolution, int radius, int width, int height, std::string function, std::string textArea)
  : UIElement(world), shape(nullptr), button(nullptr), updateFunc(nullptr)
 {
@@ -101,6 +102,7 @@ void WorldUIElement::onClick()
    // std::cout << "Rect clicked" << std::endl;
 }
 
+//needs to use player-controller such that enemy AI has access to the same commands
 const std::unordered_map<std::string, std::function<void(World*, const FunctionArgs&)>>& WorldUIElement::getFunctionMap() {
    static const std::unordered_map<std::string, std::function<void(World*, const FunctionArgs&)>> functionMap = {
         {"testClick", [](World* w, const FunctionArgs&) {
@@ -163,7 +165,7 @@ const std::unordered_map<std::string, std::function<void(World*, const FunctionA
         }},
         {"decrementHeuristic", [](World* w, const FunctionArgs& args){
             w->changeHF(-0.1);
-        }},
+        }}
 
     };
     return functionMap;
