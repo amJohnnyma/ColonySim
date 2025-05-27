@@ -1,5 +1,6 @@
 #include "WorldUIElement.h"
-
+#include <iostream>
+#include <unordered_map>
 WorldUIElement::WorldUIElement(World* world, int x, int y, int resolution, int radius, int width, int height, std::string function, std::string textArea)
  : UIElement(world), shape(nullptr), button(nullptr), updateFunc(nullptr)
 {

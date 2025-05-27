@@ -1,9 +1,7 @@
 #ifndef WORLD_UI_ELEMENT_H
 #define WORLD_UI_ELEMENT_H
-#include "UIElement.h"
-#include <iostream>
-#include <unordered_map>
 
+#include "UIElement.h"
 
 class WorldUIElement : public UIElement
 {
