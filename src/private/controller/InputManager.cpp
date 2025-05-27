@@ -34,7 +34,7 @@ void InputManager::update(sf::RenderWindow& window) {
 }
 
 void InputManager::draw(sf::RenderWindow& window) {
-    selectionBox->draw(window); //The world should draw this
+    selectionBox->draw(window); //The world should draw this to minimizse draw calls
 }
 
 bool InputManager::isKeyHeld(sf::Keyboard::Key key) const {
