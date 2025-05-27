@@ -12,7 +12,7 @@ namespace conf
     const float dt = 1.0f / static_cast<float>(max_framerate);
     const int numAnts = 50; //per base
     const int numBases = 2; //one base per team
-    const int numLocations =2;
+    const int numLocations =1;
     const int antPathDrawLength = 10;
     int Q = 1;
     double pF = 0.5; //pheremone influnce
