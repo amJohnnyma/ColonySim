@@ -228,6 +228,7 @@ struct pair_hash {
 // Create rectangle shape for a location
 std::unique_ptr<sf::RectangleShape> WorldGeneration::createLocationShape(int x, int y, float cellSize, double difficulty)
 {
+    //this needs to be custom shape else performance stinks
     auto rs = std::make_unique<sf::RectangleShape>(sf::Vector2f(cellSize, cellSize));
     rs->setPosition(x * cellSize, y * cellSize);
     rs->setOutlineThickness(1.f);
