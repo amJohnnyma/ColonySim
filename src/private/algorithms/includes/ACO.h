@@ -52,18 +52,14 @@ class ACO
         void findFood(Cell* cell, Ant* e);
         void returnHome(Cell* cell, Ant* e);
         void getNewTarget(Ant* e);
-        void transferResource(Entity* from, Entity* to, int amount);
-
-
-
-        
+        void transferResource(Entity* from, Entity* to, int amount);      
 
 
 
 
         
     public:
-        ACO(Cell* startCell, std::vector<Cell*>& goals, std::vector<Cell*>& world, int width, int height);
+        ACO(Cell* startCell, std::vector<Cell*>& goals, std::vector<Cell*>& world, int width, int height, Entity* base);
         ~ACO();
         void update();
         void assignRandomTarget(std::vector<Cell*> &raw_goals);

@@ -1,10 +1,11 @@
 #include "../includes/ACO.h"
 #include "../../game/headers/GlobalVars.h"
 
-ACO::ACO(Cell *startCell, std::vector<Cell *> &goals, std::vector<Cell *> &world, int width, int height)
+ACO::ACO(Cell *startCell, std::vector<Cell *> &goals, std::vector<Cell *> &world, int width, int height, Entity* base)
 {
-
-    for (auto &cell : world)
+std::cout << "ACO const" << std::endl;
+    /*
+        for (auto &cell : world)
     {
         for (auto &e : cell->data.entities)
         {
@@ -27,7 +28,9 @@ ACO::ACO(Cell *startCell, std::vector<Cell *> &goals, std::vector<Cell *> &world
             }
         }
     }
+    */
 
+    this->base = base;
     for (auto &g : goals)
     {
         this->goals.insert(g);
@@ -39,6 +42,8 @@ ACO::ACO(Cell *startCell, std::vector<Cell *> &goals, std::vector<Cell *> &world
     curCell = startCell;
 
     assignRandomTarget(goals);
+
+    std::cout << "Fin" << std::endl;
 }
 
 ACO::~ACO()
@@ -71,16 +76,16 @@ void ACO::assignRandomTarget(std::vector<Cell *> &raw_goals)
     {
         for (auto &entity : cell->data.entities)
         {
-            //    std::cout << "e" << std::endl;
+               // std::cout << "e" << std::endl;
             if (Ant* ant = dynamic_cast<Ant*>(entity.get()))
             {
-              //  std::cout << "Ant target get" << std::endl;
+               // std::cout << "Ant target get" << std::endl;
                 getNewTarget(ant);
-                ant->getPath().push_back(cell);
+                //ant->getPath().push_back(cell);
             }
         }
     }
-   // std::cout << "Construct fin" << std::endl;
+    //std::cout << "Construct fin" << std::endl;
 }
 
 void ACO::getNewTarget(Ant *ant)
@@ -110,12 +115,14 @@ void ACO::getNewTarget(Ant *ant)
         counter++;
 
     }
-   //    std::cout << "Assigned index: " << randomIndex << std::endl;
+      // std::cout << "Assigned index: " << randomIndex << std::endl;
     
     if(counter < tl.size())
     {
+        //std::cout << "Setting" << std::endl;
         ant->setTarget(tl[randomIndex]);
         possibleLocations = true;
+       // std::cout << "done set" << std::endl;
     }
     else{
        // std::cout << "No more locations with food" << std::endl;
@@ -158,7 +165,7 @@ void ACO::update()
     //  std::cout << base->getResource() << std::endl;
     bool noBetterF = true;
     double runBest = 0;
-  //     std::cout << "Updating aco" << std::endl;
+     //  std::cout << "Updating aco" << std::endl;
     // from start cell, look at each entity (ant)
     for (auto &cell : world)
     {
@@ -168,7 +175,7 @@ void ACO::update()
             if (e)
             {
                 if (Ant* ant = dynamic_cast<Ant*>(e.get()))
-                {
+                {                    
                     if(ant->stillAnimating())
                     {
                         break;
@@ -179,9 +186,13 @@ void ACO::update()
                     {
                         getNewTarget(ant);
                     }
-
                     if (ant->getTarget() && ant->getTarget()->getName() == "Base")
                     {
+                        if(!ant->sameTeam(ant->getTeam(), ant->getTarget()->getTeam()))
+                        {
+                            getNewTarget(ant);
+                            break;
+                        }
                         if((!possibleLocations) && (e.get()->getX() == ant->getTarget()->getX())&& (e.get()->getY() == ant->getTarget()->getY()))
                         {
                             getNewTarget(ant);

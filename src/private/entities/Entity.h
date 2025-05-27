@@ -18,6 +18,7 @@ constexpr uint16_t RESERVED_MASK = 0x0080; // 0000 0000 1000 0000 //reserved bit
 constexpr uint16_t PERM_MASK     = 0x0F00; // 0000 1111 0000 0000 //what can it do -> unused for now
 constexpr uint16_t STATUS_MASK   = 0xF000; // 1111 0000 0000 0000 //status of object -> unused for now
 
+
 constexpr uint8_t getTeam(TeamInfo v) {
     return v & TEAM_MASK;
 }
@@ -70,7 +71,7 @@ protected:
     double maxResource =0;
     std::unique_ptr<sf::RectangleShape> hitbox;
     //bits for team//
-    //lets make it a struct
+    TeamInfo teamInfo;
 
 public:
     // Constructor
@@ -92,9 +93,13 @@ public:
     const std::string& getName() const { return name; }
     sf::RectangleShape* getHitbox() { return hitbox.get(); }
     virtual std::vector<Cell*>& getPath() = 0;
+    TeamInfo getTeam() {return teamInfo;}
+    bool sameTeam(TeamInfo a, TeamInfo b) {
+    return (a & TEAM_MASK) == (b & TEAM_MASK);
+}
 
     // Setters
-
+    
     void setHitbox(std::unique_ptr<sf::RectangleShape> newHitbox) {
         hitbox = std::move(newHitbox);
     }
@@ -120,6 +125,12 @@ void setMaxResource(double newMax) {
     maxResource = newMax;
     if (resource > maxResource) resource = maxResource;
 }
+
+void setTeam(TeamInfo ti)
+{
+    this->teamInfo = ti;
+}
+
 
 
 

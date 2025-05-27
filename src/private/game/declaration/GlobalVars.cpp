@@ -10,8 +10,8 @@ namespace conf
     const sf::Vector2i worldSize = {50, 50};
     const uint32_t max_framerate = 60;
     const float dt = 1.0f / static_cast<float>(max_framerate);
-    const int numAnts = 100;
-    const int numBases = 1;
+    const int numAnts = 50; //per base
+    const int numBases = 2; //one base per team
     const int numLocations =1;
     const int antPathDrawLength = 10;
     int Q = 1;
@@ -22,4 +22,5 @@ namespace conf
     double locationFoodRegenerationRate = 0.01;
     float antSpeed = 500.0f;
     float terrainDifficultyScale = 0.05f;
+    int baseSeparationDistance = 20;
 }
