@@ -41,15 +41,20 @@ void PlayerController::selectCells(sf::Vector2i from, sf::Vector2i to, std::vect
 
     // std::cout << fromto.str() << std::endl;
     // std::cout << bounds.str() << std::endl;
-    clearSelectedCells();
+    if(!world->getWorldStats()->isInBuildingMode())
+    {
+       clearSelectedCells();
+    }
+
        for(int x = topLeft.x; x < bottomRight.x; x++)
        {
               for(int y = topLeft.y; y < bottomRight.y; y++)
               {
                      Cell* curC = world->at(y,x).get();
                      curC->setFilterOverlay(selectOverlay);
-                     selectedCells.push_back(curC);
+                     selectedCells.push_back(curC);                     
               }
        }
+       world->getWorldStats()->setSelectedCells(selectedCells);
               
 }

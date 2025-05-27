@@ -403,6 +403,18 @@ void World::toggleSimState()
     running = !running;
 }
 
+void World::buildBuilding(std::string type)
+{
+    if(trackedVars->isInBuildingMode())
+    {
+        for(auto & sc : trackedVars->getSelectedCells())
+        {
+            std::cout << "Building in cell: " + std::to_string(sc->x) + ", " + std::to_string(sc->y) << std::endl;
+        }
+    }    
+
+}
+
 World::~World()
 {
     delete trackedVars;

@@ -165,6 +165,18 @@ const std::unordered_map<std::string, std::function<void(World*, const FunctionA
         }},
         {"decrementHeuristic", [](World* w, const FunctionArgs& args){
             w->changeHF(-0.1);
+        }},
+        {"openBuildMenu", [](World* w, const FunctionArgs& args){
+
+                if(args.name.has_value())
+                {
+                    w->getWorldStats()->setBuildingMode(true);
+                    std::string name = args.name.value_or("Unnamed"); 
+                    w->buildBuilding(name);            
+                    w->getWorldStats()->setBuildingMode(false);
+                }
+
+            
         }}
 
     };

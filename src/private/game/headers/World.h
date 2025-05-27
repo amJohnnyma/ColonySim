@@ -60,7 +60,7 @@ class World
         TrackedVariables* getWorldStats() { return trackedVars; }
         void changePF(double amnt) {conf::pF += amnt;}
         void changeHF(double amnt) {conf::hF += amnt;}        
-    
+        void buildBuilding(std::string type); 
 };
 
 

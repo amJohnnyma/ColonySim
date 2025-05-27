@@ -10,6 +10,8 @@ class TrackedVariables
         Entity* base; //grid coordinates of base
         const std::vector<Cell*>* world = nullptr; //The entire world -> might be useful later
         int numAnts;
+        std::vector<Cell*> selectedCells;
+        bool inBuildingMode = false;
     public:
         TrackedVariables() {};
         ~TrackedVariables() {};
@@ -20,8 +22,15 @@ class TrackedVariables
         int getBaseFood() {
     return base->getResource();
 }
+    void setSelectedCells(std::vector<Cell*> cells)
+    {
+        selectedCells = cells;
+    }
+    std::vector<Cell*> getSelectedCells() { return selectedCells; }
     double getPF() {return conf::pF;}
     double getHF() { return conf::hF;}
+    double isInBuildingMode() {return inBuildingMode;}
+    void setBuildingMode(bool val) {inBuildingMode=val;}
 
 };
 

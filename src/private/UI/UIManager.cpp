@@ -14,7 +14,7 @@ UIManager::UIManager(World* world)
     UIElement* decPher = new WorldUIElement(world, 0,7,4,5,conf::cellSize,conf::cellSize, "decrementPheremone", "-p");
     UIElement* incHeur = new WorldUIElement(world, 1,8,4,5,conf::cellSize,conf::cellSize, "incrementHeuristic", "+h");
     UIElement* decHeur = new WorldUIElement(world, 0,8,4,5,conf::cellSize,conf::cellSize, "decrementHeuristic", "-h");
-   // UIElement* addLocation
+    UIElement* buildMenu = new WorldUIElement(world, 0, 9, 5,4 , conf::cellSize, conf::cellSize, "openBuildMenu", "Build");
 
     FunctionArgs args;
     args.element = stats;
@@ -24,7 +24,12 @@ UIManager::UIManager(World* world)
     FunctionArgs sArgs;
     sArgs.element = simControl;   
     simControl->setArgs(sArgs);
-    simControl->setFontSize(40);
+
+    FunctionArgs buildMenuArgs;
+    buildMenuArgs.name = "DefaultNonBlocking"; //this could be a bit string
+    
+    buildMenuArgs.element = buildMenu;
+    buildMenu->setArgs(buildMenuArgs);
 
     incPher->setColor(sf::Color::Green);
     decPher->setColor(sf::Color::Red);
@@ -34,6 +39,9 @@ UIManager::UIManager(World* world)
     decPher->setFontSize(40);
     incHeur->setFontSize(40);
     decHeur->setFontSize(40);
+    simControl->setFontSize(40);
+    buildMenu->setFontSize(10);
+    
 
   
     
@@ -44,6 +52,7 @@ UIManager::UIManager(World* world)
     addElement(decPher);
     addElement(incHeur);
     addElement(decHeur);
+    addElement(buildMenu);
 
 
 }
