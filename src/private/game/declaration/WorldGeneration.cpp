@@ -72,9 +72,8 @@ std::unique_ptr<Cell> WorldGeneration::createCell(int x, int y, float cellSize)
 
     return cell;
 }
-
-//convert to use custom rectangle at some point
-std::unique_ptr<sf::Sprite> WorldGeneration::createShape(sf::Color fillColor, int x, int y, float cellSize)
+//refactor this so i can just say auto ant = std::unique<ant> instead of the "constructor" being here
+std::unique_ptr<sf::Sprite> WorldGeneration::createAntShape(sf::Color fillColor, int x, int y, float cellSize)
 {
     auto& manager = TextureManager::getInstance();
     sf::Texture* antTexture = manager.loadTexture("ant", "src/textures/entities/ants/ant-top-down.png");
@@ -93,8 +92,34 @@ std::unique_ptr<sf::Sprite> WorldGeneration::createShape(sf::Color fillColor, in
 
     // Now position it based on grid
     shape->setPosition(
-        (x + scaleX) * conf::cellSize,
-        (y + scaleY) * conf::cellSize
+        (x) * conf::cellSize,
+        (y) * conf::cellSize
+    );
+
+    return shape;
+}
+
+std::unique_ptr<sf::Sprite> WorldGeneration::createBaseShape(sf::Color fillColor, int x, int y, float cellSize)
+{
+    auto& manager = TextureManager::getInstance();
+    sf::Texture* antTexture = manager.loadTexture("base", "src/textures/entities/buildings/base.jpg");
+    auto shape = std::make_unique<sf::Sprite>(*antTexture);
+    shape->setColor(fillColor);
+    std::cout << "Size: " << antTexture->getSize().x << ", " << antTexture->getSize().y << std::endl;
+    float scaleX = static_cast<float>(conf::cellSize) / antTexture->getSize().x;
+    float scaleY =static_cast<float>(conf::cellSize)/ antTexture->getSize().y;
+    std::cout << "Scale: " << scaleX << ", " << scaleY << std::endl;
+    shape->setScale(scaleX, scaleY);
+
+    // shape->setOrigin(
+    //     antTexture->getSize().x / 2.f,
+    //     antTexture->getSize().y / 2.f
+    // );
+
+    // Now position it based on grid
+    shape->setPosition(
+        (x) * conf::cellSize,
+        (y) * conf::cellSize
     );
 
     return shape;
@@ -102,14 +127,14 @@ std::unique_ptr<sf::Sprite> WorldGeneration::createShape(sf::Color fillColor, in
 
 std::unique_ptr<Ant> WorldGeneration::createAnt(int x, int y)
 {
-    auto shape = createShape(sf::Color::White, x, y, cellSize);
+    auto shape = createAntShape(sf::Color::White, x, y, cellSize);
     Cell* cell = grid[x * width + y].get();
     return std::make_unique<Ant>(y, x, "ant", 10, std::move(shape), cell);
 }
 
 std::unique_ptr<Location> WorldGeneration::createBase(int x, int y)
 {
-    auto shape = createShape(sf::Color::Yellow, x, y, cellSize);
+    auto shape = createBaseShape(sf::Color::Yellow, x, y, cellSize);
     Cell* cell = grid[x * width + y].get();
     return std::make_unique<Location>(x, y, "Base", 100000, std::move(shape), cell);
 }
