@@ -253,9 +253,28 @@ struct pair_hash {
 // Create rectangle shape for a location
 std::unique_ptr<sf::Sprite> WorldGeneration::createLocationShape(int x, int y, float cellSize, double difficulty)
 {
-    //this needs to be custom shape else performance stinks
-    auto rs = std::make_unique<sf::Sprite>();
-    return rs;
+    auto& manager = TextureManager::getInstance();
+    sf::Texture* antTexture = manager.loadTexture("foodlocation", "src/textures/entities/buildings/foodlocation.png");
+    auto shape = std::make_unique<sf::Sprite>(*antTexture);
+    shape->setColor(sf::Color::Blue);
+    std::cout << "Size: " << antTexture->getSize().x << ", " << antTexture->getSize().y << std::endl;
+    float scaleX = static_cast<float>(conf::cellSize) / antTexture->getSize().x;
+    float scaleY =static_cast<float>(conf::cellSize)/ antTexture->getSize().y;
+    std::cout << "Scale: " << scaleX << ", " << scaleY << std::endl;
+    shape->setScale(scaleX, scaleY);
+
+    // shape->setOrigin(
+    //     antTexture->getSize().x / 2.f,
+    //     antTexture->getSize().y / 2.f
+    // );
+
+    // Now position it based on grid
+    shape->setPosition(
+        (x) * conf::cellSize,
+        (y) * conf::cellSize
+    );
+
+    return shape;
 }
 
 void WorldGeneration::generateLocations(int num)
