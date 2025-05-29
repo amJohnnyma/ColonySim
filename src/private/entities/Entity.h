@@ -5,6 +5,7 @@
 #include <memory>
 #include <string>
 #include "../game/headers/GlobalVars.h"
+#include "../utils/headers/TextureManager.h"
 
 #include <cstdint>
 #include <sstream>
