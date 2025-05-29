@@ -125,6 +125,7 @@ std::unique_ptr<sf::Sprite> WorldGeneration::createBaseShape(sf::Color fillColor
     return shape;
 }
 
+//why must world gen make the ants hitbox??
 std::unique_ptr<Ant> WorldGeneration::createAnt(int x, int y)
 {
     auto shape = createAntShape(sf::Color::White, x, y, cellSize);
