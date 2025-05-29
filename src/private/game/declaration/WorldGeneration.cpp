@@ -76,19 +76,26 @@ std::unique_ptr<Cell> WorldGeneration::createCell(int x, int y, float cellSize)
 //convert to use custom rectangle at some point
 std::unique_ptr<sf::Sprite> WorldGeneration::createShape(sf::Color fillColor, int x, int y, float cellSize)
 {
-    auto shape = std::make_unique<sf::Sprite>();
-    // Position the sprite at (x * cellSize, y * cellSize)
-    shape->setPosition(static_cast<float>(x) * cellSize, static_cast<float>(y) * cellSize);
-
-    // Optional: tint with color
+    auto& manager = TextureManager::getInstance();
+    sf::Texture* antTexture = manager.loadTexture("ant", "src/textures/entities/ants/ant-top-down.png");
+    auto shape = std::make_unique<sf::Sprite>(*antTexture);
     shape->setColor(fillColor);
+    std::cout << "Size: " << antTexture->getSize().x << ", " << antTexture->getSize().y << std::endl;
+    float scaleX = static_cast<float>(conf::cellSize) / antTexture->getSize().x;
+    float scaleY =static_cast<float>(conf::cellSize)/ antTexture->getSize().y;
+    std::cout << "Scale: " << scaleX << ", " << scaleY << std::endl;
+    shape->setScale(scaleX, scaleY);
 
-    // Optional: scale sprite to cell size if texture exists
-    // if (shape->getTexture())
-    // {
-    //     auto texSize = shape->getTexture()->getSize();
-    //     shape->setScale(cellSize / texSize.x, cellSize / texSize.y);
-    // }
+    // shape->setOrigin(
+    //     antTexture->getSize().x / 2.f,
+    //     antTexture->getSize().y / 2.f
+    // );
+
+    // Now position it based on grid
+    shape->setPosition(
+        (x + scaleX) * conf::cellSize,
+        (y + scaleY) * conf::cellSize
+    );
 
     return shape;
 }
@@ -200,21 +207,6 @@ void WorldGeneration::generateEntities(int num, int col)
 
 void WorldGeneration::assignTextures()
 {
-    auto& manager = TextureManager::getInstance();
-    sf::Texture* antTexture = manager.loadTexture("ant", "src/textures/entities/ants/ant-top-down.png");
-
-    if (!antTexture) return;
-
-    for (auto& cell : grid)
-    {
-        for (auto& ent : cell->data.entities)
-        {
-            if (ent->getName() == "ant")
-            {
-                ent->setTexture(*antTexture);
-            }
-        }
-    }
 }
 
 // Helper to create a random engine once

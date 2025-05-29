@@ -133,7 +133,7 @@ void setTeam(TeamInfo ti)
     this->teamInfo = ti;
 }
 
-void setTexture(sf::Texture texture);
+void setTexture(const sf::Texture &texture);
 
 
 
