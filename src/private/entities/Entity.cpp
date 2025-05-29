@@ -35,6 +35,17 @@ int Entity::giveResource(int amount)
     return 0; // if no excess, return 0 (no remaining)
 }
 
+void Entity::setTexture(sf::Texture texture)
+{
+    std::cout << "Texturing entity" << std::endl;
+    this->hitbox->setTexture(texture);
+    float scale = conf::cellSize / texture.getSize().x;
+    hitbox->setScale(scale, scale);
+    hitbox->setPosition(this->x, this->y);
+    std::cout << "Done" << std::endl;
+
+}
+
 Entity::Entity(int x, int y, std::string name, double maxResource)
 {
     this->x = x;
@@ -44,7 +55,7 @@ Entity::Entity(int x, int y, std::string name, double maxResource)
 }
 
 
-Entity::Entity(int x, int y, std::string name, double maxResource, std::unique_ptr<sf::RectangleShape> hitbox, Cell* curCell)
+Entity::Entity(int x, int y, std::string name, double maxResource, std::unique_ptr<sf::Sprite> hitbox, Cell* curCell)
 {
     this->x = x;
     this->y = y;
@@ -52,6 +63,12 @@ Entity::Entity(int x, int y, std::string name, double maxResource, std::unique_p
     this->maxResource = maxResource;
     this->hitbox = std::move(hitbox);
   //  this->currentCell = curCell;
+}
+
+void Entity::draw(sf::RenderTarget &target, sf::RenderStates states) const 
+{
+    std::cout << "Draw entityt" << std::endl;
+    target.draw(*this->hitbox, states);
 }
 
 void Entity::setPos(int x, int y)

@@ -8,7 +8,7 @@ class FoodLocation : public Location{
     private:
 
     public:
-        FoodLocation(int x, int y, std::string name, double maxResource, std::unique_ptr<sf::RectangleShape> hitbox, Cell* currentCell);
+        FoodLocation(int x, int y, std::string name, double maxResource, std::unique_ptr<sf::Sprite> hitbox, Cell* currentCell);
     public:
         void regenerate() { giveResource(conf::locationFoodRegenerationRate * this->maxResource);}
 

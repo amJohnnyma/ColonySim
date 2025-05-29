@@ -138,8 +138,7 @@ void World::drawEntities(sf::RenderWindow& window)
             if(ant->stillAnimating())
                 ant->updateMovement(dt);
         }
-        sf::RectangleShape* hb = e->getHitbox();
-        window.draw(*hb);
+        window.draw(*e);
     }
 }
 

@@ -6,7 +6,7 @@
 class BuildingLocation : public Location
 {
     public:
-        BuildingLocation(int x, int y, std::string name, double maxResource, std::unique_ptr<sf::RectangleShape> hitbox, Cell* currentCell);
+        BuildingLocation(int x, int y, std::string name, double maxResource, std::unique_ptr<sf::Sprite> hitbox, Cell* currentCell);
         BuildingLocation(int x, int y, std::string name);
 };
 

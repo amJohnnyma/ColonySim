@@ -35,13 +35,13 @@ class WorldGeneration
         std::unique_ptr<Rectangle> createCellShape(int x, int y, float size);
         std::unique_ptr<Cell> createCell(int x, int y, float cellSize);
         void generateTerrain();
-        std::unique_ptr<sf::RectangleShape> createShape(sf::Color fillColor, int x, int y, float cellSize);
+        std::unique_ptr<sf::Sprite> createShape(sf::Color fillColor, int x, int y, float cellSize);
         std::unique_ptr<Ant> createAnt(int x, int y);
         std::unique_ptr<Location> createBase(int x, int y);
         void logAllEntities();
         void generateEntities(int num, int col);
         void assignTextures();
-        std::unique_ptr<sf::RectangleShape> createLocationShape(int x, int y, float cellSize, double difficulty);
+        std::unique_ptr<sf::Sprite> createLocationShape(int x, int y, float cellSize, double difficulty);
         void generateLocations(int num);
 };
 

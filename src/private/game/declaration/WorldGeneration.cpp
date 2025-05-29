@@ -74,14 +74,22 @@ std::unique_ptr<Cell> WorldGeneration::createCell(int x, int y, float cellSize)
 }
 
 //convert to use custom rectangle at some point
-std::unique_ptr<sf::RectangleShape> WorldGeneration::createShape(sf::Color fillColor, int x, int y, float cellSize)
+std::unique_ptr<sf::Sprite> WorldGeneration::createShape(sf::Color fillColor, int x, int y, float cellSize)
 {
-    auto shape = std::make_unique<sf::RectangleShape>();
-    shape->setSize(sf::Vector2f(cellSize, cellSize));
-    shape->setPosition(x * cellSize, y * cellSize);
-  //  shape->setOutlineThickness(1.f);
-   // shape->setOutlineColor(sf::Color::Red);
-    shape->setFillColor(fillColor);
+    auto shape = std::make_unique<sf::Sprite>();
+    // Position the sprite at (x * cellSize, y * cellSize)
+    shape->setPosition(static_cast<float>(x) * cellSize, static_cast<float>(y) * cellSize);
+
+    // Optional: tint with color
+    shape->setColor(fillColor);
+
+    // Optional: scale sprite to cell size if texture exists
+    // if (shape->getTexture())
+    // {
+    //     auto texSize = shape->getTexture()->getSize();
+    //     shape->setScale(cellSize / texSize.x, cellSize / texSize.y);
+    // }
+
     return shape;
 }
 
@@ -203,8 +211,7 @@ void WorldGeneration::assignTextures()
         {
             if (ent->getName() == "ant")
             {
-                ent->getHitbox()->setTexture(antTexture);
-
+                ent->setTexture(*antTexture);
             }
         }
     }
@@ -226,14 +233,10 @@ struct pair_hash {
 };
 
 // Create rectangle shape for a location
-std::unique_ptr<sf::RectangleShape> WorldGeneration::createLocationShape(int x, int y, float cellSize, double difficulty)
+std::unique_ptr<sf::Sprite> WorldGeneration::createLocationShape(int x, int y, float cellSize, double difficulty)
 {
     //this needs to be custom shape else performance stinks
-    auto rs = std::make_unique<sf::RectangleShape>(sf::Vector2f(cellSize, cellSize));
-    rs->setPosition(x * cellSize, y * cellSize);
-    rs->setOutlineThickness(1.f);
-    rs->setOutlineColor(sf::Color::White);
-    rs->setFillColor(sf::Color(255, 255, 255, static_cast<sf::Uint8>(difficulty * 100)));
+    auto rs = std::make_unique<sf::Sprite>();
     return rs;
 }
 

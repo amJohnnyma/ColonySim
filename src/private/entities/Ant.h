@@ -17,7 +17,7 @@ class Ant : public Entity
         float moveDuration = 0.5f; // seconds
         bool isMoving = false;
     public:
-        Ant(int x, int y, std::string name, double maxResource, std::unique_ptr<sf::RectangleShape> hitbox, Cell* currentCell);
+        Ant(int x, int y, std::string name, double maxResource, std::unique_ptr<sf::Sprite> hitbox, Cell* currentCell);
     public:
         bool getStatus() {return returningHome;}
         void setStatus(bool stat) {returningHome = stat;}
