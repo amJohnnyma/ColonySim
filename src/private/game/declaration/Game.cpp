@@ -44,6 +44,13 @@ void Game::renderFrame() {
 
 void Game::idleState()
 {
+    sf::Event event;
+    while (wind->wndw->pollEvent(event))
+    {
+        inputManager->processEvent(event, *wind->wndw);
+        if (event.type == sf::Event::Closed)
+            wind->wndw->close();
+    }
     world->handleInput(*inputManager, *wind->wndw);
     inputManager->update(*wind->wndw);
     uiMan->update(*wind->wndw);
@@ -81,6 +88,13 @@ void Game::runningState()
 
 void Game::pausedState()
 {
+        sf::Event event;
+    while (wind->wndw->pollEvent(event))
+    {
+        inputManager->processEvent(event, *wind->wndw);
+        if (event.type == sf::Event::Closed)
+            wind->wndw->close();
+    }
     //but show pause menu aswell
         world->handleInput(*inputManager, *wind->wndw);
     inputManager->update(*wind->wndw);
