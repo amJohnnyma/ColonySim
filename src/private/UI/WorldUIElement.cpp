@@ -140,8 +140,9 @@ const std::unordered_map<std::string, std::function<void(World*, const FunctionA
             //    std::cout << "Making magic" << std::endl;
                 if (elem) {
               //      std::cout << "Magic trying" << std::endl;
-                    elem->setText("Stats:\nBase: "
-                         + std::to_string(tv.getBaseFood())
+              std::string basesInfo = tv.getBasesInfo();
+                    elem->setText("Stats: \n"
+                        + basesInfo 
                          +"\nPF: " + std::to_string(tv.getPF())
                          +"\nHF: " + std::to_string(tv.getHF())
                         );

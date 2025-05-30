@@ -378,7 +378,7 @@ void ACO::returnHome(Cell *cell, Ant *e)
                     if(hasFound)
                     {
                     transferResource(e,ent.get(),e->getResource());
-                    std::cout << ent->getName() << " -> " << ent->getResource() << std::endl;
+                    //std::cout << ent->getName() << " -> " << ent->getResource() << std::endl;
                     }
 
                     return hasFound;
