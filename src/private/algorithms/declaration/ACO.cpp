@@ -111,36 +111,15 @@ void ACO::getNewTarget(Ant *ant)
    // target = tl[randomIndex];
 }
 
+bool same(int x, int y, int w, int v)
+{
+    //std::cout << "Comparing (" << x << "," << y << ") with (" << w << "," << v << ")" << std::endl;
+    return (x == w) && (y==v);
+}
+
 void ACO::update()
 {
-    /////////////////testing
-    /*
-    int baseAnts = 0;
-    int foodAnts = 0;
-    for (auto &cell : world)
-    {
-        for (auto &e : cell->data.entities)
-        {
-            if (e)
-            {
-                if (Ant *ant = dynamic_cast<Ant *>(e.get()))
-                {
-                    if(ant->getTarget()->getName() == "Base")
-                    {
-                        baseAnts++;
-                    }
-                    else{
-                        foodAnts++;
-                    }
-                }
-            }
-        }
-    }
-    std::cout << "Base: " << std::to_string(baseAnts) << "\t Food: " << std::to_string(foodAnts) << std::endl;
-    */
-/////////////////////
 
-    //  std::cout << base->getResource() << std::endl;
     bool noBetterF = true;
     double runBest = 0;
      //  std::cout << "Updating aco" << std::endl;
@@ -154,6 +133,7 @@ void ACO::update()
             {
                 if (Ant* ant = dynamic_cast<Ant*>(e.get()))
                 {    
+
                    // std::cout << "Ant team: " << ant->getTeam() << ", Target: " << ant->getTarget()->getName() << "\n";
 
                     if(!ant->sameTeam(ant->getTeam(), team))   
@@ -403,7 +383,34 @@ void ACO::getAdjCells(int x, int y, Entity *e)
                 [](const auto& b) {
                     return dynamic_cast<BuildingLocation*>(b.get()) != nullptr;
                 });
+            for(auto &enemyAnt : tile->data.entities)
+            {
+                if(Ant* ant = dynamic_cast<Ant*>(enemyAnt.get()))
+                {
+                    if(!e->sameTeam(ant->getTeam(), e->getTeam()))
+                    {
+                        Ant* thisAnt = dynamic_cast<Ant*>(e);
+                        auto& target = ant;
+                        //thisAnt->setTarget(ant); 
+                        Cell* cell = world[thisAnt->getY() * worldWidth + thisAnt->getX()];
+                        moveToCell(cell, tile, e);
+                        std::cout << "Attack time" << std::endl;
+                        double result = thisAnt->attack(target);
+                        if (result <= 0) {
+                            auto& vec = cell->data.entities;
 
+                            vec.erase(std::remove_if(vec.begin(), vec.end(),
+                                [target](const std::unique_ptr<Entity>& e) {
+                                    return e.get() == target;
+                                }), vec.end());
+
+                            
+                        }
+                        
+                        break;                  
+                    }
+                }
+            }
             if (notBlocked)
             {
                 adjCells.push_back(tile);
