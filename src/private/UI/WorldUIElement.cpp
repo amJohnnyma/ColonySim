@@ -195,7 +195,7 @@ const std::unordered_map<std::string, std::function<void(World*, const FunctionA
             switch (Game::getInstance().getState())
             {
                 case State::PAUSED:
-                    Game::getInstance().handleEvent(Event::UNPAUSE);
+                    Game::getInstance().handleEvent(Event::UNPAUSE);                    
                     break;
                 case State::RUNNING:
                     Game::getInstance().handleEvent(Event::PAUSE);

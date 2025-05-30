@@ -131,6 +131,7 @@ void Game::handleEvent(Event event) {
     } else {
         std::cerr << "Invalid event/state combo\n";
     }
+    uiMan->setVisibilityForState(currentState);
 }
 
 Game::Game(int windowWidth, int windowHeight, int worldWidth, int worldHeight)

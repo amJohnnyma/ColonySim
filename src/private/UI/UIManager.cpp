@@ -28,6 +28,7 @@ UIManager::UIManager(World* world)
         "pauseGame", 
         "Pause"
     );
+    UIElement* pTEST = new WorldUIElement(world,5,5,4,5,conf::cellSize,conf::cellSize, "null", "");
 
     FunctionArgs args;
     args.element = stats;
@@ -75,6 +76,7 @@ UIManager::UIManager(World* world)
     addElement(buildMenu); //7
     addElement(deleteBuilding); //8
     addElement(pauseButton); //9
+    addElement(pTEST); //10
 
 
 }
@@ -112,16 +114,16 @@ void UIManager::setVisibilityForState(State gameState)
     for (auto& elem : elements)
         elem->setVisible(false); // Hide everything by default
 
-    switch (gameState)
-{
+    int BASEUI = 9;
+    switch (gameState){
     case State::RUNNING: {
-        int num = 0;
+        int num = 0;        
         for(auto& elem : elements)
         {
-            if(num <= 8)
-                elem->setVisible(false);
-            else
+            if(num <= BASEUI)
                 elem->setVisible(true);
+            else
+                elem->setVisible(false);
             num++;
         }
         break;
@@ -131,7 +133,7 @@ void UIManager::setVisibilityForState(State gameState)
         int num = 0;
         for(auto& elem : elements)
         {
-            if(num <= 8)
+            if(num <= BASEUI-1)
                 elem->setVisible(false);
             else
                 elem->setVisible(true);
@@ -144,10 +146,10 @@ void UIManager::setVisibilityForState(State gameState)
         int num = 0;
         for(auto& elem : elements)
         {
-            if(num <= 8)
-                elem->setVisible(false);
-            else
+            if(num <= BASEUI)
                 elem->setVisible(true);
+            else
+                elem->setVisible(false);
             num++;
         }
         break;
@@ -157,7 +159,7 @@ void UIManager::setVisibilityForState(State gameState)
         int num = 0;
         for(auto& elem : elements)
         {
-            if(num <= 8)
+            if(num <= BASEUI)
                 elem->setVisible(false);
             else
                 elem->setVisible(true);
