@@ -393,7 +393,7 @@ void ACO::getAdjCells(int x, int y, Entity *e)
                             if (!thisAnt) break;
 
                             Cell* cell = world[thisAnt->getY() * worldWidth + thisAnt->getX()];
-                            moveToCell(cell, tile, e);
+                           // moveToCell(cell, tile, e);
 
                             std::cout << "Attack time" << std::endl;
                             double result = thisAnt->attack(ant);
