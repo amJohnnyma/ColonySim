@@ -397,12 +397,6 @@ void ACO::getAdjCells(int x, int y, Entity *e)
             int index = ny * worldWidth + nx;
             auto& tile = world[index];
 
-            // Check if already in path
-            bool inPath = std::any_of(e->getPath().begin(), e->getPath().end(), [&](const auto& p) {
-                return p->x == nx && p->y == ny;
-            });
-
-            if (inPath) continue;
             
             // Check for blocking buildings
             bool notBlocked = std::none_of(world[nx * worldWidth + ny]->data.entities.begin(), world[nx * worldWidth + ny]->data.entities.end(),
