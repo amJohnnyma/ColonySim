@@ -433,8 +433,8 @@ double ACO::pheromoneCalc(Cell *cell, Entity *target, bool returningHome)
     double Tij;
 
 
-    Tij = cell->data.p.pheromoneMap[team];
-    std::cout << "Tij: " + std::to_string(Tij) << std::endl;
+    Tij = std::clamp(cell->data.p.pheromoneMap[team], 0.01, 100.0);
+   // std::cout << "Tij: " + std::to_string(Tij) << std::endl;
 
     double numerator = std::pow(Tij, conf::pF) * std::pow(Nij , conf::hF);
     double denominator = sumOfFeasiblePheremoneProb(target, returningHome) + 0.00001;
@@ -452,7 +452,7 @@ double ACO::sumOfFeasiblePheremoneProb(Entity *target, bool returningHome)
         double heuristic = calculateHeuristic(ac, target);
         double Tij;
 
-        Tij = ac->data.p.pheromoneMap[team];
+        Tij = std::clamp(ac->data.p.pheromoneMap[team], 0.01, 100.0);
 
         //   std::cout << "H: " << heuristic << " :hF: " << hF<<std::endl;
         //    std::cout << "P: " << pheromone <<" :pF: "<< pF<< std::endl;
@@ -468,7 +468,9 @@ double ACO::calculateHeuristic(Cell *next, Entity *target)
     double difficulty = next->data.difficulty;                                                 // [0, 1], where 1 is most difficult
 
     // Heuristic: prioritize shorter distance, lightly penalize difficulty
+    //double heuristic = 1.0 / (distance + 1.0 + conf::terrainDifficultyScale * difficulty);
     double heuristic = 1.0 / (distance + 1.0 + conf::terrainDifficultyScale * difficulty);
+    heuristic = std::clamp(heuristic, 0.001, 100.0);
 
     return heuristic;
 }
