@@ -154,7 +154,7 @@ void ACO::update()
             {
                 if (Ant* ant = dynamic_cast<Ant*>(e.get()))
                 {    
-                    std::cout << "Ant team: " << ant->getTeam() << ", Target: " << ant->getTarget()->getName() << "\n";
+                   // std::cout << "Ant team: " << ant->getTeam() << ", Target: " << ant->getTarget()->getName() << "\n";
 
                     if(!ant->sameTeam(ant->getTeam(), team))   
                     {
@@ -246,7 +246,7 @@ void ACO::findFood(Cell *cell, Ant *e)
 
     curCell = cell;
     //   std::cout<<"Getting adj cells"<<std::endl;
-    getAdjCells(cell->y, cell->x, e);
+    getAdjCells(cell->x, cell->y, e);
     if (adjCells.size() == 0)
     {
         //     std::cout << "No adj cells" << std::endl;
@@ -316,7 +316,7 @@ void ACO::returnHome(Cell *cell, Ant *e)
     //   std::cout << "Returning home!" << std::endl;
     curCell = cell;
     //   std::cout<<"Getting adj cells"<<std::endl;
-    getAdjCells(cell->y, cell->x, e);
+    getAdjCells(cell->x, cell->y, e);
     if (adjCells.size() == 0)
     {
         //     std::cout << "No adj cells" << std::endl;
@@ -396,18 +396,24 @@ void ACO::getAdjCells(int x, int y, Entity *e)
         if (nx >= 0 && nx < worldWidth && ny >= 0 && ny < worldHeight)
         {
             int index = ny * worldWidth + nx;
-            bool inPath = false;
-            for (auto &p : e->getPath())
+            auto& tile = world[index];
+
+            // Check if already in path
+            bool inPath = std::any_of(e->getPath().begin(), e->getPath().end(), [&](const auto& p) {
+                return p->x == nx && p->y == ny;
+            });
+
+            if (inPath) continue;
+            
+            // Check for blocking buildings
+            bool notBlocked = std::none_of(tile->data.entities.begin(), tile->data.entities.end(),
+                [](const auto& b) {
+                    return dynamic_cast<BuildingLocation*>(b.get()) != nullptr;
+                });
+
+            if (notBlocked)
             {
-                if (p->x == nx && p->y == ny)
-                {
-                    inPath = true;
-                    break;
-                }
-            }
-            if (!inPath)
-            {
-                adjCells.push_back(world[index]);
+                adjCells.push_back(tile);
             }
         }
     }
