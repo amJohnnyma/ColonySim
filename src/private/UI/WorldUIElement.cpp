@@ -114,7 +114,22 @@ const std::unordered_map<std::string, std::function<void(World*, const FunctionA
             }
         }},
         {"toggleSimState", [](World* w, const FunctionArgs& args){
-            w->toggleSimState();
+            switch (Game::getInstance().getState())
+            {
+                case State::PAUSED:
+                    Game::getInstance().handleEvent(Event::START);                    
+                    break;
+                case State::RUNNING:
+                    Game::getInstance().handleEvent(Event::START);
+                    break;
+                case State::IDLE:
+                    Game::getInstance().handleEvent(Event::START);
+                    break;
+                case State::STOPPED:
+                    Game::getInstance().handleEvent(Event::STOP);
+                    break;
+            }
+            w->toggleSimState();            
           //  std::cout << "Calling setColor on UIElement at " << *args.element << std::endl;
             bool running = w->isRunning();            
             if (args.element.has_value() && args.element.value() != nullptr) {

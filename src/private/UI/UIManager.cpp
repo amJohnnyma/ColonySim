@@ -92,7 +92,7 @@ void UIManager::update(sf::RenderWindow& window)
 {
 
     for (auto& elem : elements)
-        if(elem->isVisible())
+      //  if(elem->isVisible())
             elem->update(window);
     
 }
