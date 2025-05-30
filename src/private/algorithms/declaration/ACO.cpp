@@ -359,74 +359,77 @@ void ACO::returnHome(Cell *cell, Ant *e)
         }
     }
 }
-void ACO::getAdjCells(int x, int y, Entity *e)
-{
+bool ACO::isInBounds(int x, int y) const {
+    return x >= 0 && x < worldWidth && y >= 0 && y < worldHeight;
+}
+
+bool ACO::isCellBlocked(Cell* tile) const {
+    return std::any_of(tile->data.entities.begin(), tile->data.entities.end(),
+        [](const auto& b) {
+            return dynamic_cast<BuildingLocation*>(b.get()) != nullptr;
+        });
+}
+
+void ACO::handleEnemiesInCell(Cell* tile, Entity* e) {
+    for (auto it = tile->data.entities.begin(); it != tile->data.entities.end();)
+    {
+        if (Ant* ant = dynamic_cast<Ant*>(it->get()))
+        {
+            if (!e->sameTeam(ant->getTeam(), e->getTeam()))
+            {
+                Ant* thisAnt = dynamic_cast<Ant*>(e);
+                if (!thisAnt) break;
+
+                std::cout << "Attack time" << std::endl;
+                double result = thisAnt->attack(ant);
+
+                if (result <= 0)
+                {
+                    it = tile->data.entities.erase(it);
+                }
+                else
+                {
+                    ++it;
+                }
+                break; // attack one per turn
+            }
+            else
+            {
+                ++it;
+            }
+        }
+        else
+        {
+            ++it;
+        }
+    }
+}
+
+void ACO::getAdjCells(int x, int y, Entity* e) {
     const int dx[] = {0, 0, -1, 1, -1, -1, 1, 1};
     const int dy[] = {1, -1, 0, 0, -1, 1, -1, 1};
 
     adjCells.clear();
 
-    for (int i = 0; i < 8; i++)
+    for (int i = 0; i < 8; ++i)
     {
         int nx = x + dx[i];
         int ny = y + dy[i];
 
-        // Check bounds
-        if (nx >= 0 && nx < worldWidth && ny >= 0 && ny < worldHeight)
+        if (!isInBounds(nx, ny)) continue;
+
+        int index = ny * worldWidth + nx;
+        Cell* tile = world[index];
+
+        handleEnemiesInCell(tile, e);
+
+        if (!isCellBlocked(tile))
         {
-            int index = ny * worldWidth + nx;
-            auto& tile = world[index];
-
-            
-            // Check for blocking buildings
-            bool notBlocked = std::none_of(world[nx * worldWidth + ny]->data.entities.begin(), world[nx * worldWidth + ny]->data.entities.end(),
-                [](const auto& b) {
-                    return dynamic_cast<BuildingLocation*>(b.get()) != nullptr;
-                });
-                for (auto it = tile->data.entities.begin(); it != tile->data.entities.end();)
-                {
-                    if (Ant* ant = dynamic_cast<Ant*>(it->get()))
-                    {
-                        if (!e->sameTeam(ant->getTeam(), e->getTeam()))
-                        {
-                            Ant* thisAnt = dynamic_cast<Ant*>(e);
-                            if (!thisAnt) break;
-
-                            Cell* cell = world[thisAnt->getY() * worldWidth + thisAnt->getX()];
-                           // moveToCell(cell, tile, e);
-
-                            std::cout << "Attack time" << std::endl;
-                            double result = thisAnt->attack(ant);
-
-                            if (result <= 0)
-                            {
-                                it = tile->data.entities.erase(it); // erase returns the next valid iterator
-                            }
-                            else
-                            {
-                                ++it; // only increment if not erased
-                            }
-
-                            break; // attack one per turn
-                        }
-                        else
-                        {
-                            ++it;
-                        }
-                    }
-                    else
-                    {
-                        ++it;
-                    }
-                }
-            if (notBlocked)
-            {
-                adjCells.push_back(tile);
-            }
+            adjCells.push_back(tile);
         }
     }
-
 }
+
 
 /*
 • τij (t) is the pheromone value on edge (i, j) at time t.

@@ -16,8 +16,8 @@ class Ant : public Entity
         float elapsedTime = 0.0f;
         float moveDuration = 0.5f; // seconds
         bool isMoving = false;
-        double hitpoints = 100;
-        double damage = 60;
+        double hitpoints = 100; //base hp
+        double damage = 9; //this is base damage ->other ants may have more or less
         Ant* attackTarget = nullptr;
     public:
         Ant(int x, int y, std::string name, double maxResource, std::unique_ptr<sf::Sprite> hitbox, Cell* currentCell);
