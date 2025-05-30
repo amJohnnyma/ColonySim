@@ -83,7 +83,7 @@ void WorldUIElement::draw(sf::RenderWindow& window)
 
 void WorldUIElement::update(sf::RenderWindow& window)
 {
-    if(button)
+    if(button && isVisible())
     {
         if(button->isClicked(window))
         {
