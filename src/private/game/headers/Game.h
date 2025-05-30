@@ -26,15 +26,20 @@ enum Event
 class Game
 {
     private:
+        static Game* instance;
         World* world;
         window* wind;        
         UIManager* uiMan;
         InputManager* inputManager; //How am i going to use this in other classes? -> great difficulty
         State currentState = State::RUNNING;
 
-    public:
+    private:
         Game(int windowWidth, int windowHeight, int worldWidth, int worldHeight);
         ~Game();
+        Game(const Game&) = delete;
+        Game& operator=(const Game&) = delete;
+
+    public:
         void fixedrun();
         void run();
         void renderFrame();
@@ -43,6 +48,23 @@ class Game
         void pausedState();
         void stoppedState();
         void handleEvent(Event event);
+    public:
+    static void init(int windowWidth, int windowHeight, int worldWidth, int worldHeight) {
+        if (!instance)
+            instance = new Game(windowWidth, windowHeight, worldWidth, worldHeight);
+    }
+
+    static Game& getInstance() {
+        if (!instance) {
+            throw std::runtime_error("Game not initialized. Call Game::init() first.");
+        }
+        return *instance;
+    }
+
+    static void destroy() {
+        delete instance;
+        instance = nullptr;
+    }
 };
 
 #endif

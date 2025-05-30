@@ -6,9 +6,10 @@
 #include "utils/headers/TextureManager.h"
 int main()
 {
-    Game* game = new Game(conf::window_size.x,conf::window_size.y, conf::worldSize.x,conf::worldSize.y);
-    game->run();
-    delete game;
+    Game::init(conf::window_size.x,conf::window_size.y, conf::worldSize.x,conf::worldSize.y);
+    Game& game = Game::getInstance();
+    game.run();
+    Game::destroy();
 //    game.fixedrun(); //fixed run to help with memory leaks
 
 
