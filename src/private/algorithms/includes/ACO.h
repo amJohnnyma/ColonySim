@@ -10,6 +10,7 @@
 #include "../../entities/Ant.h"
 #include "../../entities/Location.h"
 #include "../../entities/FoodLocation.h"
+#include "../../entities/BuildingLocation.h"
 
 
 
@@ -31,10 +32,12 @@ class ACO
         Entity* base;
         std::vector<Entity*> tl; // goals
         bool possibleLocations = true;
+        TeamInfo team;
 
 
 
     private:
+        void handleEnemiesInCell(Cell *tile, Entity *e);
         void getAdjCells(int x, int y, Entity *e);
         /*
         • τij (t) is the pheromone value on edge (i, j) at time t.
@@ -51,19 +54,17 @@ class ACO
         void depositPheremones(Cell* c);
         void findFood(Cell* cell, Ant* e);
         void returnHome(Cell* cell, Ant* e);
-        void getNewTarget(Ant* e);
-        void transferResource(Entity* from, Entity* to, int amount);
-
-
-
-        
+        bool isInBounds(int x, int y) const;
+        bool isCellBlocked(Cell *tile) const;
+        void getNewTarget(Ant *e);
+        void transferResource(Entity* from, Entity* to, int amount);      
 
 
 
 
         
     public:
-        ACO(Cell* startCell, std::vector<Cell*>& goals, std::vector<Cell*>& world, int width, int height);
+        ACO(Cell* startCell, std::vector<Cell*>& goals, std::vector<Cell*>& world, int width, int height, Entity* base);
         ~ACO();
         void update();
         void assignRandomTarget(std::vector<Cell*> &raw_goals);

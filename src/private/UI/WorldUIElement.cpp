@@ -1,5 +1,6 @@
 #include "WorldUIElement.h"
-
+#include <iostream>
+#include <unordered_map>
 WorldUIElement::WorldUIElement(World* world, int x, int y, int resolution, int radius, int width, int height, std::string function, std::string textArea)
  : UIElement(world), shape(nullptr), button(nullptr), updateFunc(nullptr)
 {
@@ -101,6 +102,7 @@ void WorldUIElement::onClick()
    // std::cout << "Rect clicked" << std::endl;
 }
 
+//needs to use player-controller such that enemy AI has access to the same commands
 const std::unordered_map<std::string, std::function<void(World*, const FunctionArgs&)>>& WorldUIElement::getFunctionMap() {
    static const std::unordered_map<std::string, std::function<void(World*, const FunctionArgs&)>> functionMap = {
         {"testClick", [](World* w, const FunctionArgs&) {
@@ -138,8 +140,9 @@ const std::unordered_map<std::string, std::function<void(World*, const FunctionA
             //    std::cout << "Making magic" << std::endl;
                 if (elem) {
               //      std::cout << "Magic trying" << std::endl;
-                    elem->setText("Stats:\nBase: "
-                         + std::to_string(tv.getBaseFood())
+              std::string basesInfo = tv.getBasesInfo();
+                    elem->setText("Stats: \n"
+                        + basesInfo 
                          +"\nPF: " + std::to_string(tv.getPF())
                          +"\nHF: " + std::to_string(tv.getHF())
                         );
@@ -164,6 +167,30 @@ const std::unordered_map<std::string, std::function<void(World*, const FunctionA
         {"decrementHeuristic", [](World* w, const FunctionArgs& args){
             w->changeHF(-0.1);
         }},
+        {"openBuildMenu", [](World* w, const FunctionArgs& args){
+
+                if(args.name.has_value())
+                {
+                    w->getWorldStats()->setBuildingMode(true);
+                    std::string name = args.name.value_or("Unnamed"); 
+                    w->buildBuilding(name);            
+                    w->getWorldStats()->setBuildingMode(false);
+                }
+
+            
+        }},
+        {"deleteBuilding", [](World* w, const FunctionArgs& args){
+
+                if(args.name.has_value())
+                {
+                    w->getWorldStats()->setBuildingMode(true);
+                    std::string name = args.name.value_or("Unnamed"); 
+                    w->destroyBuilding("");            
+                    w->getWorldStats()->setBuildingMode(false);
+                }
+
+            
+        }}
 
     };
     return functionMap;
