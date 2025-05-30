@@ -4,32 +4,9 @@
 ACO::ACO(Cell *startCell, std::vector<Cell *> &goals, std::vector<Cell *> &world, int width, int height, Entity* base)
 {
 std::cout << "ACO const" << std::endl;
-    /*
-        for (auto &cell : world)
-    {
-        for (auto &e : cell->data.entities)
-        {
-            if (e)
-            {
-                if (e.get()->getName() != "default")
-                {
-                    std::cout << cell->x << ", " << cell->y << ": " << e.get()->getName() << std::endl;
-                }
-                if (e.get()->getName() == "Base")
-                {
-                    std::cout << "Ants have base" << std::endl;
-                    base = e.get();
-                   // break;
-                }
-                if(e.get()->getName() == "ant")
-                {
-                    numberAnts++;
-                }
-            }
-        }
-    }
-    */
 
+    std::cout << "ACO for team: " + std::to_string(base->getTeam()) << std::endl;
+    team = base->getTeam();
     this->base = base;
     std::cout << this->base->getTeam() << std::endl;
     for (auto &g : goals)
@@ -176,7 +153,13 @@ void ACO::update()
             if (e)
             {
                 if (Ant* ant = dynamic_cast<Ant*>(e.get()))
-                {                    
+                {    
+                    std::cout << "Ant team: " << ant->getTeam() << ", Target: " << ant->getTarget()->getName() << "\n";
+
+                    if(!ant->sameTeam(ant->getTeam(), team))   
+                    {
+                        break;
+                    }             
                     if(ant->stillAnimating())
                     {
                         break;
@@ -224,12 +207,6 @@ void ACO::update()
             }
         }
 
-        /*
-            if (cell->data.p.strength > conf::maxPheromone)
-            {
-                conf::maxPheromone = cell->data.p.strength;
-            }
-                */
     }
 }
 

@@ -31,6 +31,7 @@ class ACO
         Entity* base;
         std::vector<Entity*> tl; // goals
         bool possibleLocations = true;
+        TeamInfo team;
 
 
 

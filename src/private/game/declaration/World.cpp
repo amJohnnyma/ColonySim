@@ -161,8 +161,8 @@ void World::createACO()
             }                 
             if (eg->getName().find("Base") != std::string::npos) //this only works for one base
             {
-                antBase = eg.get();
-                trackedVars->setBase(antBase);
+                //antBase = eg.get();
+                trackedVars->setBase(eg.get());
             } 
         }
     }
