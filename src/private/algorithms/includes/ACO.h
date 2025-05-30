@@ -10,6 +10,7 @@
 #include "../../entities/Ant.h"
 #include "../../entities/Location.h"
 #include "../../entities/FoodLocation.h"
+#include "../../entities/BuildingLocation.h"
 
 
 
@@ -31,6 +32,7 @@ class ACO
         Entity* base;
         std::vector<Entity*> tl; // goals
         bool possibleLocations = true;
+        TeamInfo team;
 
 
 

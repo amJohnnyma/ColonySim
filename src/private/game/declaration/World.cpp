@@ -1,7 +1,7 @@
 #include "../headers/World.h"
-#include "World.h"
 #include "../headers/GlobalVars.h"
 #include "../../controller/InputManager.h" 
+#include "World.h"
 
 World::World(int w, int h, sf::RenderWindow& window)
 {
@@ -36,8 +36,8 @@ void World::update()
     {
         //if(in simulated) -> i.e. not manually controlled
         //std::cout << "Update aco" << std::endl;
-        a.update();
-        numAnts += a.getNumberAnts();
+        a->update();
+        numAnts += a->getNumberAnts();
         //std::cout << "done" << std::endl;
     }
     trackedVars->setNumAnts(numAnts);
@@ -138,8 +138,7 @@ void World::drawEntities(sf::RenderWindow& window)
             if(ant->stillAnimating())
                 ant->updateMovement(dt);
         }
-        sf::RectangleShape* hb = e->getHitbox();
-        window.draw(*hb);
+        window.draw(*e);
     }
 }
 
@@ -151,8 +150,6 @@ void World::createACO()
     for (const auto& cell_ptr : grid) {
         raw_grid.push_back(cell_ptr.get());  // raw pointer to the same object
     }
-    //separate according to teams
-    std::vector<Entity*> bases;
 
     for(auto &g : grid)
     {
@@ -161,20 +158,19 @@ void World::createACO()
             if(eg->getName() == "location")
             {
                 raw_goals.push_back(g.get());
-            }           
-            if(eg->getName() == "Base") //this only works for one base
+            }                 
+            if (eg->getName().find("Base") != std::string::npos) //this only works for one base
             {
-                bases.push_back(eg.get());
-                antBase = eg.get();
-                trackedVars->setBase(antBase);
+                //antBase = eg.get();
+                trackedVars->setBase(eg.get());
             } 
         }
     }
 
-    for(auto & base : bases)
+    for(auto & base : trackedVars->getBases())
     {
-    ACO aco(raw_grid[0], raw_goals, raw_grid, width, height, base);
-    sims.push_back(aco);
+        ACO* aco = new ACO(raw_grid[0], raw_goals, raw_grid, width, height, base);
+        sims.push_back(aco);
     }
     
 
@@ -403,6 +399,40 @@ void World::toggleSimState()
     running = !running;
 }
 
+void World::buildBuilding(std::string type)
+{
+    if(trackedVars->isInBuildingMode())
+    {
+        for(auto & sc : trackedVars->getSelectedCells())
+        {
+            //std::cout << "Building in cell: " + std::to_string(sc->x) + ", " + std::to_string(sc->y) << std::endl;
+            auto building = std::make_unique<BuildingLocation>(sc->x, sc->y, "Building");
+            Cell* cell = at(sc->x, sc->y).get();
+
+            cell->data.entities.push_back(std::unique_ptr<Entity>(building.release()));
+        }
+    }    
+
+}
+
+void World::destroyBuilding(std::string type)
+{
+    if(trackedVars->isInBuildingMode())
+    {
+        for(auto & sc : trackedVars->getSelectedCells())
+        {
+            //std::cout << "Building in cell: " + std::to_string(sc->x) + ", " + std::to_string(sc->y) << std::endl;
+            Cell* cell = at(sc->x, sc->y).get();
+            auto& entities = cell->data.entities;
+            entities.erase(std::remove_if(entities.begin(), entities.end(),
+                [](const std::unique_ptr<Entity>& e) {
+                    return dynamic_cast<BuildingLocation*>(e.get()) != nullptr;
+                }),
+                entities.end());
+
+        }
+    }    
+}
 World::~World()
 {
     delete trackedVars;

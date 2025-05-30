@@ -14,6 +14,8 @@ struct FunctionArgs
     std::optional<std::string> name;
     std::optional<int> count;
     std::optional<UIElement*> element = nullptr;
+    std::optional<int> x;
+    std::optional<int> y;
 };
 
 using FunctionType = std::function<void(World*, const FunctionArgs&)>;

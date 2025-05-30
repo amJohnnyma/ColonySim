@@ -24,7 +24,7 @@ class World
         float currentZoom = 1.0f;
         float baseSpeed = 1.0f;
         float speed;
-        std::vector<ACO> sims;
+        std::vector<ACO*> sims;
         bool running = false;
         TrackedVariables* trackedVars;
         Entity* antBase; //temporary
@@ -60,7 +60,8 @@ class World
         TrackedVariables* getWorldStats() { return trackedVars; }
         void changePF(double amnt) {conf::pF += amnt;}
         void changeHF(double amnt) {conf::hF += amnt;}        
-    
+        void buildBuilding(std::string type); 
+        void destroyBuilding(std::string type);
 };
 
 

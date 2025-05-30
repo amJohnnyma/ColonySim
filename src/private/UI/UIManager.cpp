@@ -14,7 +14,8 @@ UIManager::UIManager(World* world)
     UIElement* decPher = new WorldUIElement(world, 0,7,4,5,conf::cellSize,conf::cellSize, "decrementPheremone", "-p");
     UIElement* incHeur = new WorldUIElement(world, 1,8,4,5,conf::cellSize,conf::cellSize, "incrementHeuristic", "+h");
     UIElement* decHeur = new WorldUIElement(world, 0,8,4,5,conf::cellSize,conf::cellSize, "decrementHeuristic", "-h");
-   // UIElement* addLocation
+    UIElement* buildMenu = new WorldUIElement(world, 0, 9, 5,4 , conf::cellSize, conf::cellSize, "openBuildMenu", "Build");
+    UIElement* deleteBuilding = new WorldUIElement(world, 1, 9, 5,4 , conf::cellSize, conf::cellSize, "deleteBuilding", "Destroy");
 
     FunctionArgs args;
     args.element = stats;
@@ -24,16 +25,31 @@ UIManager::UIManager(World* world)
     FunctionArgs sArgs;
     sArgs.element = simControl;   
     simControl->setArgs(sArgs);
-    simControl->setFontSize(40);
+
+    FunctionArgs buildMenuArgs;
+    buildMenuArgs.name = "DefaultNonBlocking"; //this could be a bit string    
+    buildMenuArgs.element = buildMenu;
+    buildMenu->setArgs(buildMenuArgs);
+
+    FunctionArgs deleteBuildArgs;
+    deleteBuildArgs.name = "DefaultNonBlocking"; //this could be a bit string    
+    deleteBuildArgs.element = buildMenu;
+    deleteBuilding->setArgs(deleteBuildArgs);
 
     incPher->setColor(sf::Color::Green);
     decPher->setColor(sf::Color::Red);
     incHeur->setColor(sf::Color::Green);
     decHeur->setColor(sf::Color::Red);
+    buildMenu->setColor(sf::Color::Green);
+    deleteBuilding->setColor(sf::Color::Red);
     incPher->setFontSize(40);
     decPher->setFontSize(40);
     incHeur->setFontSize(40);
     decHeur->setFontSize(40);
+    simControl->setFontSize(40);
+    buildMenu->setFontSize(10);
+    deleteBuilding->setFontSize(10);
+    
 
   
     
@@ -44,6 +60,8 @@ UIManager::UIManager(World* world)
     addElement(decPher);
     addElement(incHeur);
     addElement(decHeur);
+    addElement(buildMenu);
+    addElement(deleteBuilding);
 
 
 }
