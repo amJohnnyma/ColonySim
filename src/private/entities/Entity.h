@@ -5,6 +5,7 @@
 #include <memory>
 #include <string>
 #include "../game/headers/GlobalVars.h"
+#include "../utils/headers/TextureManager.h"
 
 #include <cstdint>
 #include <sstream>
@@ -62,22 +63,24 @@ constexpr TeamInfo setStatus(TeamInfo v, uint8_t status) {
 
 class Cell;
 
-class Entity
+class Entity : public sf::Drawable
 {
 protected:
     int x, y;
     std::string name;
     double resource = 0;
     double maxResource =0;
-    std::unique_ptr<sf::RectangleShape> hitbox;
+    std::unique_ptr<sf::Sprite> hitbox;
     //bits for team//
     TeamInfo teamInfo;
 
 public:
     // Constructor
     Entity(int x, int y, std::string name, double maxResource);
-    Entity(int x, int y, std::string name, double maxResource, std::unique_ptr<sf::RectangleShape> hitbox, Cell* currentCell);
+    Entity(int x, int y, std::string name, double maxResource, std::unique_ptr<sf::Sprite> hitbox, Cell* currentCell);
+    Entity() {}
     virtual ~Entity() {}
+    void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
 
     // Getter and setter for position
     void setPos(int x, int y);
@@ -91,7 +94,7 @@ public:
     double getResource() const { return resource; }
     double getMaxResource() const { return maxResource; }
     const std::string& getName() const { return name; }
-    sf::RectangleShape* getHitbox() { return hitbox.get(); }
+    sf::Sprite* getHitbox() { return hitbox.get(); }
     virtual std::vector<Cell*>& getPath() = 0;
     TeamInfo getTeam() {return teamInfo;}
     bool sameTeam(TeamInfo a, TeamInfo b) {
@@ -100,7 +103,7 @@ public:
 
     // Setters
     
-    void setHitbox(std::unique_ptr<sf::RectangleShape> newHitbox) {
+    void setHitbox(std::unique_ptr<sf::Sprite> newHitbox) {
         hitbox = std::move(newHitbox);
     }
 
@@ -130,6 +133,8 @@ void setTeam(TeamInfo ti)
 {
     this->teamInfo = ti;
 }
+
+void setTexture(const sf::Texture &texture);
 
 
 

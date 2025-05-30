@@ -27,13 +27,17 @@ std::vector<std::unique_ptr<Cell>> WorldGeneration::getResult() {
     return std::move(grid); // Transfer ownership safely
 }
 
-std::array<pheromone,2> WorldGeneration::createPheromones(int x, int y)
+pheromone WorldGeneration::createPheromones(int x, int y)
 {
     pheromone p1;
+    TeamInfo p = 0;
 
-    pheromone p2;
-
-    return {p1, p2};
+    for(int i = 1; i <= conf::numBases; i++)
+    {
+        p = setTeam(p, i);
+        p1.pheromoneMap[p] = 1;
+    }
+    return p1;
 }
 
 double WorldGeneration::generateDifficulty()
@@ -57,12 +61,12 @@ std::unique_ptr<Cell> WorldGeneration::createCell(int x, int y, float cellSize)
 
     CellData cd;
     cd.type = "(" + std::to_string(x) + ", " + std::to_string(y) + ")";
-    cd.difficulty = std::clamp(generateDifficulty() * 2, 0.5, 1.0);
-   // cd.difficulty = 1;
+   // cd.difficulty = std::clamp(generateDifficulty() * 2, 0.5, 1.0);
+    cd.difficulty = 1;
 
     auto pheromones = createPheromones(x, y);
-    cd.p[0] = pheromones[0];
-    cd.p[1] = pheromones[1];
+    
+    cd.p = pheromones;
 
     cell->cellShape = createCellShape(x, y, cellSize);
     cell->setColor(sf::Color(0, 255, 0, static_cast<sf::Uint8>(cd.difficulty * 255)));
@@ -72,31 +76,72 @@ std::unique_ptr<Cell> WorldGeneration::createCell(int x, int y, float cellSize)
 
     return cell;
 }
-
-//convert to use custom rectangle at some point
-std::unique_ptr<sf::RectangleShape> WorldGeneration::createShape(sf::Color fillColor, int x, int y, float cellSize)
+//refactor this so i can just say auto ant = std::unique<ant> instead of the "constructor" being here
+std::unique_ptr<sf::Sprite> WorldGeneration::createAntShape(sf::Color fillColor, int x, int y, float cellSize)
 {
-    auto shape = std::make_unique<sf::RectangleShape>();
-    shape->setSize(sf::Vector2f(cellSize, cellSize));
-    shape->setPosition(x * cellSize, y * cellSize);
-  //  shape->setOutlineThickness(1.f);
-   // shape->setOutlineColor(sf::Color::Red);
-    shape->setFillColor(fillColor);
+    auto& manager = TextureManager::getInstance();
+    sf::Texture* antTexture = manager.loadTexture("ant", "src/textures/entities/ants/ant-top-down.png");
+    auto shape = std::make_unique<sf::Sprite>(*antTexture);
+    shape->setColor(fillColor);
+   // std::cout << "Size: " << antTexture->getSize().x << ", " << antTexture->getSize().y << std::endl;
+    float scaleX = static_cast<float>(conf::cellSize) / antTexture->getSize().x;
+    float scaleY =static_cast<float>(conf::cellSize)/ antTexture->getSize().y;
+   // std::cout << "Scale: " << scaleX << ", " << scaleY << std::endl;
+    shape->setScale(scaleX, scaleY);
+
+    // shape->setOrigin(
+    //     antTexture->getSize().x / 2.f,
+    //     antTexture->getSize().y / 2.f
+    // );
+
+    // Now position it based on grid
+    shape->setPosition(
+        (x) * conf::cellSize,
+        (y) * conf::cellSize
+    );
+
     return shape;
 }
 
+std::unique_ptr<sf::Sprite> WorldGeneration::createBaseShape(sf::Color fillColor, int x, int y, float cellSize)
+{
+    auto& manager = TextureManager::getInstance();
+    sf::Texture* antTexture = manager.loadTexture("base", "src/textures/entities/buildings/base.jpg");
+    auto shape = std::make_unique<sf::Sprite>(*antTexture);
+    shape->setColor(fillColor);
+  //  std::cout << "Size: " << antTexture->getSize().x << ", " << antTexture->getSize().y << std::endl;
+    float scaleX = static_cast<float>(conf::cellSize) / antTexture->getSize().x;
+    float scaleY =static_cast<float>(conf::cellSize)/ antTexture->getSize().y;
+   // std::cout << "Scale: " << scaleX << ", " << scaleY << std::endl;
+    shape->setScale(scaleX, scaleY);
+
+    // shape->setOrigin(
+    //     antTexture->getSize().x / 2.f,
+    //     antTexture->getSize().y / 2.f
+    // );
+
+    // Now position it based on grid
+    shape->setPosition(
+        (x) * conf::cellSize,
+        (y) * conf::cellSize
+    );
+
+    return shape;
+}
+
+//why must world gen make the ants hitbox??
 std::unique_ptr<Ant> WorldGeneration::createAnt(int x, int y)
 {
-    auto shape = createShape(sf::Color::White, x, y, cellSize);
+    auto shape = createAntShape(sf::Color::White, x, y, cellSize);
     Cell* cell = grid[x * width + y].get();
     return std::make_unique<Ant>(y, x, "ant", 10, std::move(shape), cell);
 }
 
-std::unique_ptr<Location> WorldGeneration::createBase(int x, int y)
+std::unique_ptr<Location> WorldGeneration::createBase(int x, int y, TeamInfo p)
 {
-    auto shape = createShape(sf::Color::Yellow, x, y, cellSize);
+    auto shape = createBaseShape(sf::Color::Yellow, x, y, cellSize);
     Cell* cell = grid[x * width + y].get();
-    return std::make_unique<Location>(x, y, "Base", 100000, std::move(shape), cell);
+    return std::make_unique<Location>(x, y, "Base:"+std::to_string(p), 100000, std::move(shape), cell);
 }
 
 void WorldGeneration::logAllEntities()
@@ -148,6 +193,7 @@ void WorldGeneration::generateEntities(int num, int col)
 
     for (int b = 1; b <= conf::numBases; b++)
     {
+       // std::cout << std::to_string(b) << std::endl;
         int xVal = 0;
         int yVal = 0;
 
@@ -171,19 +217,19 @@ void WorldGeneration::generateEntities(int num, int col)
         TeamInfo p = 0;
         p = setTeam(p, b);
 
-        for (int i = 0; i < col; i++)
-        {
             for (int k = 0; k < num; k++)
             {
                 auto ant = createAnt(xVal, yVal);
                 ant->setTeam(p);
                 grid[xVal * width + yVal]->data.entities.push_back(std::move(ant));
             }
-
-        }
-            auto base = createBase(xVal, yVal);
+          //  std::cout << "Creating base in team: " + std::to_string(p) << std::endl;
+            auto base = createBase(xVal, yVal, p);
             base->setTeam(p);
+           // std::cout << "Madfe base" << std::endl;
             grid[xVal * width + yVal]->data.entities.push_back(std::move(base));
+
+        
 
             // Logging moved to separate function
     }
@@ -192,22 +238,6 @@ void WorldGeneration::generateEntities(int num, int col)
 
 void WorldGeneration::assignTextures()
 {
-    auto& manager = TextureManager::getInstance();
-    sf::Texture* antTexture = manager.loadTexture("ant", "src/textures/entities/ants/ant-top-down.png");
-
-    if (!antTexture) return;
-
-    for (auto& cell : grid)
-    {
-        for (auto& ent : cell->data.entities)
-        {
-            if (ent->getName() == "ant")
-            {
-                ent->getHitbox()->setTexture(antTexture);
-
-            }
-        }
-    }
 }
 
 // Helper to create a random engine once
@@ -226,14 +256,30 @@ struct pair_hash {
 };
 
 // Create rectangle shape for a location
-std::unique_ptr<sf::RectangleShape> WorldGeneration::createLocationShape(int x, int y, float cellSize, double difficulty)
+std::unique_ptr<sf::Sprite> WorldGeneration::createLocationShape(int x, int y, float cellSize, double difficulty)
 {
-    auto rs = std::make_unique<sf::RectangleShape>(sf::Vector2f(cellSize, cellSize));
-    rs->setPosition(x * cellSize, y * cellSize);
-    rs->setOutlineThickness(1.f);
-    rs->setOutlineColor(sf::Color::White);
-    rs->setFillColor(sf::Color(255, 255, 255, static_cast<sf::Uint8>(difficulty * 100)));
-    return rs;
+    auto& manager = TextureManager::getInstance();
+    sf::Texture* antTexture = manager.loadTexture("foodlocation", "src/textures/entities/buildings/foodlocation.png");
+    auto shape = std::make_unique<sf::Sprite>(*antTexture);
+    shape->setColor(sf::Color::Blue);
+ //   std::cout << "Size: " << antTexture->getSize().x << ", " << antTexture->getSize().y << std::endl;
+    float scaleX = static_cast<float>(conf::cellSize) / antTexture->getSize().x;
+    float scaleY =static_cast<float>(conf::cellSize)/ antTexture->getSize().y;
+ //   std::cout << "Scale: " << scaleX << ", " << scaleY << std::endl;
+    shape->setScale(scaleX, scaleY);
+
+    // shape->setOrigin(
+    //     antTexture->getSize().x / 2.f,
+    //     antTexture->getSize().y / 2.f
+    // );
+
+    // Now position it based on grid
+    shape->setPosition(
+        (x) * conf::cellSize,
+        (y) * conf::cellSize
+    );
+
+    return shape;
 }
 
 void WorldGeneration::generateLocations(int num)
@@ -241,8 +287,8 @@ void WorldGeneration::generateLocations(int num)
     std::unordered_set<std::pair<int,int>, pair_hash> visited;
 
     auto& gen = getRandomEngine();
-    std::uniform_int_distribution<> xdist(0, width - 1);
-    std::uniform_int_distribution<> ydist(0, height - 1);
+    std::uniform_int_distribution<> xdist(0, width-1);
+    std::uniform_int_distribution<> ydist(0, height-1);
 
     int created = 0;
     while (created < num)
