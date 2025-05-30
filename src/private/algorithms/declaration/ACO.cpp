@@ -423,7 +423,7 @@ void ACO::getAdjCells(int x, int y, Entity* e) {
 
         handleEnemiesInCell(tile, e);
 
-        if (!isCellBlocked(tile))
+        if (!isCellBlocked(world[nx*worldWidth+ny]))
         {
             adjCells.push_back(tile);
         }
