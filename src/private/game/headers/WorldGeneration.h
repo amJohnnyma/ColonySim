@@ -30,7 +30,7 @@ class WorldGeneration
         std::vector<std::unique_ptr<Cell>> getResult();
 
     private:
-        std::array<pheromone, 2> createPheromones(int x, int y);
+        pheromone createPheromones(int x, int y);
         double generateDifficulty();
         std::unique_ptr<Rectangle> createCellShape(int x, int y, float size);
         std::unique_ptr<Cell> createCell(int x, int y, float cellSize);

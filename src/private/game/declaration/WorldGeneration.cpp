@@ -27,13 +27,17 @@ std::vector<std::unique_ptr<Cell>> WorldGeneration::getResult() {
     return std::move(grid); // Transfer ownership safely
 }
 
-std::array<pheromone,2> WorldGeneration::createPheromones(int x, int y)
+pheromone WorldGeneration::createPheromones(int x, int y)
 {
     pheromone p1;
+    TeamInfo p = 0;
 
-    pheromone p2;
-
-    return {p1, p2};
+    for(int i = 1; i <= conf::numBases; i++)
+    {
+        p = setTeam(p, i);
+        p1.pheromoneMap[p] = 1;
+    }
+    return p1;
 }
 
 double WorldGeneration::generateDifficulty()
@@ -61,8 +65,8 @@ std::unique_ptr<Cell> WorldGeneration::createCell(int x, int y, float cellSize)
     cd.difficulty = 1;
 
     auto pheromones = createPheromones(x, y);
-    cd.p[0] = pheromones[0];
-    cd.p[1] = pheromones[1];
+    
+    cd.p = pheromones;
 
     cell->cellShape = createCellShape(x, y, cellSize);
     cell->setColor(sf::Color(0, 255, 0, static_cast<sf::Uint8>(cd.difficulty * 255)));

@@ -200,12 +200,10 @@ void ACO::update()
             }
 
         }
-        for (int i = 0; i < 2; ++i) {
-            for (auto& [key, strength] : cell->data.p[i].pheromoneMap) {
-                double bonus = (i == 0) ? 0.02 : 0.1;  // home vs base bonus
-                strength = (1 - conf::pheremoneEvap) * strength + bonus;
-            }
-        }
+        
+
+    //update pheromone            
+    cell->data.p.pheromoneMap[team] *= (1.0 - conf::pheremoneEvap);
 
     }
 }
@@ -300,10 +298,11 @@ void ACO::findFood(Cell *cell, Ant *e)
                 e->setTarget(base);
             }
 
-            int team = getTeam(e->getTeam());
             // Update pheromone after choosing the cell
-            double updatedP = conf::Q / s.first->data.p[0].pheromoneMap[team];
-            s.first->data.p[0].pheromoneMap[team] += updatedP;
+            double currentP = s.first->data.p.pheromoneMap[team];
+            double updatedP = conf::Q / (currentP + 0.0001);  // or your preferred epsilon
+            s.first->data.p.pheromoneMap[team] += updatedP;
+
 
             moveToCell(curCell, s.first, e);
 
@@ -367,11 +366,11 @@ void ACO::returnHome(Cell *cell, Ant *e)
                 getNewTarget(e);
             }
 
-            //for now...
-            int team = getTeam(e->getTeam());
             // Update pheromone after choosing the cell
-            double updatedP = conf::Q / s.first->data.p[0].pheromoneMap[team];
-            s.first->data.p[0].pheromoneMap[team] += updatedP;
+            double currentP = s.first->data.p.pheromoneMap[team];
+            double updatedP = conf::Q / (currentP + 0.0001);  // or your preferred epsilon
+            s.first->data.p.pheromoneMap[team] += updatedP;
+
 
 
             moveToCell(curCell, s.first, e);
@@ -429,25 +428,16 @@ void ACO::getAdjCells(int x, int y, Entity *e)
 */
 double ACO::pheromoneCalc(Cell *cell, Entity *target, bool returningHome)
 {
-    int team = getTeam(target->getTeam());
     // std::cout << cell->x << ", " << cell->y << " c:t " << target->getX() << ", " << target->getY() << std::endl;
     double Nij = calculateHeuristic(cell, target);
     double Tij;
-    double homeFac = 1;
-    
-    if(returningHome)
-    {
-    Tij = cell->data.p[1].pheromoneMap[team];
-    homeFac = 2;
 
-    }
-    else{
 
-    Tij = cell->data.p[0].pheromoneMap[team];
-    }
+    Tij = cell->data.p.pheromoneMap[team];
+    std::cout << "Tij: " + std::to_string(Tij) << std::endl;
 
-    double numerator = std::pow(Tij, conf::pF) * std::pow(Nij * homeFac, conf::hF);
-    double denominator = sumOfFeasiblePheremoneProb(target, returningHome);
+    double numerator = std::pow(Tij, conf::pF) * std::pow(Nij , conf::hF);
+    double denominator = sumOfFeasiblePheremoneProb(target, returningHome) + 0.00001;
 
     // std::cout << numerator / denominator << std::endl;
     return numerator / denominator;
@@ -455,27 +445,18 @@ double ACO::pheromoneCalc(Cell *cell, Entity *target, bool returningHome)
 
 double ACO::sumOfFeasiblePheremoneProb(Entity *target, bool returningHome)
 {
-    int team = getTeam(target->getTeam());
 
     double sum = 0.0;
     for (auto &ac : adjCells)
     {
         double heuristic = calculateHeuristic(ac, target);
         double Tij;
-        double homeFac = 1;
 
-        if (returningHome)
-        {
-            Tij = ac->data.p[1].pheromoneMap[team];
-            homeFac = 2;
-        }
-        else
-        {
-            Tij = ac->data.p[0].pheromoneMap[team];
-        }
+        Tij = ac->data.p.pheromoneMap[team];
+
         //   std::cout << "H: " << heuristic << " :hF: " << hF<<std::endl;
         //    std::cout << "P: " << pheromone <<" :pF: "<< pF<< std::endl;
-        sum += std::pow(heuristic * homeFac, conf::hF) * std::pow(Tij, conf::pF);
+        sum += std::pow(heuristic, conf::hF) * std::pow(Tij, conf::pF);
     }
     // std::cout << "Sum: " << sum << std::endl;
     return sum + 1e-10;
