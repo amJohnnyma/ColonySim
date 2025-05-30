@@ -37,6 +37,7 @@ class ACO
 
 
     private:
+        void handleEnemiesInCell(Cell *tile, Entity *e);
         void getAdjCells(int x, int y, Entity *e);
         /*
         • τij (t) is the pheromone value on edge (i, j) at time t.
@@ -53,7 +54,9 @@ class ACO
         void depositPheremones(Cell* c);
         void findFood(Cell* cell, Ant* e);
         void returnHome(Cell* cell, Ant* e);
-        void getNewTarget(Ant* e);
+        bool isInBounds(int x, int y) const;
+        bool isCellBlocked(Cell *tile) const;
+        void getNewTarget(Ant *e);
         void transferResource(Entity* from, Entity* to, int amount);      
 
 

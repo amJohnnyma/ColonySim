@@ -51,3 +51,33 @@ void Ant::updateMovement(float dt)
 
     hitbox->move(velocity);
 }
+
+double Ant::takeDamage(double amount)
+{
+    this->hitpoints-=amount;
+    if(hitpoints <= 0)
+    {
+        std::cout << "Died" << std::endl;
+    }
+
+    return this->hitpoints; //if less than 0 then killed
+}
+
+double Ant::dealDamage()
+{
+    return this->damage;
+}
+
+double Ant::attack(Ant *target)
+{
+    if(target)
+        return target->takeDamage(this->dealDamage());
+    if(this->attackTarget)
+        return this->attackTarget->takeDamage(this->dealDamage());
+}
+
+void Ant::setAttackTarget(Ant *ant)
+{
+    std::cout << "Atttack target set" << std::endl;
+    this->attackTarget = ant;
+}
