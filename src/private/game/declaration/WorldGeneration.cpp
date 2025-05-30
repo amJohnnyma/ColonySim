@@ -189,6 +189,7 @@ void WorldGeneration::generateEntities(int num, int col)
 
     for (int b = 1; b <= conf::numBases; b++)
     {
+       // std::cout << std::to_string(b) << std::endl;
         int xVal = 0;
         int yVal = 0;
 
@@ -218,8 +219,10 @@ void WorldGeneration::generateEntities(int num, int col)
                 ant->setTeam(p);
                 grid[xVal * width + yVal]->data.entities.push_back(std::move(ant));
             }
+          //  std::cout << "Creating base in team: " + std::to_string(p) << std::endl;
             auto base = createBase(xVal, yVal, p);
             base->setTeam(p);
+           // std::cout << "Madfe base" << std::endl;
             grid[xVal * width + yVal]->data.entities.push_back(std::move(base));
 
         
@@ -280,8 +283,8 @@ void WorldGeneration::generateLocations(int num)
     std::unordered_set<std::pair<int,int>, pair_hash> visited;
 
     auto& gen = getRandomEngine();
-    std::uniform_int_distribution<> xdist(0, width);
-    std::uniform_int_distribution<> ydist(0, height);
+    std::uniform_int_distribution<> xdist(0, width-1);
+    std::uniform_int_distribution<> ydist(0, height-1);
 
     int created = 0;
     while (created < num)

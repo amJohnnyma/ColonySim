@@ -11,7 +11,7 @@ namespace conf
     const uint32_t max_framerate = 60;
     const float dt = 1.0f / static_cast<float>(max_framerate);
     const int numAnts = 2; //per base
-    const int numBases = 2; //one base per team
+    const int numBases = 3; //one base per team
     const int numLocations =1;
     const int antPathDrawLength = 10;
     int Q = 1;
@@ -22,5 +22,5 @@ namespace conf
     double locationFoodRegenerationRate = 10000;
     float antSpeed = 500.0f;
     float terrainDifficultyScale = 0.05f;
-    int baseSeparationDistance = 20;
+    int baseSeparationDistance = 5;
 }

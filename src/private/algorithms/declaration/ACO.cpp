@@ -182,7 +182,7 @@ void ACO::update()
                         break;
                     }
                     //   std::cout << "found ant" << std::endl;
-                       std::cout << "Target: " << ant->getTarget()->getName() << std::endl;
+                     //  std::cout << "Target: " << ant->getTarget()->getName() << std::endl;
                     if(ant->getTarget()->getResource() <= 0 && ant->getTarget() != base)
                     {
                         getNewTarget(ant);
