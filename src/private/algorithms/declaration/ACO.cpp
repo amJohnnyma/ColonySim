@@ -383,34 +383,42 @@ void ACO::getAdjCells(int x, int y, Entity *e)
                 [](const auto& b) {
                     return dynamic_cast<BuildingLocation*>(b.get()) != nullptr;
                 });
-            for(auto &enemyAnt : tile->data.entities)
-            {
-                if(Ant* ant = dynamic_cast<Ant*>(enemyAnt.get()))
+                for (auto it = tile->data.entities.begin(); it != tile->data.entities.end();)
                 {
-                    if(!e->sameTeam(ant->getTeam(), e->getTeam()))
+                    if (Ant* ant = dynamic_cast<Ant*>(it->get()))
                     {
-                        Ant* thisAnt = dynamic_cast<Ant*>(e);
-                        auto& target = ant;
-                        //thisAnt->setTarget(ant); 
-                        Cell* cell = world[thisAnt->getY() * worldWidth + thisAnt->getX()];
-                        moveToCell(cell, tile, e);
-                        std::cout << "Attack time" << std::endl;
-                        double result = thisAnt->attack(target);
-                        if (result <= 0) {
-                            auto& vec = cell->data.entities;
+                        if (!e->sameTeam(ant->getTeam(), e->getTeam()))
+                        {
+                            Ant* thisAnt = dynamic_cast<Ant*>(e);
+                            if (!thisAnt) break;
 
-                            vec.erase(std::remove_if(vec.begin(), vec.end(),
-                                [target](const std::unique_ptr<Entity>& e) {
-                                    return e.get() == target;
-                                }), vec.end());
+                            Cell* cell = world[thisAnt->getY() * worldWidth + thisAnt->getX()];
+                            moveToCell(cell, tile, e);
 
-                            
+                            std::cout << "Attack time" << std::endl;
+                            double result = thisAnt->attack(ant);
+
+                            if (result <= 0)
+                            {
+                                it = tile->data.entities.erase(it); // erase returns the next valid iterator
+                            }
+                            else
+                            {
+                                ++it; // only increment if not erased
+                            }
+
+                            break; // attack one per turn
                         }
-                        
-                        break;                  
+                        else
+                        {
+                            ++it;
+                        }
+                    }
+                    else
+                    {
+                        ++it;
                     }
                 }
-            }
             if (notBlocked)
             {
                 adjCells.push_back(tile);
