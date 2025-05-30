@@ -246,7 +246,7 @@ void ACO::findFood(Cell *cell, Ant *e)
 
     curCell = cell;
     //   std::cout<<"Getting adj cells"<<std::endl;
-    getAdjCells(cell->x, cell->y, e);
+    getAdjCells(cell->y, cell->x, e);
     if (adjCells.size() == 0)
     {
         //     std::cout << "No adj cells" << std::endl;
@@ -316,7 +316,7 @@ void ACO::returnHome(Cell *cell, Ant *e)
     //   std::cout << "Returning home!" << std::endl;
     curCell = cell;
     //   std::cout<<"Getting adj cells"<<std::endl;
-    getAdjCells(cell->x, cell->y, e);
+    getAdjCells(cell->y, cell->x, e);
     if (adjCells.size() == 0)
     {
         //     std::cout << "No adj cells" << std::endl;
