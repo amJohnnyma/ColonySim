@@ -190,6 +190,24 @@ const std::unordered_map<std::string, std::function<void(World*, const FunctionA
                 }
 
             
+        }},
+        {"pauseGame", [](World* w, const FunctionArgs& args){
+            switch (Game::getInstance().getState())
+            {
+                case State::PAUSED:
+                    Game::getInstance().handleEvent(Event::UNPAUSE);
+                    break;
+                case State::RUNNING:
+                    Game::getInstance().handleEvent(Event::PAUSE);
+                    break;
+                case State::IDLE:
+                    Game::getInstance().handleEvent(Event::PAUSE);
+                    break;
+                case State::STOPPED:
+                    Game::getInstance().handleEvent(Event::STOP);
+                    break;
+            }
+
         }}
 
     };

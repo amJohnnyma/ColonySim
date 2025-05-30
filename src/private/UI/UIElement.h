@@ -7,7 +7,8 @@
 #include "../shapes/RoundedRectangle.h"
 #include "Button.h"
 #include <optional>
-
+#include "../structs/enums.h"
+#include "../game/headers/Game.h"
 class UIElement;
 struct FunctionArgs
 {
@@ -25,6 +26,7 @@ class UIElement
         World* world;
         std::string function;
         FunctionArgs args;
+        bool visible = true;
 
     public:
         UIElement(World* world) : world(world) {}
@@ -40,6 +42,8 @@ class UIElement
         virtual void setText(std::string text) = 0;
         virtual std::string getText() = 0;
         virtual void setFontSize(int size) = 0;
+        void setVisible(bool val) {visible = val;}
+        bool isVisible() {return visible;}
 };
 
 #endif

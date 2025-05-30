@@ -7,15 +7,27 @@ UIManager::UIManager(World* world)
 {       
 
     
-    UIElement* fpsc = new FPSCounter(world, 12, sf::Color::Red, sf::Vector2f{conf::window_size.x - (conf::window_size.x * 0.1), (conf::window_size.y * 0.02)});
+    UIElement* fpsc = new FPSCounter(world, static_cast<int>(conf::window_size.x / conf::cellSize) - 10, sf::Color::Red, sf::Vector2f{conf::window_size.x - (conf::window_size.x * 0.1), (conf::window_size.y * 0.02)});
     UIElement* stats = new WorldUIElement(world, 0,0,4,5,conf::cellSize*4,conf::cellSize*6, "updateWorldStats", "Stats:");
     UIElement* simControl = new WorldUIElement(world, 0,6,4,5,conf::cellSize,conf::cellSize, "toggleSimState", "S");
     UIElement* incPher = new WorldUIElement(world, 1,7,4,5,conf::cellSize,conf::cellSize, "incrementPheremone", "+p");
     UIElement* decPher = new WorldUIElement(world, 0,7,4,5,conf::cellSize,conf::cellSize, "decrementPheremone", "-p");
     UIElement* incHeur = new WorldUIElement(world, 1,8,4,5,conf::cellSize,conf::cellSize, "incrementHeuristic", "+h");
     UIElement* decHeur = new WorldUIElement(world, 0,8,4,5,conf::cellSize,conf::cellSize, "decrementHeuristic", "-h");
-    UIElement* buildMenu = new WorldUIElement(world, 0, 9, 5,4 , conf::cellSize, conf::cellSize, "openBuildMenu", "Build");
-    UIElement* deleteBuilding = new WorldUIElement(world, 1, 9, 5,4 , conf::cellSize, conf::cellSize, "deleteBuilding", "Destroy");
+    UIElement* buildMenu = new WorldUIElement(world, 0, 9, 4,5 , conf::cellSize, conf::cellSize, "openBuildMenu", "Build");
+    UIElement* deleteBuilding = new WorldUIElement(world, 1, 9, 4,5 , conf::cellSize, conf::cellSize, "deleteBuilding", "Destroy");
+    UIElement* pauseButton = new WorldUIElement
+    (
+        world, 
+        static_cast<int>(conf::window_size.x / conf::cellSize) - 1, 
+        0, 
+        4,
+        5,
+        conf::cellSize,
+        conf::cellSize, 
+        "pauseGame", 
+        "Pause"
+    );
 
     FunctionArgs args;
     args.element = stats;
@@ -53,15 +65,16 @@ UIManager::UIManager(World* world)
 
   
     
-    addElement(fpsc);
-    addElement(stats);   
-    addElement(simControl);
-    addElement(incPher);
-    addElement(decPher);
-    addElement(incHeur);
-    addElement(decHeur);
-    addElement(buildMenu);
-    addElement(deleteBuilding);
+    addElement(fpsc); //0
+    addElement(stats);   //1
+    addElement(simControl); //2
+    addElement(incPher); //3
+    addElement(decPher); //4
+    addElement(incHeur); //5
+    addElement(decHeur); //6
+    addElement(buildMenu); //7
+    addElement(deleteBuilding); //8
+    addElement(pauseButton); //9
 
 
 }
@@ -69,7 +82,7 @@ UIManager::UIManager(World* world)
 UIManager::~UIManager()
 {
     //IF THIS IS HERE YOU DIDNT RUN VALGRIND TO ENSURE NO LEAKS
-    for (auto& elem : elements)
+    for (auto& elem : elements)        
         delete elem;
 }
 
@@ -77,7 +90,8 @@ void UIManager::update(sf::RenderWindow& window)
 {
 
     for (auto& elem : elements)
-        elem->update(window);
+        if(elem->isVisible())
+            elem->update(window);
     
 }
 
@@ -88,6 +102,69 @@ void UIManager::draw(sf::RenderWindow& window)
             std::cerr << "Null element in UIManager::elements!\n";
             continue;
         }
-        elem->draw(window);
+        if(elem->isVisible())
+            elem->draw(window);
     }
+}
+
+void UIManager::setVisibilityForState(State gameState)
+{
+    for (auto& elem : elements)
+        elem->setVisible(false); // Hide everything by default
+
+    switch (gameState)
+{
+    case State::RUNNING: {
+        int num = 0;
+        for(auto& elem : elements)
+        {
+            if(num <= 8)
+                elem->setVisible(false);
+            else
+                elem->setVisible(true);
+            num++;
+        }
+        break;
+    }
+
+    case State::PAUSED: {
+        int num = 0;
+        for(auto& elem : elements)
+        {
+            if(num <= 8)
+                elem->setVisible(false);
+            else
+                elem->setVisible(true);
+            num++;
+        }
+        break;
+    }
+
+    case State::IDLE: {
+        int num = 0;
+        for(auto& elem : elements)
+        {
+            if(num <= 8)
+                elem->setVisible(false);
+            else
+                elem->setVisible(true);
+            num++;
+        }
+        break;
+    }
+
+    case State::STOPPED: {
+        int num = 0;
+        for(auto& elem : elements)
+        {
+            if(num <= 8)
+                elem->setVisible(false);
+            else
+                elem->setVisible(true);
+            num++;
+        }
+        break;
+    }
+}
+
 }

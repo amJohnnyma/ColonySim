@@ -5,23 +5,11 @@
 #include "../../UI/UIManager.h"
 #include "../../controller/InputManager.h"
 #include "GlobalVars.h"
+#include "../../structs/enums.h"
 
 #include <thread>
 #include <chrono>
-enum State 
-{
-    IDLE,
-    RUNNING,
-    PAUSED,
-    STOPPED
-};
-enum Event
-{
-    START,
-    STOP,
-    PAUSE,
-    UNPAUSE
-};
+
 
 class Game
 {
@@ -65,6 +53,7 @@ class Game
         delete instance;
         instance = nullptr;
     }
+    State getState() {return currentState;}
 };
 
 #endif
