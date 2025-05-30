@@ -7,10 +7,10 @@ namespace conf
     double maxPheromone = 0;
     const sf::Vector2f window_size = {1000, 1000};
     const sf::Vector2f window_size_f = static_cast<sf::Vector2f>(window_size);
-    const sf::Vector2i worldSize = {50, 50};
+    const sf::Vector2i worldSize = {20, 20};
     const uint32_t max_framerate = 60;
     const float dt = 1.0f / static_cast<float>(max_framerate);
-    const int numAnts = 250; //per base
+    const int numAnts = 2; //per base
     const int numBases = 2; //one base per team
     const int numLocations =1;
     const int antPathDrawLength = 10;
@@ -19,7 +19,7 @@ namespace conf
     double hF = 8.6; // heuristic influence //higher because terrain difficulty lowers it heavily
     double pheremoneEvap = 0.1;
     unsigned int timestep = 500;
-    double locationFoodRegenerationRate = 0.01;
+    double locationFoodRegenerationRate = 10000;
     float antSpeed = 500.0f;
     float terrainDifficultyScale = 0.05f;
     int baseSeparationDistance = 20;

@@ -182,13 +182,13 @@ void ACO::update()
                         break;
                     }
                     //   std::cout << "found ant" << std::endl;
-                    //   std::cout << "Target: " << e.get()->getTarget()->getName() << std::endl;
+                       std::cout << "Target: " << ant->getTarget()->getName() << std::endl;
                     if(ant->getTarget()->getResource() <= 0 && ant->getTarget() != base)
                     {
                         getNewTarget(ant);
-                    }
-                    if (ant->getTarget() && ant->getTarget()->getName() == "Base")
-                    {
+                    }                    
+                    if (ant->getTarget() && ant->getTarget()->getName() == "Base:" + std::to_string(ant->getTeam()))
+                    {                        
                         if(!ant->sameTeam(ant->getTeam(), ant->getTarget()->getTeam()))
                         {
                             getNewTarget(ant);
@@ -199,10 +199,12 @@ void ACO::update()
                             getNewTarget(ant);
                             break;
                         }
+                       // std::cout <<std::to_string(ant->getTeam()) +  "Returning home" << std::endl;
                         returnHome(cell, ant);
                     }
                     else
                     {
+                       // std::cout << std::to_string(ant->getTeam()) + " Finding food" << std::endl;
                         findFood(cell, ant);
                     }
                 } 

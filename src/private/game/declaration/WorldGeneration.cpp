@@ -79,10 +79,10 @@ std::unique_ptr<sf::Sprite> WorldGeneration::createAntShape(sf::Color fillColor,
     sf::Texture* antTexture = manager.loadTexture("ant", "src/textures/entities/ants/ant-top-down.png");
     auto shape = std::make_unique<sf::Sprite>(*antTexture);
     shape->setColor(fillColor);
-    std::cout << "Size: " << antTexture->getSize().x << ", " << antTexture->getSize().y << std::endl;
+   // std::cout << "Size: " << antTexture->getSize().x << ", " << antTexture->getSize().y << std::endl;
     float scaleX = static_cast<float>(conf::cellSize) / antTexture->getSize().x;
     float scaleY =static_cast<float>(conf::cellSize)/ antTexture->getSize().y;
-    std::cout << "Scale: " << scaleX << ", " << scaleY << std::endl;
+   // std::cout << "Scale: " << scaleX << ", " << scaleY << std::endl;
     shape->setScale(scaleX, scaleY);
 
     // shape->setOrigin(
@@ -105,10 +105,10 @@ std::unique_ptr<sf::Sprite> WorldGeneration::createBaseShape(sf::Color fillColor
     sf::Texture* antTexture = manager.loadTexture("base", "src/textures/entities/buildings/base.jpg");
     auto shape = std::make_unique<sf::Sprite>(*antTexture);
     shape->setColor(fillColor);
-    std::cout << "Size: " << antTexture->getSize().x << ", " << antTexture->getSize().y << std::endl;
+  //  std::cout << "Size: " << antTexture->getSize().x << ", " << antTexture->getSize().y << std::endl;
     float scaleX = static_cast<float>(conf::cellSize) / antTexture->getSize().x;
     float scaleY =static_cast<float>(conf::cellSize)/ antTexture->getSize().y;
-    std::cout << "Scale: " << scaleX << ", " << scaleY << std::endl;
+   // std::cout << "Scale: " << scaleX << ", " << scaleY << std::endl;
     shape->setScale(scaleX, scaleY);
 
     // shape->setOrigin(
@@ -133,11 +133,11 @@ std::unique_ptr<Ant> WorldGeneration::createAnt(int x, int y)
     return std::make_unique<Ant>(y, x, "ant", 10, std::move(shape), cell);
 }
 
-std::unique_ptr<Location> WorldGeneration::createBase(int x, int y)
+std::unique_ptr<Location> WorldGeneration::createBase(int x, int y, TeamInfo p)
 {
     auto shape = createBaseShape(sf::Color::Yellow, x, y, cellSize);
     Cell* cell = grid[x * width + y].get();
-    return std::make_unique<Location>(x, y, "Base", 100000, std::move(shape), cell);
+    return std::make_unique<Location>(x, y, "Base:"+std::to_string(p), 100000, std::move(shape), cell);
 }
 
 void WorldGeneration::logAllEntities()
@@ -212,19 +212,17 @@ void WorldGeneration::generateEntities(int num, int col)
         TeamInfo p = 0;
         p = setTeam(p, b);
 
-        for (int i = 0; i < col; i++)
-        {
             for (int k = 0; k < num; k++)
             {
                 auto ant = createAnt(xVal, yVal);
                 ant->setTeam(p);
                 grid[xVal * width + yVal]->data.entities.push_back(std::move(ant));
             }
-
-        }
-            auto base = createBase(xVal, yVal);
+            auto base = createBase(xVal, yVal, p);
             base->setTeam(p);
             grid[xVal * width + yVal]->data.entities.push_back(std::move(base));
+
+        
 
             // Logging moved to separate function
     }
@@ -257,10 +255,10 @@ std::unique_ptr<sf::Sprite> WorldGeneration::createLocationShape(int x, int y, f
     sf::Texture* antTexture = manager.loadTexture("foodlocation", "src/textures/entities/buildings/foodlocation.png");
     auto shape = std::make_unique<sf::Sprite>(*antTexture);
     shape->setColor(sf::Color::Blue);
-    std::cout << "Size: " << antTexture->getSize().x << ", " << antTexture->getSize().y << std::endl;
+ //   std::cout << "Size: " << antTexture->getSize().x << ", " << antTexture->getSize().y << std::endl;
     float scaleX = static_cast<float>(conf::cellSize) / antTexture->getSize().x;
     float scaleY =static_cast<float>(conf::cellSize)/ antTexture->getSize().y;
-    std::cout << "Scale: " << scaleX << ", " << scaleY << std::endl;
+ //   std::cout << "Scale: " << scaleX << ", " << scaleY << std::endl;
     shape->setScale(scaleX, scaleY);
 
     // shape->setOrigin(
@@ -282,8 +280,8 @@ void WorldGeneration::generateLocations(int num)
     std::unordered_set<std::pair<int,int>, pair_hash> visited;
 
     auto& gen = getRandomEngine();
-    std::uniform_int_distribution<> xdist(0, width - 1);
-    std::uniform_int_distribution<> ydist(0, height - 1);
+    std::uniform_int_distribution<> xdist(0, width);
+    std::uniform_int_distribution<> ydist(0, height);
 
     int created = 0;
     while (created < num)

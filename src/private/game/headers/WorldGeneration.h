@@ -38,7 +38,7 @@ class WorldGeneration
         std::unique_ptr<sf::Sprite> createAntShape(sf::Color fillColor, int x, int y, float cellSize);
         std::unique_ptr<sf::Sprite> createBaseShape(sf::Color fillColor, int x, int y, float cellSize);
         std::unique_ptr<Ant> createAnt(int x, int y);
-        std::unique_ptr<Location> createBase(int x, int y);
+        std::unique_ptr<Location> createBase(int x, int y, TeamInfo p);
         void logAllEntities();
         void generateEntities(int num, int col);
         void assignTextures();

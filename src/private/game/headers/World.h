@@ -24,7 +24,7 @@ class World
         float currentZoom = 1.0f;
         float baseSpeed = 1.0f;
         float speed;
-        std::vector<ACO> sims;
+        std::vector<ACO*> sims;
         bool running = false;
         TrackedVariables* trackedVars;
         Entity* antBase; //temporary

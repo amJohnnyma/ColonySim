@@ -36,8 +36,8 @@ void World::update()
     {
         //if(in simulated) -> i.e. not manually controlled
         //std::cout << "Update aco" << std::endl;
-        a.update();
-        numAnts += a.getNumberAnts();
+        a->update();
+        numAnts += a->getNumberAnts();
         //std::cout << "done" << std::endl;
     }
     trackedVars->setNumAnts(numAnts);
@@ -150,8 +150,6 @@ void World::createACO()
     for (const auto& cell_ptr : grid) {
         raw_grid.push_back(cell_ptr.get());  // raw pointer to the same object
     }
-    //separate according to teams
-    std::vector<Entity*> bases;
 
     for(auto &g : grid)
     {
@@ -160,20 +158,19 @@ void World::createACO()
             if(eg->getName() == "location")
             {
                 raw_goals.push_back(g.get());
-            }           
-            if(eg->getName() == "Base") //this only works for one base
+            }                 
+            if (eg->getName().find("Base") != std::string::npos) //this only works for one base
             {
-                bases.push_back(eg.get());
                 antBase = eg.get();
                 trackedVars->setBase(antBase);
             } 
         }
     }
 
-    for(auto & base : bases)
+    for(auto & base : trackedVars->getBases())
     {
-    ACO aco(raw_grid[0], raw_goals, raw_grid, width, height, base);
-    sims.push_back(aco);
+        ACO* aco = new ACO(raw_grid[0], raw_goals, raw_grid, width, height, base);
+        sims.push_back(aco);
     }
     
 
