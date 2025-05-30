@@ -406,7 +406,7 @@ void ACO::getAdjCells(int x, int y, Entity *e)
             if (inPath) continue;
             
             // Check for blocking buildings
-            bool notBlocked = std::none_of(tile->data.entities.begin(), tile->data.entities.end(),
+            bool notBlocked = std::none_of(world[nx * worldWidth + ny]->data.entities.begin(), world[nx * worldWidth + ny]->data.entities.end(),
                 [](const auto& b) {
                     return dynamic_cast<BuildingLocation*>(b.get()) != nullptr;
                 });

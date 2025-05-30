@@ -10,6 +10,7 @@
 #include "../../entities/Ant.h"
 #include "../../entities/Location.h"
 #include "../../entities/FoodLocation.h"
+#include "../../entities/BuildingLocation.h"
 
 
 

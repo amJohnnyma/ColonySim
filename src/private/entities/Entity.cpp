@@ -79,8 +79,8 @@ void Entity::draw(sf::RenderTarget &target, sf::RenderStates states) const
 
 void Entity::setPos(int x, int y)
 {
-    hitbox->setPosition(x * conf::cellSize, y * conf::cellSize);  
     this->x = x;
     this->y = y;
+    hitbox->setPosition(x * conf::cellSize, y * conf::cellSize);  
 }
 
