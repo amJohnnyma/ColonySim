@@ -8,6 +8,20 @@
 
 #include <thread>
 #include <chrono>
+enum State 
+{
+    IDLE,
+    RUNNING,
+    PAUSED,
+    STOPPED
+};
+enum Event
+{
+    START,
+    STOP,
+    PAUSE,
+    UNPAUSE
+};
 
 class Game
 {
@@ -16,13 +30,19 @@ class Game
         window* wind;        
         UIManager* uiMan;
         InputManager* inputManager; //How am i going to use this in other classes? -> great difficulty
-        
+        State currentState = State::RUNNING;
 
     public:
         Game(int windowWidth, int windowHeight, int worldWidth, int worldHeight);
         ~Game();
         void fixedrun();
         void run();
+        void renderFrame();
+        void idleState();
+        void runningState();
+        void pausedState();
+        void stoppedState();
+        void handleEvent(Event event);
 };
 
 #endif

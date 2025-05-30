@@ -7,38 +7,116 @@ void Game::run()
     using clock = std::chrono::steady_clock;
     auto lastUpdate = clock::now();
     const std::chrono::milliseconds updateInterval(50); 
-
-    while (wind->wndw->isOpen())
+    while(wind->wndw->isOpen())
     {
-        sf::Event event;
-        while (wind->wndw->pollEvent(event))
+
+        switch (currentState)
         {
-            inputManager->processEvent(event,*wind->wndw);
-            if (event.type == sf::Event::Closed)
+            case State::IDLE:
+                idleState();  
+                break;          
+            case State::PAUSED:
+                pausedState();
+                break;
+            case State::RUNNING:
+                runningState();
+                break;
+            case State::STOPPED:
+                stoppedState();
+                break;
+            default:
+                std::cerr << "Unkown state" << std::endl;
                 wind->wndw->close();
+                break;
         }
-        world->handleInput(*inputManager, *wind->wndw);
-        inputManager->update(*wind->wndw);
-
-        // Only update every x ms
-        auto now = clock::now();
-        if (now - lastUpdate >= updateInterval && world->isRunning())
-        {
-            world->update();
-            lastUpdate = now;
-
-        }
-
-        uiMan->update(*wind->wndw);
-        world->render(*wind->wndw);   
-        uiMan->draw(*wind->wndw);   
-        inputManager->draw(*wind->wndw); 
-        wind->wndw->display();
+        std::this_thread::sleep_for(std::chrono::milliseconds(1)); // Prevents CPU spinning
+}
 
 
+}
 
+void Game::renderFrame() {
+    world->render(*wind->wndw);   
+    uiMan->draw(*wind->wndw);   
+    inputManager->draw(*wind->wndw); 
+    wind->wndw->display();
+}
+
+void Game::idleState()
+{
+    world->handleInput(*inputManager, *wind->wndw);
+    inputManager->update(*wind->wndw);
+    uiMan->update(*wind->wndw);
+    renderFrame();
+}
+
+void Game::runningState()
+{
+    using clock = std::chrono::steady_clock;
+    static auto lastUpdate = clock::now();
+    const std::chrono::milliseconds updateInterval(50);
+
+    sf::Event event;
+    while (wind->wndw->pollEvent(event))
+    {
+        inputManager->processEvent(event, *wind->wndw);
+        if (event.type == sf::Event::Closed)
+            wind->wndw->close();
     }
 
+    world->handleInput(*inputManager, *wind->wndw);
+    inputManager->update(*wind->wndw);
+
+    auto now = clock::now();
+    if (now - lastUpdate >= updateInterval && world->isRunning())
+    {
+        world->update();
+        lastUpdate = now;
+    }
+
+    uiMan->update(*wind->wndw);
+    renderFrame();
+    
+}
+
+void Game::pausedState()
+{
+    //but show pause menu aswell
+        world->handleInput(*inputManager, *wind->wndw);
+    inputManager->update(*wind->wndw);
+    uiMan->update(*wind->wndw);
+    renderFrame();
+}
+
+void Game::stoppedState()
+{
+    wind->wndw->close();
+}
+
+void Game::handleEvent(Event event) {
+    static const std::map<std::pair<State, Event>, State> transitions = {
+        {{State::IDLE, Event::START}, State::RUNNING},
+        {{State::IDLE, Event::PAUSE}, State::PAUSED},
+        {{State::IDLE, Event::STOP}, State::STOPPED},
+        {{State::IDLE, Event::UNPAUSE}, State::IDLE},
+
+        {{State::RUNNING, Event::PAUSE}, State::PAUSED},
+        {{State::RUNNING, Event::STOP}, State::STOPPED},
+        {{State::RUNNING, Event::UNPAUSE}, State::RUNNING},
+
+        {{State::PAUSED, Event::UNPAUSE}, State::IDLE},
+        {{State::PAUSED, Event::START}, State::IDLE},
+        {{State::PAUSED, Event::STOP}, State::STOPPED},
+
+        // STOPPED state doesn't change
+    };
+
+    auto it = transitions.find({currentState, event});
+    if (it != transitions.end()) {
+        currentState = it->second;
+    } else {
+        std::cerr << "Invalid event/state combo\n";
+    }
 }
 
 Game::Game(int windowWidth, int windowHeight, int worldWidth, int worldHeight)
