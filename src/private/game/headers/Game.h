@@ -19,7 +19,7 @@ class Game
         window* wind;        
         UIManager* uiMan;
         InputManager* inputManager; //How am i going to use this in other classes? -> great difficulty
-        State currentState = State::IDLE;
+        State currentState = State::PAUSED;
 
     private:
         Game(int windowWidth, int windowHeight, int worldWidth, int worldHeight);

@@ -40,6 +40,9 @@ public:
     std::string getText();
 
     void setFontSize(int size) override;
+        
+    void move(int x, int y) override;
+
 
 };
 

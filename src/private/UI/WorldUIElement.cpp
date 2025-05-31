@@ -120,7 +120,8 @@ const std::unordered_map<std::string, std::function<void(World*, const FunctionA
                     Game::getInstance().handleEvent(Event::START);                    
                     break;
                 case State::RUNNING:
-                    Game::getInstance().handleEvent(Event::START);
+                //dont change state
+                   // Game::getInstance().handleEvent(Event::START);
                     break;
                 case State::IDLE:
                     Game::getInstance().handleEvent(Event::START);
@@ -247,4 +248,9 @@ std::string WorldUIElement::getText()
 void WorldUIElement::setFontSize(int size)
 {
     this->text.setCharacterSize(size);
+}
+void WorldUIElement::move(int x, int y) {
+    shape->moveTo(x,y);
+    text.setPosition(x*conf::cellSize, y*conf::cellSize);
+    button->setPosition(x*conf::cellSize, y*conf::cellSize);
 }

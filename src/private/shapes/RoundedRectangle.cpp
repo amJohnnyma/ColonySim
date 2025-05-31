@@ -122,3 +122,10 @@ void RoundedRectangle::buildShape() {
         sf::Vector2f(right - r, bottom - r),
         sf::Vector2f(left + r, bottom - r));
 }
+
+void RoundedRectangle::moveTo(int xg, int yg)
+{
+    this->xg = xg;
+    this->yg=yg;
+    buildShape();
+}

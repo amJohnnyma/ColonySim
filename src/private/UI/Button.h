@@ -45,6 +45,10 @@ public:
         }
         return false;
     }
+    void setPosition(int x, int y)
+    {
+        shape.setPosition(x,y);
+    }
 };
 
 

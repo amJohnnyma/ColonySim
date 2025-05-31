@@ -5,7 +5,12 @@
 #include <memory>
 UIManager::UIManager(World* world)
 {       
-
+    width = conf::window_size.x;
+    height = conf::window_size.y;
+    midScreen = {
+        (conf::window_size.x / conf::cellSize) / 2,
+        (conf::window_size.y / conf::cellSize) / 2
+    };
     
     UIElement* fpsc = new FPSCounter(world, static_cast<int>(conf::window_size.x / conf::cellSize) - 10, sf::Color::Red, sf::Vector2f{conf::window_size.x - (conf::window_size.x * 0.1), (conf::window_size.y * 0.02)});
     UIElement* stats = new WorldUIElement(world, 0,0,4,5,conf::cellSize*4,conf::cellSize*6, "updateWorldStats", "Stats:");
@@ -28,7 +33,18 @@ UIManager::UIManager(World* world)
         "pauseGame", 
         "Pause"
     );
-    UIElement* pTEST = new WorldUIElement(world,5,5,4,5,conf::cellSize,conf::cellSize, "null", "");
+    UIElement* pauseMenu = new WorldUIElement
+    (
+        world,
+        (2),
+        (1),
+        4,
+        5,
+        (conf::window_size.x - conf::cellSize*4),
+        (conf::window_size.y - conf::cellSize*4),
+        "null", 
+        ""
+    );
 
     FunctionArgs args;
     args.element = stats;
@@ -65,7 +81,7 @@ UIManager::UIManager(World* world)
     
 
   
-    
+    //DEFAULT PRIO = 10 -> very unimportant
     addElement(fpsc); //0
     addElement(stats);   //1
     addElement(simControl); //2
@@ -76,8 +92,9 @@ UIManager::UIManager(World* world)
     addElement(buildMenu); //7
     addElement(deleteBuilding); //8
     addElement(pauseButton); //9
-    addElement(pTEST); //10
-
+    pauseButton->setPriority(9);    
+    addElement(pauseMenu); //10 
+    pauseMenu->setVisible(false);
 
 }
 
@@ -92,20 +109,24 @@ void UIManager::update(sf::RenderWindow& window)
 {
 
     for (auto& elem : elements)
-      //  if(elem->isVisible())
+        if(elem->isVisible())
             elem->update(window);
     
 }
 
 void UIManager::draw(sf::RenderWindow& window)
 {
-    for (auto& elem : elements) {
-        if (!elem) {
-            std::cerr << "Null element in UIManager::elements!\n";
-            continue;
+    for(int i = 10; i >= 0; i--)
+    {
+        for (auto& elem : elements) {
+            if (!elem) {
+                std::cerr << "Null element in UIManager::elements!\n";
+                continue;
+            }
+            if(elem->isVisible() && elem->getPrio()==i)
+                elem->draw(window);
         }
-        if(elem->isVisible())
-            elem->draw(window);
+
     }
 }
 
@@ -115,6 +136,7 @@ void UIManager::setVisibilityForState(State gameState)
         elem->setVisible(false); // Hide everything by default
 
     int BASEUI = 9;
+    int PauseMenu = 15;
     switch (gameState){
     case State::RUNNING: {
         int num = 0;        
@@ -126,6 +148,8 @@ void UIManager::setVisibilityForState(State gameState)
                 elem->setVisible(false);
             num++;
         }
+        elements[9]->move(static_cast<int>(conf::window_size.x / conf::cellSize) - 1, 0);
+        elements[9]->setVisible(true);
         break;
     }
 
@@ -133,12 +157,14 @@ void UIManager::setVisibilityForState(State gameState)
         int num = 0;
         for(auto& elem : elements)
         {
-            if(num <= BASEUI-1)
+            if(num <= BASEUI)
                 elem->setVisible(false);
             else
                 elem->setVisible(true);
             num++;
         }
+        elements[9]->move(midScreen.first, midScreen.second);
+        elements[9]->setVisible(true);
         break;
     }
 
@@ -152,6 +178,8 @@ void UIManager::setVisibilityForState(State gameState)
                 elem->setVisible(false);
             num++;
         }
+        elements[9]->move(static_cast<int>(conf::window_size.x / conf::cellSize) - 1, 0);
+        elements[9]->setVisible(true);
         break;
     }
 

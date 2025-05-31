@@ -10,6 +10,8 @@ class UIManager
 {
     private:
             std::vector<UIElement*> elements;
+            int width, height;
+            std::pair<int,int> midScreen;
     public:
         UIManager(World* world);
         ~UIManager();

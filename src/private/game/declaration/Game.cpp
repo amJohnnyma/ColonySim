@@ -96,7 +96,7 @@ void Game::pausedState()
             wind->wndw->close();
     }
     //but show pause menu aswell
-        world->handleInput(*inputManager, *wind->wndw);
+    //world->handleInput(*inputManager, *wind->wndw);
     inputManager->update(*wind->wndw);
     uiMan->update(*wind->wndw);
     renderFrame();
@@ -128,6 +128,10 @@ void Game::handleEvent(Event event) {
     auto it = transitions.find({currentState, event});
     if (it != transitions.end()) {
         currentState = it->second;
+        if(currentState == State::STOPPED)
+        {
+            std::cerr << "Stopped state" << std::endl;
+        }
     } else {
         std::cerr << "Invalid event/state combo\n";
     }

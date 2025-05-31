@@ -27,6 +27,7 @@ class UIElement
         std::string function;
         FunctionArgs args;
         bool visible = true;
+        int priority = 10;
 
     public:
         UIElement(World* world) : world(world) {}
@@ -44,6 +45,9 @@ class UIElement
         virtual void setFontSize(int size) = 0;
         void setVisible(bool val) {visible = val;}
         bool isVisible() {return visible;}
+        virtual void move(int x, int y) = 0;
+        void setPriority(int val) {priority=val;}
+        int getPrio(){return priority;}
 };
 
 #endif

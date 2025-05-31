@@ -50,3 +50,8 @@
     {
         this->fpsText.setCharacterSize(size);
     }
+
+    void FPSCounter::move(int x, int y)
+    {
+        fpsText.setPosition(x,y);
+    }
