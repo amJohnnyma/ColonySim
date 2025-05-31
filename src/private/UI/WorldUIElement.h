@@ -27,8 +27,6 @@ class WorldUIElement : public UIElement
         void setFontSize(int size) override;
         void move(int x, int y) override;
 
-
-
 };
 
 #endif
