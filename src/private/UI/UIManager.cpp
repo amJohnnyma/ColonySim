@@ -1,6 +1,7 @@
 #include "UIManager.h"
 #include "WorldUIElement.h"
 #include "FPSCounter.h"
+#include "TextBoxSubmit.h"
 #include <vector>
 #include <memory>
 UIManager::UIManager(World* world)
@@ -23,15 +24,15 @@ UIManager::UIManager(World* world)
     UIElement* deleteBuilding = new WorldUIElement(world, 1, 9, 4,5 , conf::cellSize, conf::cellSize, "deleteBuilding", "Destroy");
     UIElement* pauseButton = new WorldUIElement
     (
-        world, 
-        static_cast<int>(conf::window_size.x / conf::cellSize) - 1, 
-        0, 
-        4,
-        5,
-        conf::cellSize,
-        conf::cellSize, 
-        "pauseGame", 
-        "Pause"
+        world, //world
+        static_cast<int>(conf::window_size.x / conf::cellSize) - 1, //x
+        0, //y
+        4, //resolution
+        5, //radius (size)
+        conf::cellSize, //width
+        conf::cellSize, //height
+        "pauseGame",  //function
+        "Pause" //displayed text
     );
     UIElement* pauseMenu = new WorldUIElement
     (
@@ -44,6 +45,19 @@ UIManager::UIManager(World* world)
         (conf::window_size.y - conf::cellSize*4),
         "null", 
         ""
+    );
+    UIElement* numAntsInput = new TextBoxSubmit
+    (
+        world,
+        (2),
+        (1),
+        4,
+        5,
+        conf::cellSize*2,
+        conf::cellSize,
+        "null", 
+        "ants",
+        "getNumAnts" //purpose
     );
 
     FunctionArgs args;
@@ -95,6 +109,8 @@ UIManager::UIManager(World* world)
     pauseButton->setPriority(9);    
     addElement(pauseMenu); //10 
     pauseMenu->setVisible(false);
+    addElement(numAntsInput); //11
+    numAntsInput->setPriority(9);
 
 }
 

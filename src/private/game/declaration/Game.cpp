@@ -88,10 +88,9 @@ void Game::runningState()
 
 void Game::pausedState()
 {
-        sf::Event event;
+    sf::Event event;
     while (wind->wndw->pollEvent(event))
     {
-        inputManager->processEvent(event, *wind->wndw);
         if (event.type == sf::Event::Closed)
             wind->wndw->close();
     }

@@ -19,8 +19,8 @@ TextBoxSubmit::TextBoxSubmit(World *world, int x, int y, int resolution, int rad
         text.setString(textArea);
     }
     //Text enter
-    textBox = new WorldUIElement(world, position.x, position.y+height,resolution,radius,width,height, "trackInput","");
-    textBox->setColor(sf::Color(10,10,10,100));
+    textBox = new WorldUIElement(world, position.x+1, position.y+1,resolution,radius,width,height, "trackInput","");
+    textBox->setColor(sf::Color(100,100,100,255));
     FunctionArgs sArgs;
     sArgs.element = textBox;   
     textBox->setArgs(sArgs);
@@ -28,7 +28,7 @@ TextBoxSubmit::TextBoxSubmit(World *world, int x, int y, int resolution, int rad
     //submission button (optional)
     if(purpose!="null")
     {
-        submitButton = new WorldUIElement(world, position.x, position.y + (height*2), resolution,radius,width,height, "submitInput", "submit");
+        submitButton = new WorldUIElement(world, position.x+2, position.y + 2, resolution,radius,width,height, "submitInput", "submit");
         submitButton->setColor(sf::Color(10,10,10,100));
         FunctionArgs sbArgs;
         sbArgs.element = submitButton;   
@@ -38,12 +38,14 @@ TextBoxSubmit::TextBoxSubmit(World *world, int x, int y, int resolution, int rad
 
 TextBoxSubmit::~TextBoxSubmit()
 {
+    delete textBox;
+    delete submitButton;
 }
 
 void TextBoxSubmit::draw(sf::RenderWindow& window) {
-    window.draw(text);
     textBox->draw(window);
     submitButton->draw(window);
+    window.draw(text);
 
 }
 void TextBoxSubmit::update(sf::RenderWindow& window) {
@@ -51,20 +53,25 @@ void TextBoxSubmit::update(sf::RenderWindow& window) {
     submitButton->update(window);
 }
 void TextBoxSubmit::onClick() {
+    submitButton->onClick();
+    textBox->onClick();
     
 }
 void TextBoxSubmit::setColor(sf::Color col) {
-
+    submitButton->setColor(col);
+    textBox->setColor(col);
 }
 void TextBoxSubmit::setText(std::string text) {
-
+    
 }
 std::string TextBoxSubmit::getText() {
-
+    return textBox->getText();
 }
 void TextBoxSubmit::setFontSize(int size) {
 
 }
 void TextBoxSubmit::move(int x, int y) {
-
+    text.setPosition(sf::Vector2f(x,y));
+    submitButton->move(x,y);
+    textBox->move(x,y);
 }
