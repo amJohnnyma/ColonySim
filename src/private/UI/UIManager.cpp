@@ -41,8 +41,8 @@ UIManager::UIManager(World* world)
         (1),
         4,
         5,
-        (conf::window_size.x - conf::cellSize*10),
-        (conf::window_size.y - conf::cellSize*10),
+        (conf::window_size.x - conf::cellSize*4),
+        (conf::window_size.y - conf::cellSize*4),
         "null", 
         ""
     );
