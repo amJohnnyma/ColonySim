@@ -26,7 +26,7 @@ public:
         fpsText.setPosition(position);
     }
 
-    void update(sf::RenderWindow& window) override;
+    void update(sf::RenderWindow& window, sf::Event& event) override;
 
     void draw(sf::RenderWindow& window) override;
 

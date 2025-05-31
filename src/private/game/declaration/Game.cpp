@@ -53,7 +53,7 @@ void Game::idleState()
     }
     world->handleInput(*inputManager, *wind->wndw);
     inputManager->update(*wind->wndw);
-    uiMan->update(*wind->wndw);
+    uiMan->update(*wind->wndw,event);
     renderFrame();
 }
 
@@ -81,7 +81,7 @@ void Game::runningState()
         lastUpdate = now;
     }
 
-    uiMan->update(*wind->wndw);
+    uiMan->update(*wind->wndw, event);
     renderFrame();
     
 }
@@ -93,11 +93,9 @@ void Game::pausedState()
     {
         if (event.type == sf::Event::Closed)
             wind->wndw->close();
+        inputManager->update(*wind->wndw);
+        uiMan->update(*wind->wndw, event);
     }
-    //but show pause menu aswell
-    //world->handleInput(*inputManager, *wind->wndw);
-    inputManager->update(*wind->wndw);
-    uiMan->update(*wind->wndw);
     renderFrame();
 }
 
@@ -193,7 +191,7 @@ void Game::fixedrun()
             }
         }
 
-        uiMan->update(*wind->wndw);
+        uiMan->update(*wind->wndw, event);
         world->render(*wind->wndw);
         uiMan->draw(*wind->wndw);
         inputManager->draw(*wind->wndw); 

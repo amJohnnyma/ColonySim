@@ -17,7 +17,7 @@ class UIManager
         ~UIManager();
         void draw(sf::RenderWindow& window);
         void setVisibilityForState(State gameState);
-        void update(sf::RenderWindow &window);
+        void update(sf::RenderWindow &window, sf::Event& event);
         void addElement(UIElement* elem) {
             elements.push_back(elem);
     }

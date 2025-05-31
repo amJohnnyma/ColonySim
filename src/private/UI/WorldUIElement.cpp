@@ -81,13 +81,13 @@ void WorldUIElement::draw(sf::RenderWindow& window)
 
 
 
-void WorldUIElement::update(sf::RenderWindow& window)
+void WorldUIElement::update(sf::RenderWindow& window, sf::Event &event)
 {
     if(button && isVisible())
     {
         if(button->isClicked(window))
         {
-            onClick();
+            onClick(); //selected = true
         }
     }
     if(updateFunc && this->args.element)
@@ -99,7 +99,8 @@ void WorldUIElement::update(sf::RenderWindow& window)
 
 void WorldUIElement::onClick()
 {
-   // std::cout << "Rect clicked" << std::endl;
+    std::cout << "Rect clicked" << std::endl;
+   //selected = true;
 }
 
 //needs to use player-controller such that enemy AI has access to the same commands
@@ -224,6 +225,12 @@ const std::unordered_map<std::string, std::function<void(World*, const FunctionA
                     break;
             }
 
+        }},
+        {"trackInput", [](World* w, const FunctionArgs& args){
+            if (args.element.has_value() && args.element.value() != nullptr) {
+                std::cout << "Selected but " << std::to_string(args.element.value()->isSelected()) << std::endl;
+                args.element.value()->setSelected(true);
+            }
         }}
 
     };

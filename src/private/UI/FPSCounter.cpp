@@ -1,6 +1,6 @@
 #include "FPSCounter.h"
 
-    void FPSCounter::update(sf::RenderWindow& window) {
+    void FPSCounter::update(sf::RenderWindow& window, sf::Event &event) {
         frameCount++;
         elapsedTime += clock.restart().asSeconds();
 

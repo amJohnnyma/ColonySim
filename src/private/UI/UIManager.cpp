@@ -122,12 +122,12 @@ UIManager::~UIManager()
         delete elem;
 }
 
-void UIManager::update(sf::RenderWindow& window)
+void UIManager::update(sf::RenderWindow& window, sf::Event& event)
 {
-
     for (auto& elem : elements)
         if(elem->isVisible())
-            elem->update(window);
+            elem->update(window, event);
+        
     
 }
 

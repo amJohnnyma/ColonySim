@@ -28,12 +28,13 @@ class UIElement
         FunctionArgs args;
         bool visible = true;
         int priority = 10;
+        bool selected = false;
 
     public:
         UIElement(World* world) : world(world) {}
         virtual ~UIElement();
         virtual void draw(sf::RenderWindow& window) = 0;
-        virtual void update(sf::RenderWindow& window) = 0;
+        virtual void update(sf::RenderWindow& window, sf::Event& event) = 0;
         virtual void onClick() = 0;
         void setArgs(const FunctionArgs& newArgs) {
             args = newArgs;
@@ -48,6 +49,8 @@ class UIElement
         virtual void move(int x, int y) = 0;
         void setPriority(int val) {priority=val;}
         int getPrio(){return priority;}
+        void setSelected(bool val) {std::cout << std::to_string(selected); selected = val; std::cout << std::to_string(selected) << std::endl;}
+        bool isSelected() const { return selected; }
 };
 
 #endif

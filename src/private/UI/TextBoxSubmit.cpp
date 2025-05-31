@@ -1,7 +1,7 @@
 #include "TextBoxSubmit.h"
 
 TextBoxSubmit::TextBoxSubmit(World *world, int x, int y, int resolution, int radius, int width, int height, std::string function, std::string textArea, std::string purpose)
-: UIElement(world)
+: UIElement(world), purpose(purpose)
 {
     sf::Vector2f position(x*conf::cellSize, y*conf::cellSize);
     //Label
@@ -54,13 +54,37 @@ void TextBoxSubmit::draw(sf::RenderWindow& window) {
     window.display();
 
 }
-void TextBoxSubmit::update(sf::RenderWindow& window) {
-    textBox->update(window);
-    submitButton->update(window);
+void TextBoxSubmit::update(sf::RenderWindow& window, sf::Event &event) {
+
+    // Check if textbox is selected and event is text input
+    if (selected && event.type == sf::Event::TextEntered)
+    {
+        std::cout << "Selected" << std::endl;
+        char entered = static_cast<char>(event.text.unicode);
+        
+        if (event.text.unicode < 128 && std::isprint(entered)) {
+            std::string currentText = textBox->getText();
+            currentText += entered;
+            textBox->setText(currentText);
+            std::cout << entered << std::endl;
+        }
+        // Optional: handle backspace
+        if (event.text.unicode == 8) { // Backspace
+            std::string currentText = textBox->getText();
+            if (!currentText.empty())
+                currentText.pop_back();
+            textBox->setText(currentText);
+        }
+    }
+    textBox->update(window,event); 
+    submitButton->update(window,event);
 }
+
 void TextBoxSubmit::onClick() {
-    submitButton->onClick();
+    std::cout << "TB click" << std::endl;
+   // submitButton->onClick();
     textBox->onClick();
+    selected = true;
     
 }
 void TextBoxSubmit::setColor(sf::Color col) {
@@ -80,4 +104,9 @@ void TextBoxSubmit::move(int x, int y) {
     text.setPosition(sf::Vector2f(x,y));
     submitButton->move(x,y);
     textBox->move(x,y);
+}
+
+std::string TextBoxSubmit::getPurpose()
+{
+    return purpose;
 }
