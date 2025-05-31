@@ -19,8 +19,7 @@ TextBoxSubmit::TextBoxSubmit(World *world, int x, int y, int resolution, int rad
         text.setString(textArea);
     }
     //Text enter
-    textBox = new WorldUIElement(world, position.x, position.y,resolution,radius,width,height, "trackInput","");
-    textBox->setColor(sf::Color(100,100,100,255));
+    textBox = new WorldUIElement(world, position.x, position.y,resolution,radius,width,height, "trackInput","word");
     FunctionArgs sArgs;
     sArgs.element = textBox;   
     textBox->setArgs(sArgs);
@@ -29,7 +28,6 @@ TextBoxSubmit::TextBoxSubmit(World *world, int x, int y, int resolution, int rad
     if(purpose!="null")
     {
         submitButton = new WorldUIElement(world, position.x, position.y, resolution,radius,width,height, "submitInput", "submit");
-        submitButton->setColor(sf::Color(10,10,10,100));
         FunctionArgs sbArgs;
         sbArgs.element = submitButton;   
         submitButton->setArgs(sbArgs);
@@ -51,7 +49,6 @@ void TextBoxSubmit::draw(sf::RenderWindow& window) {
 
     textBox->draw(window);
     submitButton->draw(window);
-    std::cerr << "UI" <<  std::endl;
 
 }
 void TextBoxSubmit::update(sf::RenderWindow& window) {
