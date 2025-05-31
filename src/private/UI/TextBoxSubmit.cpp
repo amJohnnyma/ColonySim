@@ -45,7 +45,11 @@ TextBoxSubmit::~TextBoxSubmit()
 void TextBoxSubmit::draw(sf::RenderWindow& window) {
     textBox->draw(window);
     submitButton->draw(window);
-    window.draw(text);
+    sf::View originalView = window.getView();
+    window.setView(window.getDefaultView());
+    if(text.getString() != "")
+        window.draw(text);
+        window.setView(originalView);
 
 }
 void TextBoxSubmit::update(sf::RenderWindow& window) {
