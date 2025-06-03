@@ -18,9 +18,9 @@ class ACO
 {
 
     private:
-        Cell* startCell;
-        Cell* curCell;
-        std::vector<std::pair<int,int>> goals;
+        std::pair<int,int> startCell;
+        std::pair<int,int> curCell;
+        std::vector<std::pair<std::string, std::pair<int,int>>> goals;
         World* world;
         float theta = 0.0f;
         std::vector<std::pair<int, int>> adjCells;
@@ -29,7 +29,7 @@ class ACO
         std::vector<std::pair<int, int>> visited;
         int numberAnts = 0;
         Entity* base;
-        std::vector<Entity*> tl; // goals
+        std::vector<std::pair<int,int>> tl; // goals
         bool possibleLocations = true;
         TeamInfo team;
 
@@ -63,7 +63,7 @@ class ACO
 
         
     public:
-        ACO(Cell* startCell, std::vector<Cell*>& goals, World* world, int width, int height, Entity* base);
+        ACO(std::vector<Cell*>& goals, World* world, int width, int height, Entity* base);
         ~ACO();
         void update();
         void assignRandomTarget(std::vector<Cell*> &raw_goals);

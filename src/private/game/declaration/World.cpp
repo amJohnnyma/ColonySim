@@ -159,18 +159,14 @@ for (auto& [chunkCoords, chunkPtr] : grid)
 void World::createACO()
 {    
     std::vector<Cell*> raw_goals;
-    std::vector<Cell*> raw_grid;
-    raw_grid.reserve(grid.size());
-    for (const auto& [coord, chunkPtr] : grid) {
-    raw_grid.push_back(chunkPtr->at(coord.first, coord.second));  // raw pointer to the Chunk
-    }
 
     for (auto& [coord, chunkPtr] : grid) {
     Chunk* chunk = chunkPtr.get();
        for (auto& cellPtr : chunk->getCells()) { // assuming Chunk is a container of Cells
             for (auto& eg : cellPtr->data.entities) {
-                if (eg->getName() == "location") {
+                if (eg->getName().find("location") != std::string::npos) {
                     raw_goals.push_back(cellPtr.get());
+                    std::cout << "Pushed back location" << std::endl;
                 }
                 if (eg->getName().find("Base") != std::string::npos) {
                     trackedVars->setBase(eg.get());
@@ -181,7 +177,7 @@ void World::createACO()
 
     for(auto & base : trackedVars->getBases())
     {
-        ACO* aco = new ACO(raw_grid[0], raw_goals, this, width, height, base);
+        ACO* aco = new ACO(raw_goals, this, width, height, base);
         sims.push_back(aco);
     }
     
