@@ -12,6 +12,7 @@
 //#include "../../controller/InputManager.h"
 
 class InputManager;
+class ACO;
 class World
 {
     private:

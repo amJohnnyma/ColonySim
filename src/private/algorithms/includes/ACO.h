@@ -1,7 +1,7 @@
 #ifndef ACO_H
 #define ACO_H
 
-#include "../../structs/worldObjects.h"
+//#include "../../structs/worldObjects.h"
 #include <iostream>
 #include <cmath>
 #include <random>
@@ -11,23 +11,22 @@
 #include "../../entities/Location.h"
 #include "../../entities/FoodLocation.h"
 #include "../../entities/BuildingLocation.h"
+#include "../../game/headers/World.h"
 
-
-
-
+class World;
 class ACO
 {
 
     private:
         Cell* startCell;
         Cell* curCell;
-        std::unordered_set<Cell*> goals;
-        std::vector<Cell*> world;
+        std::vector<std::pair<int,int>> goals;
+        World* world;
         float theta = 0.0f;
-        std::vector<Cell*> adjCells;
+        std::vector<std::pair<int, int>> adjCells;
         int worldWidth;
         int worldHeight;
-        std::unordered_set<Cell*> visited;
+        std::vector<std::pair<int, int>> visited;
         int numberAnts = 0;
         Entity* base;
         std::vector<Entity*> tl; // goals
@@ -64,7 +63,7 @@ class ACO
 
         
     public:
-        ACO(Cell* startCell, std::vector<Cell*>& goals, std::vector<Cell*>& world, int width, int height, Entity* base);
+        ACO(Cell* startCell, std::vector<Cell*>& goals, World* world, int width, int height, Entity* base);
         ~ACO();
         void update();
         void assignRandomTarget(std::vector<Cell*> &raw_goals);

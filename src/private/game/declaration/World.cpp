@@ -181,7 +181,7 @@ void World::createACO()
 
     for(auto & base : trackedVars->getBases())
     {
-        ACO* aco = new ACO(raw_grid[0], raw_goals, raw_grid, width, height, base);
+        ACO* aco = new ACO(raw_grid[0], raw_goals, this, width, height, base);
         sims.push_back(aco);
     }
     
