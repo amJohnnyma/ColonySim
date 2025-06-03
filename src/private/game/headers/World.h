@@ -45,7 +45,7 @@ class World
         int getHeight();
         std::vector<std::unique_ptr<Cell>> getGrid();
         std::vector<Cell> getBase();
-        std::unique_ptr<Cell>& at(int x, int y);
+        Cell* at(int x, int y);
         void update();
         void render(sf::RenderWindow & window);
         //temp input

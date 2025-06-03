@@ -139,7 +139,7 @@ std::unique_ptr<Ant> WorldGeneration::createAnt(int x, int y)
     Chunk* chunk = nullptr;
     Cell* cell = nullptr;
     try {
-        chunk = grid.at({chunkX, chunkY}).get();
+        chunk = grid[{chunkX, chunkY}].get();
     } catch (const std::out_of_range& e) {
         // handle missing chunk
     }
@@ -162,7 +162,7 @@ std::unique_ptr<Location> WorldGeneration::createBase(int x, int y, TeamInfo p)
     Chunk* chunk = nullptr;
     Cell* cell = nullptr;
     try {
-        chunk = grid.at({chunkX, chunkY}).get();
+        chunk = grid[{chunkX, chunkY}].get();
     } catch (const std::out_of_range& e) {
         // handle missing chunk
     }
