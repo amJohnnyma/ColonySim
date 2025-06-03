@@ -57,7 +57,7 @@ double Ant::takeDamage(double amount)
     this->hitpoints-=amount;
     if(hitpoints <= 0)
     {
-        std::cout << "Died" << std::endl;
+       // std::cout << "Died" << std::endl;
     }
 
     return this->hitpoints; //if less than 0 then killed

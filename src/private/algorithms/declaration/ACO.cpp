@@ -380,11 +380,11 @@ void ACO::handleEnemiesInCell(Cell* tile, Entity* e) {
                 Ant* thisAnt = dynamic_cast<Ant*>(e);
                 if (!thisAnt) break;
 
-                std::cout << "Attack time" << std::endl;
+              //  std::cout << "Attack time" << std::endl;
                 double result = thisAnt->attack(ant);
 
                 if (result <= 0)
-                {
+                {                    
                     it = tile->data.entities.erase(it);
                 }
                 else
@@ -423,7 +423,7 @@ void ACO::getAdjCells(int x, int y, Entity* e) {
 
         handleEnemiesInCell(tile, e);
 
-        if (!isCellBlocked(tile))
+        if (!isCellBlocked(world[nx*worldWidth+ny]))
         {
             adjCells.push_back(tile);
         }
