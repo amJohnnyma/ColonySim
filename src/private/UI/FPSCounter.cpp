@@ -1,6 +1,6 @@
 #include "FPSCounter.h"
 
-    void FPSCounter::update(sf::RenderWindow& window) {
+    void FPSCounter::update(sf::RenderWindow& window, sf::Event &event) {
         frameCount++;
         elapsedTime += clock.restart().asSeconds();
 
@@ -49,4 +49,9 @@
     void FPSCounter::setFontSize(int size)
     {
         this->fpsText.setCharacterSize(size);
+    }
+
+    void FPSCounter::move(int x, int y)
+    {
+        fpsText.setPosition(x,y);
     }

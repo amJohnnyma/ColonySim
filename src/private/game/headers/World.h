@@ -8,9 +8,9 @@
 #include <array>
 #include <algorithm>
 #include "TrackedVariables.h"
+//#include "../../controller/InputManager.h"
 
-
-
+class InputManager;
 class World
 {
     private:
@@ -24,7 +24,7 @@ class World
         float currentZoom = 1.0f;
         float baseSpeed = 1.0f;
         float speed;
-        std::vector<ACO> sims;
+        std::vector<ACO*> sims;
         bool running = false;
         TrackedVariables* trackedVars;
         Entity* antBase; //temporary
@@ -49,7 +49,7 @@ class World
         void update();
         void render(sf::RenderWindow & window);
         //temp input
-        void handleInput(sf::RenderWindow& window, sf::Event &event);
+        void handleInput(InputManager& inputmanager, sf::RenderWindow& window);
         bool isRunning() { return running;}
         void toggleSimState();
 
@@ -59,8 +59,9 @@ class World
         void spawn(std::string name, int count) { std::cout << "Spawning: " << count << " " << name << "'s. " << " with " << trackedVars->getNumAnts()  << std::endl;}
         TrackedVariables* getWorldStats() { return trackedVars; }
         void changePF(double amnt) {conf::pF += amnt;}
-        void changeHF(double amnt) {conf::hF += amnt;}
-    
+        void changeHF(double amnt) {conf::hF += amnt;}        
+        void buildBuilding(std::string type); 
+        void destroyBuilding(std::string type);
 };
 
 

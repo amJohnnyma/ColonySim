@@ -14,6 +14,7 @@
 #include "../../entities/Ant.h"
 #include "../../entities/Location.h"
 #include "../../entities/FoodLocation.h"
+#include "../../entities/BuildingLocation.h"
 #include <array>
 
 
@@ -29,18 +30,19 @@ class WorldGeneration
         std::vector<std::unique_ptr<Cell>> getResult();
 
     private:
-        std::array<pheromone, 2> createPheromones(int x, int y);
+        pheromone createPheromones(int x, int y);
         double generateDifficulty();
-        std::unique_ptr<Rectangle> createCellShape(int x, int y, float size, double difficulty);
+        std::unique_ptr<Rectangle> createCellShape(int x, int y, float size);
         std::unique_ptr<Cell> createCell(int x, int y, float cellSize);
         void generateTerrain();
-        std::unique_ptr<sf::RectangleShape> createShape(sf::Color fillColor, int x, int y, float cellSize);
+        std::unique_ptr<sf::Sprite> createAntShape(sf::Color fillColor, int x, int y, float cellSize);
+        std::unique_ptr<sf::Sprite> createBaseShape(sf::Color fillColor, int x, int y, float cellSize);
         std::unique_ptr<Ant> createAnt(int x, int y);
-        std::unique_ptr<Location> createBase(int x, int y);
+        std::unique_ptr<Location> createBase(int x, int y, TeamInfo p);
         void logAllEntities();
         void generateEntities(int num, int col);
         void assignTextures();
-        std::unique_ptr<sf::RectangleShape> createLocationShape(int x, int y, float cellSize, double difficulty);
+        std::unique_ptr<sf::Sprite> createLocationShape(int x, int y, float cellSize, double difficulty);
         void generateLocations(int num);
 };
 

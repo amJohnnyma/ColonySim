@@ -15,6 +15,7 @@ class RoundedRectangle : public Shape // will be a circle with four corners spli
 
         void drawCorner(float cx, float cy, float startAngleDeg, float endAngleDeg);
         void buildShape();
+        void moveTo(int xg, int yg);
 };
 
 #endif

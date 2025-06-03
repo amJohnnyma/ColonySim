@@ -26,7 +26,7 @@ public:
         fpsText.setPosition(position);
     }
 
-    void update(sf::RenderWindow& window) override;
+    void update(sf::RenderWindow& window, sf::Event& event) override;
 
     void draw(sf::RenderWindow& window) override;
 
@@ -40,6 +40,9 @@ public:
     std::string getText();
 
     void setFontSize(int size) override;
+        
+    void move(int x, int y) override;
+
 
 };
 
