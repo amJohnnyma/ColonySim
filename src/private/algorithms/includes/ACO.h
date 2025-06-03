@@ -49,7 +49,7 @@ class ACO
         double sumOfFeasiblePheremoneProb(Entity *target, bool flag);     
         double calculateHeuristic(Cell* next, Entity* target);
         //pair<cell, score>
-        void moveToCell(Cell* from, Cell * to, Entity* e);
+        void moveToCell(std::pair<int, int> from, std::pair<int, int> to, Entity *e);
         void depositPheremones(Cell* c);
         void findFood(Cell* cell, Ant* e);
         void returnHome(Cell* cell, Ant* e);

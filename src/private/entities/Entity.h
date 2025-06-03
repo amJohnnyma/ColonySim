@@ -73,6 +73,7 @@ protected:
     std::unique_ptr<sf::Sprite> hitbox;
     //bits for team//
     TeamInfo teamInfo;
+    Cell* currentCell;
 
 public:
     // Constructor

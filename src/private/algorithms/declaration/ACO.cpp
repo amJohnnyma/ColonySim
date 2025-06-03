@@ -67,13 +67,13 @@ void ACO::assignRandomTarget(std::vector<Cell *> &raw_goals)
 
 void ACO::getNewTarget(Ant *ant)
 {
-    if (ant->getTarget() != nullptr)
-        std::cout << "Current target: " << ant->getTarget()->getX() << ", " << ant->getTarget()->getY() << std::endl;
+ //   if (ant->getTarget() != nullptr)
+  //      std::cout << "Current target: " << ant->getTarget()->getX() << ", " << ant->getTarget()->getY() << std::endl;
 
     std::random_device rd;
     std::mt19937 gen(rd());
 
-    std::cout << "tl.size(): " << tl.size() << std::endl;
+  //  std::cout << "tl.size(): " << tl.size() << std::endl;
     if (tl.empty())
         return;
 
@@ -147,9 +147,10 @@ void ACO::update()
                         {
                             break;
                         }
-                           std::cout << "found ant" << std::endl;
+                      //     std::cout << "found ant" << std::endl;
                           std::cout << "Target name: " << ant->getTarget()->getName() << std::endl;
                           std::cout << "target pos: " << ant->getTarget()->getX() <<", " << ant->getTarget()->getY() << std::endl;
+                          std::cout << "Current pos: " << ant->getX() << ", " << ant->getY() << std::endl;
 
                         if (ant->getTarget()->getResource() <= 0 && ant->getTarget() != base)
                         {
@@ -191,32 +192,43 @@ void ACO::update()
     }
 }
 
-void ACO::moveToCell(Cell *from, Cell *to, Entity *e)
+void ACO::moveToCell(std::pair<int, int> from, std::pair<int, int> to, Entity *e)
 {
-    std::cout << "Moving" << std::endl;
-    for (auto it = from->data.entities.begin(); it != from->data.entities.end(); ++it)
+    Cell* fromCell = world->at(from.first, from.second);
+    Cell* toCell = world->at(to.first, to.second);
+
+    if (!fromCell || !toCell) {
+        std::cout << "Invalid from or to cell coordinates!" << std::endl;
+        return;
+    }
+
+  //  std::cout << "Moving entity '" << e->getName() << "' from (" << from.first << ", " << from.second << ") to (" << to.first << ", " << to.second << ")" << std::endl;
+
+   // std::cout << "Entities in from cell: " << fromCell->data.entities.size() << std::endl;
+    for (auto it = fromCell->data.entities.begin(); it != fromCell->data.entities.end(); ++it)
     {
+       // std::cout << "Entity name in from cell: " << it->get()->getName() << std::endl;
+
         if (it->get() == e)
         {
+           // std::cout << "Found matching entity in from cell, moving it." << std::endl;
+
             // Move ownership of entity to 'to' cell
-            to->data.entities.push_back(std::move(*it));
-            from->data.entities.erase(it);
-            e->setX(to->x);
-            e->setY(to->y);
+            toCell->data.entities.push_back(std::move(*it));
+            fromCell->data.entities.erase(it);
+
+
             if (Ant* ant = dynamic_cast<Ant*>(e)) {
-                float toX = to->x * conf::cellSize;  // center of the cell
-                float toY = to->y * conf::cellSize;
+                float toX = to.first * conf::cellSize;
+                float toY = to.second * conf::cellSize;
 
                 ant->startMovingTo(toX, toY);
-                break;
-
-             //   float fromX = ant->getHitbox()->getPosition().x;
-             //   float fromY = ant->getHitbox()->getPosition().y;
-            //    float angleDeg = std::atan2(toY - fromY, toX - fromX) * 180.f / M_PI;
-             //   ant->setRotation(angleDeg);
             }
+            return;
         }
     }
+
+   // std::cout << "Entity to move was NOT found in the from cell's entities!" << std::endl;
 }
 // not used currently
 void ACO::depositPheremones(Cell *c)
@@ -227,10 +239,10 @@ void ACO::depositPheremones(Cell *c)
 void ACO::findFood(Cell *cell, Ant *e)
 {
 
-    std::cout << "Finding food" << std::endl;
+   // std::cout << "Finding food" << std::endl;
     curCell = {cell->x, cell->y};
     //   std::cout<<"Getting adj cells"<<std::endl;
-    getAdjCells(cell->y, cell->x, e);
+    getAdjCells(cell->x, cell->y, e);
     if (adjCells.size() == 0)
     {
         //     std::cout << "No adj cells" << std::endl;
@@ -262,26 +274,13 @@ void ACO::findFood(Cell *cell, Ant *e)
             // e->getPath().push_back(s.first);
             e->addPath(s.first);
 
-            bool containsTarget = std::any_of(
-                s.first->data.entities.begin(),
-                s.first->data.entities.end(),
-                [&](const std::unique_ptr<Entity> &ent)
-                {
-                    bool hasFound = ent.get() == e->getTarget() ||
-                        std::find(tl.begin(), tl.end(), std::make_pair(ent->getX(), ent->getY())) != tl.end();
+            bool containsTarget = std::find(tl.begin(), tl.end(), std::make_pair(s.first->x, s.first->y)) != tl.end();
+            std::cout << "ANT( " << e->getX() << ", " << e->getY() << ")" << std::endl;
+            std::cout << "TARGET( " << s.first->x << ", " <<s.first->y << ")" << std::endl;
 
-
-                    if(hasFound)
-                    {
-                    transferResource(ent.get(),e,10);
-                 //   std::cout << ent->getName() << " -> " << ent->getResource() << std::endl;
-                    }
-
-                    return hasFound;
-                });
             if (containsTarget)
             {
-               // std::cout << "Target base " << base->getTeam() << std::endl;
+                std::cout << "Target base -----------------------------------------------------------------------------" << base->getTeam() << std::endl;
                 e->setTarget(base);
             }
 
@@ -291,7 +290,7 @@ void ACO::findFood(Cell *cell, Ant *e)
             s.first->data.p.pheromoneMap[team] += updatedP;
 
 
-            moveToCell(world->at(curCell.first, curCell.second), s.first, e);
+            moveToCell({cell->y, cell->x}, {s.first->x, s.first->y}, e);
 
             break;
         }
@@ -302,7 +301,7 @@ void ACO::returnHome(Cell *cell, Ant *e)
     //   std::cout << "Returning home!" << std::endl;
     curCell = {cell->x,cell->y};
     //   std::cout<<"Getting adj cells"<<std::endl;
-    getAdjCells(cell->y, cell->x, e);
+    getAdjCells(cell->x, cell->y, e);
     if (adjCells.size() == 0)
     {
         //     std::cout << "No adj cells" << std::endl;
@@ -334,25 +333,16 @@ void ACO::returnHome(Cell *cell, Ant *e)
             // e->getPath().push_back(s.first);
             e->addPath(s.first);
 
-            bool containsTarget = std::any_of(
-                s.first->data.entities.begin(),
-                s.first->data.entities.end(),
-                [&](const std::unique_ptr<Entity> &ent)
-                {
-                    bool hasFound = ent.get() == e->getTarget();
-                    if(hasFound)
-                    {
-                    transferResource(e,ent.get(),e->getResource());
-                    //std::cout << ent->getName() << " -> " << ent->getResource() << std::endl;
-                    }
+            bool containsTarget = same(s.first->x, s.first->y, base->getX(), base->getY());
+            std::cout << "ANT( " << e->getX() << ", " << e->getY() << ")" << std::endl;
+            std::cout << "TARGET( " << s.first->x << ", " <<s.first->y << ")" << std::endl;
+            std::cout << "BASE( " << base->getX() << ", " << base->getY() << ")" << std::endl;
 
-                    return hasFound;
-                });
             if (containsTarget)
             {
+                std::cout << "Target rand -----------------------------------------------------------------------------" << base->getTeam() << std::endl;
                 getNewTarget(e);
             }
-
             // Update pheromone after choosing the cell
             double currentP = s.first->data.p.pheromoneMap[team];
             double updatedP = conf::Q / (currentP + 0.0001);  // or your preferred epsilon
@@ -360,8 +350,7 @@ void ACO::returnHome(Cell *cell, Ant *e)
 
 
 
-            moveToCell(world->at(curCell.first,curCell.second), s.first, e);
-
+            moveToCell({cell->y, cell->x}, {s.first->x, s.first->y}, e);
             break;
         }
     }
@@ -423,22 +412,25 @@ void ACO::getAdjCells(int x, int y, Entity* e) {
         int nx = x + dx[i];
         int ny = y + dy[i];
 
-        if (!isInBounds(nx, ny)) continue;
+        if (!isInBounds(nx, ny)) {
+           // std::cout << "Not in bound" << std::endl;
+            continue;
+        } 
 
         Cell* tile = world->at(nx,ny);
 
         handleEnemiesInCell(tile, e);
 
         if (!isCellBlocked(world->at(nx,ny)))
-        {
+        {        
             adjCells.push_back({nx,ny});
         }
     }
 
-    for(auto& [x,y]:adjCells)
-    {
-        std::cout << std::to_string(x) << ", " << std::to_string(y) << std::endl;
-    }
+    // for(auto& [x,y]:adjCells)
+    // {
+    //     std::cout << std::to_string(x) << ", " << std::to_string(y) << std::endl;
+    // }
 }
 
 

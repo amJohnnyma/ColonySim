@@ -227,7 +227,9 @@ void WorldGeneration::generateTerrain()
             {
                 for(int y = 0; y < conf::chunkSize; y++)
                 {
-                    chunk.get()->push_back(createCell(x,y,conf::cellSize));
+                    int worldX = cx * conf::chunkSize + x;
+                    int worldY = cy * conf::chunkSize + y;
+                    chunk.get()->push_back(createCell(worldX,worldY,conf::cellSize));
                 }
             }
             grid[{cx, cy}] = std::move(chunk);

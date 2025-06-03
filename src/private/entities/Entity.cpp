@@ -68,7 +68,7 @@ Entity::Entity(int x, int y, std::string name, double maxResource, std::unique_p
     this->name = name;
     this->maxResource = maxResource;
     this->hitbox = std::move(hitbox);
-  //  this->currentCell = curCell;
+    this->currentCell = curCell;
 }
 
 void Entity::draw(sf::RenderTarget &target, sf::RenderStates states) const 
