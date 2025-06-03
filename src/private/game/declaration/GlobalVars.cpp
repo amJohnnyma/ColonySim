@@ -7,11 +7,11 @@ namespace conf
     double maxPheromone = 0;
     const sf::Vector2f window_size = {1000, 1000};
     const sf::Vector2f window_size_f = static_cast<sf::Vector2f>(window_size);
-    const sf::Vector2i worldSize = {30, 30};
+    const sf::Vector2i worldSize = {16, 16};
     const uint32_t max_framerate = 60;
     const float dt = 1.0f / static_cast<float>(max_framerate);
-    const int numAnts = 400; //per base
-    const int numBases = 4; //one base per team
+    const int numAnts = 10; //per base
+    const int numBases = 2; //one base per team
     const int numLocations =1;
     const int antPathDrawLength = 10;
     int Q = 1;
