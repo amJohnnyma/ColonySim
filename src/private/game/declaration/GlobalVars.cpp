@@ -17,13 +17,13 @@ namespace conf
     */
     const uint32_t max_framerate = 60;
     const float dt = 1.0f / static_cast<float>(max_framerate);
-    const int numAnts = 1; //per base
-    const int numBases = 1; //one base per team
-    const int numLocations =1;
+    const int numAnts = 200; //per base
+    const int numBases = 10; //one base per team
+    const int numLocations =5;
     const int antPathDrawLength = 10;
     int Q = 1;
     double pF = 0.5; //pheremone influnce
-    double hF = 20.8; // heuristic influence //higher because terrain difficulty lowers it heavily
+    double hF = 0.8; // heuristic influence //higher because terrain difficulty lowers it heavily
     double pheremoneEvap = 0.005;
     unsigned int timestep = 500;
     double locationFoodRegenerationRate = 10000;

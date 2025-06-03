@@ -148,9 +148,9 @@ void ACO::update()
                             break;
                         }
                       //     std::cout << "found ant" << std::endl;
-                          std::cout << "Target name: " << ant->getTarget()->getName() << std::endl;
-                          std::cout << "target pos: " << ant->getTarget()->getX() <<", " << ant->getTarget()->getY() << std::endl;
-                          std::cout << "Current pos: " << ant->getX() << ", " << ant->getY() << std::endl;
+                   //       std::cout << "Target name: " << ant->getTarget()->getName() << std::endl;
+                     //     std::cout << "target pos: " << ant->getTarget()->getX() <<", " << ant->getTarget()->getY() << std::endl;
+                   //       std::cout << "Current pos: " << ant->getX() << ", " << ant->getY() << std::endl;
 
                         if (ant->getTarget()->getResource() <= 0 && ant->getTarget() != base)
                         {
@@ -275,12 +275,12 @@ void ACO::findFood(Cell *cell, Ant *e)
             e->addPath(s.first);
 
             bool containsTarget = std::find(tl.begin(), tl.end(), std::make_pair(s.first->x, s.first->y)) != tl.end();
-            std::cout << "ANT( " << e->getX() << ", " << e->getY() << ")" << std::endl;
-            std::cout << "TARGET( " << s.first->x << ", " <<s.first->y << ")" << std::endl;
+        //    std::cout << "ANT( " << e->getX() << ", " << e->getY() << ")" << std::endl;
+         //   std::cout << "TARGET( " << s.first->x << ", " <<s.first->y << ")" << std::endl;
 
             if (containsTarget)
             {
-                std::cout << "Target base -----------------------------------------------------------------------------" << base->getTeam() << std::endl;
+            //   std::cout << "Target base -----------------------------------------------------------------------------" << base->getTeam() << std::endl;
                 e->setTarget(base);
             }
 
@@ -334,13 +334,13 @@ void ACO::returnHome(Cell *cell, Ant *e)
             e->addPath(s.first);
 
             bool containsTarget = same(s.first->x, s.first->y, base->getX(), base->getY());
-            std::cout << "ANT( " << e->getX() << ", " << e->getY() << ")" << std::endl;
-            std::cout << "TARGET( " << s.first->x << ", " <<s.first->y << ")" << std::endl;
-            std::cout << "BASE( " << base->getX() << ", " << base->getY() << ")" << std::endl;
+        //    std::cout << "ANT( " << e->getX() << ", " << e->getY() << ")" << std::endl;
+          //  std::cout << "TARGET( " << s.first->x << ", " <<s.first->y << ")" << std::endl;
+           // std::cout << "BASE( " << base->getX() << ", " << base->getY() << ")" << std::endl;
 
             if (containsTarget)
             {
-                std::cout << "Target rand -----------------------------------------------------------------------------" << base->getTeam() << std::endl;
+             //   std::cout << "Target rand -----------------------------------------------------------------------------" << base->getTeam() << std::endl;
                 getNewTarget(e);
             }
             // Update pheromone after choosing the cell
@@ -417,11 +417,10 @@ void ACO::getAdjCells(int x, int y, Entity* e) {
             continue;
         } 
 
-        Cell* tile = world->at(nx,ny);
 
-        handleEnemiesInCell(tile, e);
+        //handleEnemiesInCell(world->at(ny,nx), e);
 
-        if (!isCellBlocked(world->at(nx,ny)))
+        if (!isCellBlocked(world->at(ny,nx)))
         {        
             adjCells.push_back({nx,ny});
         }
