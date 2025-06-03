@@ -84,7 +84,6 @@ std::unique_ptr<Cell> WorldGeneration::createCell(int x, int y, float cellSize)
 
     return cell;
 }
-//refactor this so i can just say auto ant = std::unique<ant> instead of the "constructor" being here
 std::unique_ptr<sf::Sprite> WorldGeneration::createAntShape(sf::Color fillColor, int x, int y, float cellSize)
 {
     auto& manager = TextureManager::getInstance();
@@ -169,7 +168,7 @@ std::unique_ptr<Ant> WorldGeneration::createAnt(int x, int y)
 std::unique_ptr<Location> WorldGeneration::createBase(int x, int y, TeamInfo p)
 {
     auto shape = createBaseShape(sf::Color::Yellow, x, y, cellSize);
-        int chunkX = x / conf::chunkSize;
+    int chunkX = x / conf::chunkSize;
     int chunkY = y / conf::chunkSize;
 
     Chunk* chunk = nullptr;
