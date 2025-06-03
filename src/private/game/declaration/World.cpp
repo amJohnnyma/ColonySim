@@ -167,14 +167,16 @@ void World::createACO()
 
     for (auto& [coord, chunkPtr] : grid) {
     Chunk* chunk = chunkPtr.get();
-        for (auto& eg : chunk->at(coord.first, coord.second)->data.entities) {
-            if (eg->getName() == "location") {
-                raw_goals.push_back(chunk->at(coord.first, coord.second));
+       for (auto& cellPtr : chunk->getCells()) { // assuming Chunk is a container of Cells
+            for (auto& eg : cellPtr->data.entities) {
+                if (eg->getName() == "location") {
+                    raw_goals.push_back(cellPtr.get());
+                }
+                if (eg->getName().find("Base") != std::string::npos) {
+                    trackedVars->setBase(eg.get());
+                }
             }
-            if (eg->getName().find("Base") != std::string::npos) {
-                trackedVars->setBase(eg.get());
-            }
-        }
+        } 
     }
 
     for(auto & base : trackedVars->getBases())

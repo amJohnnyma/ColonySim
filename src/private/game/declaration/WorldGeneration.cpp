@@ -147,22 +147,22 @@ std::unique_ptr<Ant> WorldGeneration::createAnt(int x, int y)
     Chunk* chunk = nullptr;
     Cell* cell = nullptr;
     try {
-        std::cout << "try" << std::endl;
+       // std::cout << "try" << std::endl;
         chunk = grid[{chunkX, chunkY}].get();
     } catch (const std::out_of_range& e) {
         // handle missing chunk
-        std::cout << "Catch" << std::endl;
+       // std::cout << "Catch" << std::endl;
         grid[{chunkX,chunkY}] = std::make_unique<Chunk>(chunkX,chunkY,conf::chunkSize);
     }
 
     if (chunk) {
-        std::cout << "Chunk exists" << std::endl;
+      //  std::cout << "Chunk exists" << std::endl;
         int localX = x % conf::chunkSize;
         int localY = y % conf::chunkSize;
         cell = chunk->at(localX, localY);
         // now you can use the cell pointer
     }
-    std::cout << "Making ant" << std::endl;
+  //  std::cout << "Making ant" << std::endl;
     return std::make_unique<Ant>(y, x, "ant", 10, std::move(shape), cell);
 }
 
@@ -224,6 +224,13 @@ void WorldGeneration::generateTerrain()
     for (int cx = 0; cx < conf::worldSize.x / conf::chunkSize; ++cx) {
         for (int cy = 0; cy < conf::worldSize.y / conf::chunkSize; ++cy) {
             auto chunk = std::make_unique<Chunk>(cx, cy, conf::chunkSize);
+            for(int x = 0; x < conf::chunkSize; x++)
+            {
+                for(int y = 0; y < conf::chunkSize; y++)
+                {
+                    chunk.get()->push_back(createCell(x,y,conf::cellSize));
+                }
+            }
             grid[{cx, cy}] = std::move(chunk);
         }
     }

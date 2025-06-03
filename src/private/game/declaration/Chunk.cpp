@@ -31,3 +31,8 @@ void Chunk::render(sf::RenderWindow& window) {
 std::vector<std::unique_ptr<Cell>>& Chunk::getCells() {
     return cells;
 }
+
+void Chunk::push_back(std::unique_ptr<Cell> cell)
+{
+    cells.push_back(std::move(cell));
+}

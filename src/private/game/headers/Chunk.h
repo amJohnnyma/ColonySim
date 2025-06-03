@@ -17,6 +17,7 @@ public:
     void update();
     void render(sf::RenderWindow& window);
     std::vector<std::unique_ptr<Cell>>& getCells();
+    void push_back(std::unique_ptr<Cell> cell);
 };
 
 #endif

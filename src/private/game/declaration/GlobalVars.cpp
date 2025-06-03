@@ -7,7 +7,7 @@ namespace conf
     double maxPheromone = 0;
     const sf::Vector2f window_size = {1000, 1000};
     const sf::Vector2f window_size_f = static_cast<sf::Vector2f>(window_size);
-    const sf::Vector2i worldSize = {16, 16};
+    const sf::Vector2i worldSize = {32, 32}; // factor of 16 for now (should be how many chunks)
     const uint32_t max_framerate = 60;
     const float dt = 1.0f / static_cast<float>(max_framerate);
     const int numAnts = 10; //per base
