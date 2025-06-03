@@ -26,7 +26,7 @@ namespace conf
     double hF = 0.8; // heuristic influence //higher because terrain difficulty lowers it heavily
     double pheremoneEvap = 0.005;
     unsigned int timestep = 500;
-    double locationFoodRegenerationRate = 10000;
+    double locationFoodRegenerationRate = 100;
     float antSpeed = 500.0f;
     float terrainDifficultyScale = 0.05f;
     int baseSeparationDistance = 5;

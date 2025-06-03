@@ -280,6 +280,14 @@ void ACO::findFood(Cell *cell, Ant *e)
 
             if (containsTarget)
             {
+                Cell* targetLocation = world->at(s.first->x, s.first->y);
+                for(auto& ent:targetLocation->data.entities)
+                {
+                    if(FoodLocation* fl = dynamic_cast<FoodLocation*>(ent.get()))
+                    {
+                        e->giveResource(fl->takeResource(10));
+                    }
+                }
             //   std::cout << "Target base -----------------------------------------------------------------------------" << base->getTeam() << std::endl;
                 e->setTarget(base);
             }
@@ -341,6 +349,7 @@ void ACO::returnHome(Cell *cell, Ant *e)
             if (containsTarget)
             {
              //   std::cout << "Target rand -----------------------------------------------------------------------------" << base->getTeam() << std::endl;
+                base->giveResource(e->takeResource(10));
                 getNewTarget(e);
             }
             // Update pheromone after choosing the cell

@@ -85,9 +85,9 @@ public:
 
     // Getter and setter for position
     void setPos(int x, int y);
-    // Function to take resources
+    // Function to take resources from self
     int takeResource(int amount);
-    // Function to give resources
+    // Function to give resource to self
     int giveResource(int amount);
     // Additional getter methods for private members
     int getX() const { return x; }
