@@ -232,7 +232,7 @@ void WorldGeneration::generateTerrain()
                     chunk.get()->push_back(createCell(worldX,worldY,conf::cellSize));
                 }
             }
-            grid[{cx, cy}] = std::move(chunk);
+            grid[{cy, cx}] = std::move(chunk);
         }
     }
 
