@@ -69,8 +69,8 @@ std::unique_ptr<Cell> WorldGeneration::createCell(int x, int y, float cellSize)
 
     CellData cd;
     cd.type = "(" + std::to_string(x) + ", " + std::to_string(y) + ")";
-    cd.difficulty = std::clamp(generateDifficulty() * 2, 0.5, 1.0);
-   // cd.difficulty = 1;
+    //cd.difficulty = std::clamp(generateDifficulty() * 2, 0.5, 1.0);
+    cd.difficulty = 1;
 
     auto pheromones = createPheromones(x, y);
     
