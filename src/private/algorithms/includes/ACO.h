@@ -1,7 +1,7 @@
 #ifndef ACO_H
 #define ACO_H
 
-#include "../../structs/worldObjects.h"
+//#include "../../structs/worldObjects.h"
 #include <iostream>
 #include <cmath>
 #include <random>
@@ -11,26 +11,25 @@
 #include "../../entities/Location.h"
 #include "../../entities/FoodLocation.h"
 #include "../../entities/BuildingLocation.h"
+#include "../../game/headers/World.h"
 
-
-
-
+class World;
 class ACO
 {
 
     private:
-        Cell* startCell;
-        Cell* curCell;
-        std::unordered_set<Cell*> goals;
-        std::vector<Cell*> world;
+        std::pair<int,int> startCell;
+        std::pair<int,int> curCell;
+        std::vector<std::pair<std::string, std::pair<int,int>>> goals;
+        World* world;
         float theta = 0.0f;
-        std::vector<Cell*> adjCells;
+        std::vector<std::pair<int, int>> adjCells;
         int worldWidth;
         int worldHeight;
-        std::unordered_set<Cell*> visited;
+        std::vector<std::pair<int, int>> visited;
         int numberAnts = 0;
         Entity* base;
-        std::vector<Entity*> tl; // goals
+        std::vector<std::pair<int,int>> tl; // goals
         bool possibleLocations = true;
         TeamInfo team;
 
@@ -50,7 +49,7 @@ class ACO
         double sumOfFeasiblePheremoneProb(Entity *target, bool flag);     
         double calculateHeuristic(Cell* next, Entity* target);
         //pair<cell, score>
-        void moveToCell(Cell* from, Cell * to, Entity* e);
+        void moveToCell(std::pair<int, int> from, std::pair<int, int> to, Entity *e);
         void depositPheremones(Cell* c);
         void findFood(Cell* cell, Ant* e);
         void returnHome(Cell* cell, Ant* e);
@@ -64,7 +63,7 @@ class ACO
 
         
     public:
-        ACO(Cell* startCell, std::vector<Cell*>& goals, std::vector<Cell*>& world, int width, int height, Entity* base);
+        ACO(std::vector<Cell*>& goals, World* world, int width, int height, Entity* base);
         ~ACO();
         void update();
         void assignRandomTarget(std::vector<Cell*> &raw_goals);

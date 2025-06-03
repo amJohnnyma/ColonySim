@@ -1,7 +1,7 @@
 #include "../includes/ACO.h"
 #include "../../game/headers/GlobalVars.h"
 
-ACO::ACO(Cell *startCell, std::vector<Cell *> &goals, std::vector<Cell *> &world, int width, int height, Entity* base)
+ACO::ACO(std::vector<Cell *> &goals, World* world, int width, int height, Entity* base)
 {
 std::cout << "ACO const" << std::endl;
 
@@ -11,13 +11,12 @@ std::cout << "ACO const" << std::endl;
     std::cout << this->base->getTeam() << std::endl;
     for (auto &g : goals)
     {
-        this->goals.insert(g);
+        this->goals.push_back({g->data.type, {g->x, g->y}});
     }
 
     this->world = world;
     worldWidth = width;
     worldHeight = height;
-    curCell = startCell;
 
     assignRandomTarget(goals);
 
@@ -29,37 +28,37 @@ ACO::~ACO()
 }
 void ACO::assignRandomTarget(std::vector<Cell *> &raw_goals)
 {
-    for (auto &cell : world)
+    std::cout << "Raw goal size: " << std::to_string(raw_goals.size()) << std::endl;
+    for(auto& cell : raw_goals)
     {
-        for(auto &e : cell->data.entities)
-        {
-            if (FoodLocation* loc = dynamic_cast<FoodLocation*>(e.get()))
-            {
-                // Check if e.get() is already in tl
-                bool alreadyAdded = std::any_of(tl.begin(), tl.end(), [&](Entity *existing)
-                    { return existing == loc; });
+        // Search for FoodLocation entities and add unique ones to tl
+        for (auto& e : cell->data.entities) {
+            if (FoodLocation* loc = dynamic_cast<FoodLocation*>(e.get())) {
+                // Check if loc is already in tl by comparing (x, y)
+                bool alreadyAdded = std::any_of(tl.begin(), tl.end(), [&](const std::pair<int, int>& existing) {
+                    return existing.first == loc->getX() && existing.second == loc->getY();
+                });
 
-                if (!alreadyAdded)
-                {
-                    tl.push_back(loc);
+                if (!alreadyAdded) {
+                    tl.push_back({loc->getX(), loc->getY()});
                     std::cout << "Added possible location: " << loc->getName()
-                              << " ( " << loc->getX() << ", " << loc->getY() << " )" << std::endl;
+                            << " ( " << loc->getX() << ", " << loc->getY() << " )" << std::endl;
                 }
             }
         }
-
     }
 
-    for (auto &cell : world)
-    {
-        for (auto &entity : cell->data.entities)
-        {
-               // std::cout << "e" << std::endl;
-            if (Ant* ant = dynamic_cast<Ant*>(entity.get()))
-            {
-               // std::cout << "Ant target get" << std::endl;
-                getNewTarget(ant);
-                //ant->getPath().push_back(cell);
+    // Now iterate again for Ant entities and assign targets
+    for (int x = 0; x < conf::worldSize.x; x++) {
+        for (int y = 0; y < conf::worldSize.y; y++) {
+            Cell* cell = world->at(x, y);
+            if (!cell) continue;
+
+            for (auto& entity : cell->data.entities) {
+                if (Ant* ant = dynamic_cast<Ant*>(entity.get())) {
+                    getNewTarget(ant);
+                    // ant->getPath().push_back(cell);
+                }
             }
         }
     }
@@ -68,47 +67,48 @@ void ACO::assignRandomTarget(std::vector<Cell *> &raw_goals)
 
 void ACO::getNewTarget(Ant *ant)
 {
-
-    //when assigning a target dont change it if not needed (still has food)
+ //   if (ant->getTarget() != nullptr)
+  //      std::cout << "Current target: " << ant->getTarget()->getX() << ", " << ant->getTarget()->getY() << std::endl;
 
     std::random_device rd;
     std::mt19937 gen(rd());
-    
-     //  std::cout << "tl.size(): " << tl.size() << std::endl;
+
+  //  std::cout << "tl.size(): " << tl.size() << std::endl;
     if (tl.empty())
         return;
+
     std::uniform_int_distribution<> dis(0, tl.size() - 1);
-    int randomIndex = dis(gen);
+    int startIndex = dis(gen);
     int counter = 0;
-    while(tl[randomIndex]->getResource() <= 0 && counter < tl.size())
-    {
-        if(randomIndex == tl.size() - 1)
-        {
-            randomIndex =0;
+    Entity* e = nullptr;
+
+    while (counter < tl.size()) {
+        int idx = (startIndex + counter) % tl.size();
+        Cell* cell = world->at(tl[idx].first, tl[idx].second);
+        if (!cell) {
+            counter++;
+            continue;
         }
-        else{
-            randomIndex++;
+
+        for (auto& entity : cell->data.entities) {
+            if (dynamic_cast<FoodLocation*>(entity.get())) {
+                e = entity.get();
+                break;
+            }
+        }
+
+        if (e) {
+            ant->setTarget(e);
+            possibleLocations = true;
+            return;
         }
 
         counter++;
+    }
 
-    }
-      // std::cout << "Assigned index: " << randomIndex << std::endl;
-    
-    if(counter < tl.size())
-    {
-        //std::cout << "Setting" << std::endl;
-        ant->setTarget(tl[randomIndex]);
-        possibleLocations = true;
-       // std::cout << "done set" << std::endl;
-    }
-    else{
-       // std::cout << "No more locations with food" << std::endl;
-        possibleLocations = false;
-        ant->setTarget(base);
-    }
-    
-   // target = tl[randomIndex];
+    // No valid target found, fall back to base
+    possibleLocations = false;
+    ant->setTarget(base);
 }
 
 bool same(int x, int y, int w, int v)
@@ -122,96 +122,113 @@ void ACO::update()
 
     bool noBetterF = true;
     double runBest = 0;
-     //  std::cout << "Updating aco" << std::endl;
+    //  std::cout << "Updating aco" << std::endl;
     // from start cell, look at each entity (ant)
-    for (auto &cell : world)
+    for (int x = 0; x < conf::worldSize.x; x++)
     {
-        for (auto &e : cell->data.entities)
+        for (int y = 0; y < conf::worldSize.y; y++)
         {
-            //  std::cout << "Checking entity" << std::endl;
-            if (e)
+            Cell *cell = world->at(x, y);
+            for (auto &e : cell->data.entities)
             {
-                if (Ant* ant = dynamic_cast<Ant*>(e.get()))
-                {    
-
-                   // std::cout << "Ant team: " << ant->getTeam() << ", Target: " << ant->getTarget()->getName() << "\n";
-
-                    if(!ant->sameTeam(ant->getTeam(), team))   
-                    {
-                        break;
-                    }             
-                    if(ant->stillAnimating())
-                    {
-                        break;
-                    }
-                    //   std::cout << "found ant" << std::endl;
-                     //  std::cout << "Target: " << ant->getTarget()->getName() << std::endl;
-                    if(ant->getTarget()->getResource() <= 0 && ant->getTarget() != base)
-                    {
-                        getNewTarget(ant);
-                    }                    
-                    if (ant->getTarget() && ant->getTarget()->getName() == "Base:" + std::to_string(ant->getTeam()))
-                    {                        
-                        if(!ant->sameTeam(ant->getTeam(), ant->getTarget()->getTeam()))
-                        {
-                            getNewTarget(ant);
-                            break;
-                        }
-                        if((!possibleLocations) && (e.get()->getX() == ant->getTarget()->getX())&& (e.get()->getY() == ant->getTarget()->getY()))
-                        {
-                            getNewTarget(ant);
-                            break;
-                        }
-                       // std::cout <<std::to_string(ant->getTeam()) +  "Returning home" << std::endl;
-                        returnHome(cell, ant);
-                    }
-                    else
-                    {
-                       // std::cout << std::to_string(ant->getTeam()) + " Finding food" << std::endl;
-                        findFood(cell, ant);
-                    }
-                } 
-                else if(FoodLocation* fl = dynamic_cast<FoodLocation*>(e.get()))
+                //  std::cout << "Checking entity" << std::endl;
+                if (e)
                 {
-                   fl->regenerate();
-                 // e.get()->giveResource(1);
-                 //   std::cout << e.get()->getName() << " : " << e.get()->getResource() << std::endl;
+                    if (Ant *ant = dynamic_cast<Ant *>(e.get()))
+                    {
+
+                        // std::cout << "Ant team: " << ant->getTeam() << ", Target: " << ant->getTarget()->getName() << "\n";
+
+                        if (!ant->sameTeam(ant->getTeam(), team))
+                        {
+                            break;
+                        }
+                        if (ant->stillAnimating())
+                        {
+                            break;
+                        }
+                      //     std::cout << "found ant" << std::endl;
+                   //       std::cout << "Target name: " << ant->getTarget()->getName() << std::endl;
+                     //     std::cout << "target pos: " << ant->getTarget()->getX() <<", " << ant->getTarget()->getY() << std::endl;
+                   //       std::cout << "Current pos: " << ant->getX() << ", " << ant->getY() << std::endl;
+
+                        if (ant->getTarget()->getResource() <= 0 && ant->getTarget() != base)
+                        {
+                            getNewTarget(ant);
+                        }
+                        if (ant->getTarget() && ant->getTarget()->getName() == "Base:" + std::to_string(ant->getTeam()))
+                        {
+                            if (!ant->sameTeam(ant->getTeam(), ant->getTarget()->getTeam()))
+                            {
+                                getNewTarget(ant);
+                                break;
+                            }
+                            if ((!possibleLocations) && (e.get()->getX() == ant->getTarget()->getX()) && (e.get()->getY() == ant->getTarget()->getY()))
+                            {
+                                getNewTarget(ant);
+                                break;
+                            }
+                            // std::cout <<std::to_string(ant->getTeam()) +  "Returning home" << std::endl;
+                            returnHome(cell, ant);
+                        }
+                        else
+                        {
+                            // std::cout << std::to_string(ant->getTeam()) + " Finding food" << std::endl;
+                            findFood(cell, ant);
+                        }
+                    }
+                    else if (FoodLocation *fl = dynamic_cast<FoodLocation *>(e.get()))
+                    {
+                        fl->regenerate();
+                        // e.get()->giveResource(1);
+                        //   std::cout << e.get()->getName() << " : " << e.get()->getResource() << std::endl;
+                    }
                 }
             }
 
+            // update pheromone
+            cell->data.p.pheromoneMap[team] *= (1.0 - conf::pheremoneEvap);
         }
-        
-
-    //update pheromone            
-    cell->data.p.pheromoneMap[team] *= (1.0 - conf::pheremoneEvap);
-
     }
 }
 
-void ACO::moveToCell(Cell *from, Cell *to, Entity *e)
+void ACO::moveToCell(std::pair<int, int> from, std::pair<int, int> to, Entity *e)
 {
-    for (auto it = from->data.entities.begin(); it != from->data.entities.end(); ++it)
+    Cell* fromCell = world->at(from.first, from.second);
+    Cell* toCell = world->at(to.first, to.second);
+
+    if (!fromCell || !toCell) {
+        std::cout << "Invalid from or to cell coordinates!" << std::endl;
+        return;
+    }
+
+  //  std::cout << "Moving entity '" << e->getName() << "' from (" << from.first << ", " << from.second << ") to (" << to.first << ", " << to.second << ")" << std::endl;
+
+   // std::cout << "Entities in from cell: " << fromCell->data.entities.size() << std::endl;
+    for (auto it = fromCell->data.entities.begin(); it != fromCell->data.entities.end(); ++it)
     {
+       // std::cout << "Entity name in from cell: " << it->get()->getName() << std::endl;
+
         if (it->get() == e)
         {
+           // std::cout << "Found matching entity in from cell, moving it." << std::endl;
+
             // Move ownership of entity to 'to' cell
-            to->data.entities.push_back(std::move(*it));
-            from->data.entities.erase(it);
+            toCell->data.entities.push_back(std::move(*it));
+            fromCell->data.entities.erase(it);
+
 
             if (Ant* ant = dynamic_cast<Ant*>(e)) {
-                float toX = to->x * conf::cellSize;  // center of the cell
-                float toY = to->y * conf::cellSize;
+                float toX = to.first * conf::cellSize;
+                float toY = to.second * conf::cellSize;
 
                 ant->startMovingTo(toX, toY);
-
-             //   float fromX = ant->getHitbox()->getPosition().x;
-             //   float fromY = ant->getHitbox()->getPosition().y;
-            //    float angleDeg = std::atan2(toY - fromY, toX - fromX) * 180.f / M_PI;
-             //   ant->setRotation(angleDeg);
             }
-            break;
+            return;
         }
     }
+
+   // std::cout << "Entity to move was NOT found in the from cell's entities!" << std::endl;
 }
 // not used currently
 void ACO::depositPheremones(Cell *c)
@@ -222,9 +239,10 @@ void ACO::depositPheremones(Cell *c)
 void ACO::findFood(Cell *cell, Ant *e)
 {
 
-    curCell = cell;
+   // std::cout << "Finding food" << std::endl;
+    curCell = {cell->x, cell->y};
     //   std::cout<<"Getting adj cells"<<std::endl;
-    getAdjCells(cell->y, cell->x, e);
+    getAdjCells(cell->x, cell->y, e);
     if (adjCells.size() == 0)
     {
         //     std::cout << "No adj cells" << std::endl;
@@ -235,8 +253,8 @@ void ACO::findFood(Cell *cell, Ant *e)
     std::vector<std::pair<Cell *, double>> scores;
     for (const auto &ac : adjCells)
     {
-        double score = pheromoneCalc(ac, e->getTarget(), false);
-        scores.push_back({ac, score});
+        double score = pheromoneCalc(world->at(ac.first, ac.second), e->getTarget(), false);
+        scores.push_back({world->at(ac.first,ac.second), score});
     }
 
     // Normalize scores
@@ -256,25 +274,21 @@ void ACO::findFood(Cell *cell, Ant *e)
             // e->getPath().push_back(s.first);
             e->addPath(s.first);
 
-            bool containsTarget = std::any_of(
-                s.first->data.entities.begin(),
-                s.first->data.entities.end(),
-                [&](const std::unique_ptr<Entity> &ent)
-                {
-                    bool hasFound = ent.get() == e->getTarget() ||
-                    std::find(tl.begin(), tl.end(), ent.get()) != tl.end();
+            bool containsTarget = std::find(tl.begin(), tl.end(), std::make_pair(s.first->x, s.first->y)) != tl.end();
+        //    std::cout << "ANT( " << e->getX() << ", " << e->getY() << ")" << std::endl;
+         //   std::cout << "TARGET( " << s.first->x << ", " <<s.first->y << ")" << std::endl;
 
-                    if(hasFound)
-                    {
-                    transferResource(ent.get(),e,10);
-                 //   std::cout << ent->getName() << " -> " << ent->getResource() << std::endl;
-                    }
-
-                    return hasFound;
-                });
             if (containsTarget)
             {
-               // std::cout << "Target base " << base->getTeam() << std::endl;
+                Cell* targetLocation = world->at(s.first->x, s.first->y);
+                for(auto& ent:targetLocation->data.entities)
+                {
+                    if(FoodLocation* fl = dynamic_cast<FoodLocation*>(ent.get()))
+                    {
+                        e->giveResource(fl->takeResource(10));
+                    }
+                }
+            //   std::cout << "Target base -----------------------------------------------------------------------------" << base->getTeam() << std::endl;
                 e->setTarget(base);
             }
 
@@ -284,7 +298,7 @@ void ACO::findFood(Cell *cell, Ant *e)
             s.first->data.p.pheromoneMap[team] += updatedP;
 
 
-            moveToCell(curCell, s.first, e);
+            moveToCell({cell->y, cell->x}, {s.first->x, s.first->y}, e);
 
             break;
         }
@@ -293,9 +307,9 @@ void ACO::findFood(Cell *cell, Ant *e)
 void ACO::returnHome(Cell *cell, Ant *e)
 {
     //   std::cout << "Returning home!" << std::endl;
-    curCell = cell;
+    curCell = {cell->x,cell->y};
     //   std::cout<<"Getting adj cells"<<std::endl;
-    getAdjCells(cell->y, cell->x, e);
+    getAdjCells(cell->x, cell->y, e);
     if (adjCells.size() == 0)
     {
         //     std::cout << "No adj cells" << std::endl;
@@ -306,8 +320,8 @@ void ACO::returnHome(Cell *cell, Ant *e)
     std::vector<std::pair<Cell *, double>> scores;
     for (const auto &ac : adjCells)
     {
-        double score = pheromoneCalc(ac, e->getTarget(), true);
-        scores.push_back({ac, score});
+        double score = pheromoneCalc(world->at(ac.first, ac.second), e->getTarget(), true);
+        scores.push_back({world->at(ac.first,ac.second), score});
     }
 
     // Normalize scores
@@ -327,25 +341,17 @@ void ACO::returnHome(Cell *cell, Ant *e)
             // e->getPath().push_back(s.first);
             e->addPath(s.first);
 
-            bool containsTarget = std::any_of(
-                s.first->data.entities.begin(),
-                s.first->data.entities.end(),
-                [&](const std::unique_ptr<Entity> &ent)
-                {
-                    bool hasFound = ent.get() == e->getTarget();
-                    if(hasFound)
-                    {
-                    transferResource(e,ent.get(),e->getResource());
-                    //std::cout << ent->getName() << " -> " << ent->getResource() << std::endl;
-                    }
+            bool containsTarget = same(s.first->x, s.first->y, base->getX(), base->getY());
+        //    std::cout << "ANT( " << e->getX() << ", " << e->getY() << ")" << std::endl;
+          //  std::cout << "TARGET( " << s.first->x << ", " <<s.first->y << ")" << std::endl;
+           // std::cout << "BASE( " << base->getX() << ", " << base->getY() << ")" << std::endl;
 
-                    return hasFound;
-                });
             if (containsTarget)
             {
+             //   std::cout << "Target rand -----------------------------------------------------------------------------" << base->getTeam() << std::endl;
+                base->giveResource(e->takeResource(10));
                 getNewTarget(e);
             }
-
             // Update pheromone after choosing the cell
             double currentP = s.first->data.p.pheromoneMap[team];
             double updatedP = conf::Q / (currentP + 0.0001);  // or your preferred epsilon
@@ -353,8 +359,7 @@ void ACO::returnHome(Cell *cell, Ant *e)
 
 
 
-            moveToCell(curCell, s.first, e);
-
+            moveToCell({cell->y, cell->x}, {s.first->x, s.first->y}, e);
             break;
         }
     }
@@ -416,18 +421,24 @@ void ACO::getAdjCells(int x, int y, Entity* e) {
         int nx = x + dx[i];
         int ny = y + dy[i];
 
-        if (!isInBounds(nx, ny)) continue;
+        if (!isInBounds(nx, ny)) {
+           // std::cout << "Not in bound" << std::endl;
+            continue;
+        } 
 
-        int index = ny * worldWidth + nx;
-        Cell* tile = world[index];
 
-        handleEnemiesInCell(tile, e);
+        //handleEnemiesInCell(world->at(ny,nx), e);
 
-        if (!isCellBlocked(world[nx*worldWidth+ny]))
-        {
-            adjCells.push_back(tile);
+        if (!isCellBlocked(world->at(ny,nx)))
+        {        
+            adjCells.push_back({nx,ny});
         }
     }
+
+    // for(auto& [x,y]:adjCells)
+    // {
+    //     std::cout << std::to_string(x) << ", " << std::to_string(y) << std::endl;
+    // }
 }
 
 
@@ -461,10 +472,10 @@ double ACO::sumOfFeasiblePheremoneProb(Entity *target, bool returningHome)
     double sum = 0.0;
     for (auto &ac : adjCells)
     {
-        double heuristic = calculateHeuristic(ac, target);
+        double heuristic = calculateHeuristic(world->at(ac.first,ac.second), target);
         double Tij;
 
-        Tij = std::clamp(ac->data.p.pheromoneMap[team], 0.01, 100.0);
+        Tij = std::clamp(world->at(ac.first,ac.second)->data.p.pheromoneMap[team], 0.01, 100.0);
 
         //   std::cout << "H: " << heuristic << " :hF: " << hF<<std::endl;
         //    std::cout << "P: " << pheromone <<" :pF: "<< pF<< std::endl;

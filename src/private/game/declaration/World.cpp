@@ -18,15 +18,14 @@ World::World(int w, int h, sf::RenderWindow& window)
 
 }
 
-std::unique_ptr<Cell> &World::at(int x, int y)
-{
-    return grid[y * width + x];
+Cell* World::at(int x, int y) {
+    int cx = x / conf::chunkSize;
+    int cy = y / conf::chunkSize;
+    int lx = x % conf::chunkSize;
+    int ly = y % conf::chunkSize;
+    return grid[{cx, cy}]->at(lx, ly);
 }
 
-const std::unique_ptr<Cell> &World::at(int x, int y) const
-{
-    return grid[y*width+x];
-}
 
 void World::update()
 {
@@ -58,7 +57,11 @@ void World::update()
     trackedVars.setWorld(rawPointers);
     */
     
-    
+    for (auto& [key, chunk] : grid) {
+        //chunk->update();
+        //chunk->render();
+    }
+  
 
 
 
@@ -69,13 +72,23 @@ void World::drawEntities(sf::RenderWindow& window)
     std::vector<Entity*> waitList;
     std::vector<sf::VertexArray> pathTraces;  // Each ants path
 
-    for (auto& i : grid)
+for (auto& [chunkCoords, chunkPtr] : grid)
+{
+    if (!chunkPtr) continue;
+
+    for (auto& cellPtr : chunkPtr->getCells())
     {
-        for (auto& j : i.get()->data.entities)
+        if (!cellPtr) continue;
+
+        for (auto& entityPtr : cellPtr->data.entities)
         {
-            if (j.get() && dynamic_cast<Ant*>(j.get()))
+            if (!entityPtr) continue;
+
+            if (Ant* ant = dynamic_cast<Ant*>(entityPtr.get()))
             {
-                waitList.push_back(j.get());
+                waitList.push_back(ant);
+
+                // Example: setting up path trace (optional)
                 sf::VertexArray pathTrace(sf::LinesStrip);
 
                 // // Adding path vertices to the VertexArray (no duplicates)
@@ -118,9 +131,10 @@ void World::drawEntities(sf::RenderWindow& window)
             }
             else
             {
-                window.draw(*j->getHitbox());
+                window.draw(*entityPtr->getHitbox());
             }
         }
+    }
     }
 
     // Now draw the path trace using the accumulated vertex array
@@ -145,31 +159,25 @@ void World::drawEntities(sf::RenderWindow& window)
 void World::createACO()
 {    
     std::vector<Cell*> raw_goals;
-    std::vector<Cell*> raw_grid;
-    raw_grid.reserve(grid.size());
-    for (const auto& cell_ptr : grid) {
-        raw_grid.push_back(cell_ptr.get());  // raw pointer to the same object
-    }
 
-    for(auto &g : grid)
-    {
-        for(auto &eg : g.get()->data.entities)
-        {
-            if(eg->getName() == "location")
-            {
-                raw_goals.push_back(g.get());
-            }                 
-            if (eg->getName().find("Base") != std::string::npos) //this only works for one base
-            {
-                //antBase = eg.get();
-                trackedVars->setBase(eg.get());
-            } 
-        }
+    for (auto& [coord, chunkPtr] : grid) {
+    Chunk* chunk = chunkPtr.get();
+       for (auto& cellPtr : chunk->getCells()) { // assuming Chunk is a container of Cells
+            for (auto& eg : cellPtr->data.entities) {
+                if (eg->getName().find("location") != std::string::npos) {
+                    raw_goals.push_back(cellPtr.get());
+                    std::cout << "Pushed back location" << std::endl;
+                }
+                if (eg->getName().find("Base") != std::string::npos) {
+                    trackedVars->setBase(eg.get());
+                }
+            }
+        } 
     }
 
     for(auto & base : trackedVars->getBases())
     {
-        ACO* aco = new ACO(raw_grid[0], raw_goals, raw_grid, width, height, base);
+        ACO* aco = new ACO(raw_goals, this, width, height, base);
         sims.push_back(aco);
     }
     
@@ -202,7 +210,7 @@ void World::drawTerrain(sf::RenderWindow & window)
             //for debuggin
             drawCount++;       
 
-            Cell* dc = this->at(x,y).get();
+            Cell* dc = this->at(x,y);
             //draw pheromone on dc at some point
             if(dc->cellShape)
             {
@@ -407,7 +415,7 @@ void World::buildBuilding(std::string type)
         {
             //std::cout << "Building in cell: " + std::to_string(sc->x) + ", " + std::to_string(sc->y) << std::endl;
             auto building = std::make_unique<BuildingLocation>(sc->x, sc->y, "Building");
-            Cell* cell = at(sc->x, sc->y).get();
+            Cell* cell = at(sc->x, sc->y);
 
             cell->data.entities.push_back(std::unique_ptr<Entity>(building.release()));
         }
@@ -422,7 +430,7 @@ void World::destroyBuilding(std::string type)
         for(auto & sc : trackedVars->getSelectedCells())
         {
             //std::cout << "Building in cell: " + std::to_string(sc->x) + ", " + std::to_string(sc->y) << std::endl;
-            Cell* cell = at(sc->x, sc->y).get();
+            Cell* cell = at(sc->x, sc->y);
             auto& entities = cell->data.entities;
             entities.erase(std::remove_if(entities.begin(), entities.end(),
                 [](const std::unique_ptr<Entity>& e) {

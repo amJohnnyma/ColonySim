@@ -7,7 +7,7 @@
 class Ant : public Entity
 {
     private:
-        Entity* target;
+        Entity* target = nullptr;
         Entity* base;
         std::vector<Cell*> path;
         bool returningHome = false;

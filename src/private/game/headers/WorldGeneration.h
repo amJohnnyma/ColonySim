@@ -2,8 +2,11 @@
 #define WORLDGENERATION_H
 
 #include <iostream>
-#include "../../structs/worldObjects.h"
+#include <array>
 #include <random>
+
+//can all be forward decalred??
+#include "../../structs/worldObjects.h"
 #include "../../utils/headers/TextureManager.h"
 #include "../../entities/Entity.h"
 #include "../../shapes/Shape.h"
@@ -15,19 +18,18 @@
 #include "../../entities/Location.h"
 #include "../../entities/FoodLocation.h"
 #include "../../entities/BuildingLocation.h"
-#include <array>
-
+#include "Chunk.h"
 
 class WorldGeneration
 {
     private:
         unsigned int seed;
-        std::vector<std::unique_ptr<Cell>> grid;
+        std::map<std::pair<int, int>, std::unique_ptr<Chunk>> grid;
         int width,height,cellSize;
     public:
         WorldGeneration(unsigned int seed, int xWidth, int yWidth, int cellSize);
         ~WorldGeneration();
-        std::vector<std::unique_ptr<Cell>> getResult();
+        std::map<std::pair<int, int>, std::unique_ptr<Chunk>> getResult();
 
     private:
         pheromone createPheromones(int x, int y);

@@ -50,7 +50,7 @@ void PlayerController::selectCells(sf::Vector2i from, sf::Vector2i to, std::vect
        {
               for(int y = topLeft.y; y < bottomRight.y; y++)
               {
-                     Cell* curC = world->at(y,x).get();
+                     Cell* curC = world->at(y,x);
                      curC->setFilterOverlay(selectOverlay);
                      selectedCells.push_back(curC);                     
               }

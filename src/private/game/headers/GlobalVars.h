@@ -26,6 +26,7 @@ namespace conf
     extern float antSpeed;
     extern float terrainDifficultyScale;
     extern int baseSeparationDistance;
+    extern int chunkSize;
 
 }
 

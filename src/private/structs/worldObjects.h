@@ -19,6 +19,7 @@ struct perTeamPheromone
 
 };
 
+//make a class
 struct pheromone
 {
 
@@ -26,7 +27,7 @@ struct pheromone
 
 };
 
-
+//make this a class
 struct CellData
 {
     std::string type = "Default";
@@ -38,6 +39,7 @@ struct CellData
     
 };
 
+//make this a class
 struct Cell
 {
  //   std::unique_ptr<sf::CircleShape> cs = std::make_unique<sf::CircleShape>();
