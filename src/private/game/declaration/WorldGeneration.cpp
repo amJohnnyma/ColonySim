@@ -23,7 +23,7 @@ WorldGeneration::~WorldGeneration()
 {
 }
 
-std::vector<std::unique_ptr<Cell>> WorldGeneration::getResult() {
+std::map<std::pair<int, int>, std::unique_ptr<Chunk>> WorldGeneration::getResult() {
     return std::move(grid); // Transfer ownership safely
 }
 
@@ -133,43 +133,75 @@ std::unique_ptr<sf::Sprite> WorldGeneration::createBaseShape(sf::Color fillColor
 std::unique_ptr<Ant> WorldGeneration::createAnt(int x, int y)
 {
     auto shape = createAntShape(sf::Color::White, x, y, cellSize);
-    Cell* cell = grid[x * width + y].get();
+    int chunkX = x / conf::chunkSize;
+    int chunkY = y / conf::chunkSize;
+
+    Chunk* chunk = nullptr;
+    Cell* cell = nullptr;
+    try {
+        chunk = grid.at({chunkX, chunkY}).get();
+    } catch (const std::out_of_range& e) {
+        // handle missing chunk
+    }
+
+    if (chunk) {
+        int localX = x % conf::chunkSize;
+        int localY = y % conf::chunkSize;
+        cell = chunk->at(localX, localY);
+        // now you can use the cell pointer
+    }
     return std::make_unique<Ant>(y, x, "ant", 10, std::move(shape), cell);
 }
 
 std::unique_ptr<Location> WorldGeneration::createBase(int x, int y, TeamInfo p)
 {
     auto shape = createBaseShape(sf::Color::Yellow, x, y, cellSize);
-    Cell* cell = grid[x * width + y].get();
+        int chunkX = x / conf::chunkSize;
+    int chunkY = y / conf::chunkSize;
+
+    Chunk* chunk = nullptr;
+    Cell* cell = nullptr;
+    try {
+        chunk = grid.at({chunkX, chunkY}).get();
+    } catch (const std::out_of_range& e) {
+        // handle missing chunk
+    }
+
+    if (chunk) {
+        int localX = x % conf::chunkSize;
+        int localY = y % conf::chunkSize;
+        cell = chunk->at(localX, localY);
+        // now you can use the cell pointer
+    }
     return std::make_unique<Location>(x, y, "Base:"+std::to_string(p), 100000, std::move(shape), cell);
 }
 
 void WorldGeneration::logAllEntities()
 {
-    for (auto& cellPtr : grid)
-    {
-        for (auto& entityPtr : cellPtr->data.entities)
-        {
-            std::cout << entityPtr->getName() << ", "
-                      << entityPtr->getX() << ", "
-                      << entityPtr->getY() << ", "
-                      << entityPtr->getTeam()
-                      << std::endl;
-        }
-    }
+    // for (auto& cellPtr : grid)
+    // {
+    //     for (auto& entityPtr : cellPtr->data.entities)
+    //     {
+    //         std::cout << entityPtr->getName() << ", "
+    //                   << entityPtr->getX() << ", "
+    //                   << entityPtr->getY() << ", "
+    //                   << entityPtr->getTeam()
+    //                   << std::endl;
+    //     }
+    // }
 }
 
 
 
 void WorldGeneration::generateTerrain()
 {
-    for (int x = 0; x < width; x++)
-    {
-        for (int y = 0; y < height; y++)
-        {
-            grid.push_back(createCell(x, y, cellSize));
+    for (int cx = 0; cx < conf::worldSize.x / conf::chunkSize; ++cx) {
+        for (int cy = 0; cy < conf::worldSize.y / conf::chunkSize; ++cy) {
+            auto chunk = std::make_unique<Chunk>(cx, cy, conf::chunkSize);
+            grid[{cx, cy}] = std::move(chunk);
         }
     }
+
 }
 
 int getEdgeBiased(int max) {
@@ -213,6 +245,10 @@ void WorldGeneration::generateEntities(int num, int col)
 
         } while (tooClose);
 
+        int localX = xVal % conf::chunkSize;
+        int localY = yVal % conf::chunkSize;   
+        int chunkX = xVal / conf::chunkSize;
+        int chunkY = yVal / conf::chunkSize; 
         previousLocations.emplace_back(xVal, yVal);
         TeamInfo p = 0;
         p = setTeam(p, b);
@@ -220,14 +256,15 @@ void WorldGeneration::generateEntities(int num, int col)
             for (int k = 0; k < num; k++)
             {
                 auto ant = createAnt(xVal, yVal);
-                ant->setTeam(p);
-                grid[xVal * width + yVal]->data.entities.push_back(std::move(ant));
+                ant->setTeam(p);   
+
+                grid.at({chunkX, chunkY}).get()->at(localX,localY)->data.entities.push_back(std::move(ant));
             }
           //  std::cout << "Creating base in team: " + std::to_string(p) << std::endl;
             auto base = createBase(xVal, yVal, p);
             base->setTeam(p);
            // std::cout << "Madfe base" << std::endl;
-            grid[xVal * width + yVal]->data.entities.push_back(std::move(base));
+            grid.at({chunkX, chunkY}).get()->at(localX,localY)->data.entities.push_back(std::move(base));
 
         
 
@@ -304,11 +341,28 @@ void WorldGeneration::generateLocations(int num)
         {
             visited.insert({x, y});
 
-            double difficulty = grid[x * width + y]->data.difficulty;  // consistent indexing: row major
+            int chunkX = x / conf::chunkSize;
+            int chunkY = y / conf::chunkSize;
+
+            Chunk* chunk = nullptr;
+            Cell* cell = nullptr;
+            try {
+                chunk = grid.at({chunkX, chunkY}).get();
+            } catch (const std::out_of_range& e) {
+                // handle missing chunk
+            }
+
+            if (chunk) {
+                int localX = x % conf::chunkSize;
+                int localY = y % conf::chunkSize;
+                cell = chunk->at(localX, localY);
+                // now you can use the cell pointer
+            }
+
+            double difficulty = cell->data.difficulty;  // consistent indexing: row major
 
             auto rs = createLocationShape(x, y, cellSize, difficulty);
 
-            Cell* cell = grid[x * width + y].get();
 
             std::string name = "location" + std::to_string(created);
 

@@ -18,15 +18,14 @@ World::World(int w, int h, sf::RenderWindow& window)
 
 }
 
-std::unique_ptr<Cell> &World::at(int x, int y)
-{
-    return grid[y * width + x];
+std::unique_ptr<Cell>& World::at(int x, int y) {
+    int cx = x / conf::chunkSize;
+    int cy = y / conf::chunkSize;
+    int lx = x % conf::chunkSize;
+    int ly = y % conf::chunkSize;
+    return grid[{cx, cy}]->at(lx, ly);
 }
 
-const std::unique_ptr<Cell> &World::at(int x, int y) const
-{
-    return grid[y*width+x];
-}
 
 void World::update()
 {
@@ -58,7 +57,11 @@ void World::update()
     trackedVars.setWorld(rawPointers);
     */
     
-    
+    for (auto& [key, chunk] : grid) {
+        //chunk->update();
+        //chunk->render();
+    }
+  
 
 
 

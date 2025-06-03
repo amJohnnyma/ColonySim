@@ -23,4 +23,5 @@ namespace conf
     float antSpeed = 500.0f;
     float terrainDifficultyScale = 0.05f;
     int baseSeparationDistance = 5;
+    int chunkSize = 16;
 }
