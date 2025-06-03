@@ -163,7 +163,7 @@ std::unique_ptr<Ant> WorldGeneration::createAnt(int x, int y)
         // now you can use the cell pointer
     }
   //  std::cout << "Making ant" << std::endl;
-    return std::make_unique<Ant>(y, x, "ant", 10, std::move(shape), cell);
+    return std::make_unique<Ant>(x, y, "ant", 10, std::move(shape), cell);
 }
 
 std::unique_ptr<Location> WorldGeneration::createBase(int x, int y, TeamInfo p)

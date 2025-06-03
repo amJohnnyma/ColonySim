@@ -195,7 +195,7 @@ void ACO::update()
 
 void ACO::moveToCell(Cell *from, Cell *to, Entity *e)
 {
-    std::cout << "Moving" << std::endl;
+   // std::cout << "Moving" << std::endl;
     for (auto it = from->data.entities.begin(); it != from->data.entities.end(); ++it)
     {
         if (it->get() == e)
@@ -230,7 +230,7 @@ void ACO::findFood(Cell *cell, Ant *e)
 
     curCell = cell;
     //   std::cout<<"Getting adj cells"<<std::endl;
-    getAdjCells(cell->y, cell->x, e);
+    getAdjCells(cell->x, cell->y, e);
     if (adjCells.size() == 0)
     {
         //     std::cout << "No adj cells" << std::endl;
@@ -301,7 +301,7 @@ void ACO::returnHome(Cell *cell, Ant *e)
     //   std::cout << "Returning home!" << std::endl;
     curCell = cell;
     //   std::cout<<"Getting adj cells"<<std::endl;
-    getAdjCells(cell->y, cell->x, e);
+    getAdjCells(cell->x, cell->y, e);
     if (adjCells.size() == 0)
     {
         //     std::cout << "No adj cells" << std::endl;
@@ -424,7 +424,6 @@ void ACO::getAdjCells(int x, int y, Entity* e) {
 
         if (!isInBounds(nx, ny)) continue;
 
-        int index = ny * worldWidth + nx;
         Cell* tile = world->at(nx,ny);
 
         handleEnemiesInCell(tile, e);
