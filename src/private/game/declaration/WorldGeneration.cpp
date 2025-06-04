@@ -16,12 +16,12 @@ WorldGeneration::WorldGeneration(unsigned int seed, int xWidth, int yWidth, int 
     std::cout << "Gen e s" << std::endl;
     generateEntities(conf::numAnts,conf::numBases);
     std::cout << "Gen e d" << std::endl;
-    std::cout << "Gen te s" << std::endl;
-    assignTextures();
-    std::cout << "Gen te d" << std::endl;
     std::cout << "Gen l s" << std::endl;
     generateLocations(conf::numLocations);
     std::cout << "Gen l d" << std::endl;
+    std::cout << "Gen te s" << std::endl;
+    assignTextures();
+    std::cout << "Gen te d" << std::endl;
 
 
 
@@ -268,6 +268,7 @@ void WorldGeneration::generateEntities(int num, int col)
         int yVal = 0;
 
         bool tooClose;
+        bool building = false;
         do
         {
             xVal = getEdgeBiased(conf::worldSize.x);
@@ -275,7 +276,12 @@ void WorldGeneration::generateEntities(int num, int col)
 
             //hard lock on where bases can spawn for now
             float difficulty = getDifficulty(xVal, yVal);
-            if(difficulty > 0.3f) continue;
+            if(difficulty > 0.3f)
+            {
+                createBuilding(xVal,yVal, "");
+                building = true;
+                continue;
+            } 
 
             // Check if this (xVal, yVal) is within 10 units of any previous location
             tooClose = std::any_of(previousLocations.begin(), previousLocations.end(),
@@ -286,7 +292,11 @@ void WorldGeneration::generateEntities(int num, int col)
                                    });
 
         } while (tooClose);
-
+        if(building) //building in this spot
+        {
+            b--;
+            continue;
+        }
         int localX = xVal % conf::chunkSize;
         int localY = yVal % conf::chunkSize;   
         int chunkX = xVal / conf::chunkSize;
@@ -373,7 +383,7 @@ void WorldGeneration::generateLocations(int num)
     int created = 0;
     while (created < num)
     {
-       int x = xdist(gen);
+        int x = xdist(gen);
         int y = ydist(gen);
      // int x = 5;
      // int y =5;
@@ -382,7 +392,6 @@ void WorldGeneration::generateLocations(int num)
         // Avoid duplicates
         if (visited.count({x, y}) == 0)
         {
-            visited.insert({x, y});
 
             int chunkX = x / conf::chunkSize;
             int chunkY = y / conf::chunkSize;
@@ -393,6 +402,7 @@ void WorldGeneration::generateLocations(int num)
                 chunk = grid.at({chunkX, chunkY}).get();
             } catch (const std::out_of_range& e) {
                 // handle missing chunk
+                continue;
             }
 
             if (chunk) {
@@ -401,12 +411,20 @@ void WorldGeneration::generateLocations(int num)
                 cell = chunk->at(localX, localY);
                 // now you can use the cell pointer
             }
+            else{
+                continue;
+            }
+
+            if(!cell->data.entities.empty())
+            {
+                continue;
+            }
+
+            visited.insert({x, y});
 
             double difficulty = cell->data.difficulty;  // consistent indexing: row major
 
             auto rs = createLocationShape(x, y, cellSize, difficulty);
-
-
             std::string name = "location" + std::to_string(created);
 
             auto locationEntity = std::make_unique<FoodLocation>(x, y, name, 100, std::move(rs), cell);
@@ -428,4 +446,22 @@ float WorldGeneration::getDifficulty(int x, int y)
     int chunkY = y / conf::chunkSize; 
     double val = static_cast<double>(grid[{chunkX, chunkY}]->at(localX,localY)->data.difficulty);
     return val;
+}
+
+void WorldGeneration::createBuilding(int x, int y, std::string type)
+{
+        int localX = x % conf::chunkSize;
+        int localY = y % conf::chunkSize;   
+        int chunkX = x / conf::chunkSize;
+        int chunkY = y / conf::chunkSize; 
+
+        //if type == building
+        Cell* cell = cell = grid[{chunkX, chunkY}].get()->at(localX,localY);
+        if(cell != nullptr && cell->data.entities.empty())  
+        {
+        std::cout << "Building building at " << x << ", " << y << std::endl;
+        auto building = std::make_unique<BuildingLocation>(x, y, "Building");
+        cell->data.entities.push_back(std::unique_ptr<Entity>(building.release()));
+        }     
+
 }

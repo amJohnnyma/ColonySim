@@ -49,6 +49,7 @@ class WorldGeneration
         std::unique_ptr<sf::Sprite> createLocationShape(int x, int y, float cellSize, double difficulty);
         void generateLocations(int num);
         float getDifficulty(int x, int y);
+        void createBuilding(int x, int y, std::string type);
 };
 
 #endif

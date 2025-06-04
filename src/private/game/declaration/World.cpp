@@ -69,7 +69,8 @@ void World::update()
 
 void World::drawEntities(sf::RenderWindow& window)
 {
-    std::vector<Entity*> waitList;
+    std::vector<Ant*> ants;
+    std::vector<BuildingLocation*> buildings;
     std::vector<sf::VertexArray> pathTraces;  // Each ants path
 
 for (auto& [chunkCoords, chunkPtr] : grid)
@@ -86,48 +87,12 @@ for (auto& [chunkCoords, chunkPtr] : grid)
 
             if (Ant* ant = dynamic_cast<Ant*>(entityPtr.get()))
             {
-                waitList.push_back(ant);
+                ants.push_back(ant);
 
-                // Example: setting up path trace (optional)
-                sf::VertexArray pathTrace(sf::LinesStrip);
-
-                // // Adding path vertices to the VertexArray (no duplicates)
-                // std::vector<Cell*> path = j->getPath();
-
-                
-                // // Loop through the path and add segments to pathTrace
-                // for (size_t i = 1; i < path.size(); ++i)
-                // {
-                //     float x1 = path[i - 1]->x * cellSize + cellSize / 2;
-                //     float y1 = path[i - 1]->y * cellSize + cellSize / 2;
-
-                //     float x2 = path[i]->x * cellSize + cellSize / 2;
-                //     float y2 = path[i]->y * cellSize + cellSize / 2;
-
-                //     sf::Vector2f start(x1, y1);
-                //     sf::Vector2f end(x2, y2);
-
-                //     sf::Vector2f direction = end - start;
-                //     float length = std::sqrt(direction.x * direction.x + direction.y * direction.y);
-                //     float angle = std::atan2(direction.y, direction.x) * 180.f / 3.14159265f;
-                //     float segmentThickness = 0.0f;
-                //     // Assuming 'segmentThickness' is a float and 'path[i]->data.p.strength' is also a float
-                //     float thick = segmentThickness + path[i]->data.p[0].strength; //use find food pheremone for now
-
-                //     if (thick > 1)
-                //     {
-                //         // Add the vertices to the pathTrace array
-                //         pathTrace.append(sf::Vertex(start, sf::Color::White));  // Start point
-                //         pathTrace.append(sf::Vertex(end, sf::Color::White));    // End point
-                //     }
-                //     else
-                //     {
-                //         // Remove the duplicate path if thickness is too small
-                //         path.erase(path.begin() + i);
-                //     }
-
-                //         pathTraces.push_back(pathTrace);
-               // }
+            }
+            else if (BuildingLocation* bl = dynamic_cast<BuildingLocation*>(entityPtr.get()))
+            {
+                buildings.push_back(bl);
             }
             else
             {
@@ -137,22 +102,20 @@ for (auto& [chunkCoords, chunkPtr] : grid)
     }
     }
 
-    // Now draw the path trace using the accumulated vertex array
-  //  for (auto& pathTrace : pathTraces)
-  //  {
-   //     window.draw(pathTrace);
-  //  }
 
     float dt = antClock.restart().asSeconds();
     // Draw the waitList (RectangleShape for entities)
-    for (auto& e : waitList)
+    for (auto& e : ants)
     {
-        if(Ant* ant = dynamic_cast<Ant*>(e))
-        {
-            if(ant->stillAnimating())
-                ant->updateMovement(dt);
-        }
+        if(e->stillAnimating())
+            e->updateMovement(dt);
+        
         window.draw(*e);
+    }
+
+    for (BuildingLocation* bl : buildings)
+    {
+        window.draw(*bl);
     }
 }
 
