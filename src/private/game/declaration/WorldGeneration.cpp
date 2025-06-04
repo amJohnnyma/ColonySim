@@ -78,7 +78,10 @@ std::unique_ptr<Cell> WorldGeneration::createCell(int x, int y, float cellSize, 
     cd.p = pheromones;
 
     cell->cellShape = createCellShape(x, y, cellSize);
-    cell->setColor(sf::Color(0, 255, 0, static_cast<sf::Uint8>(cd.difficulty * 255)));
+
+    sf::Color biomec = colorFromBiome(getBiome(noise));
+    biomec.a = static_cast<sf::Uint8>(cd.difficulty * 255);
+    cell->setColor(biomec);
     cell->x = x;
     cell->y = y;
     cell->data = std::move(cd);
@@ -464,4 +467,34 @@ void WorldGeneration::createBuilding(int x, int y, std::string type)
         cell->data.entities.push_back(std::unique_ptr<Entity>(building.release()));
         }     
 
+}
+
+Biome WorldGeneration::getBiome(float e)
+{
+    if (e < 0.4) return WATER;
+    else if (e < 0.47) return BEACH;
+    else if (e < 0.55) return FOREST;
+    else if (e < 0.7) return JUNGLE;
+    else return WOODS;
+    
+}
+
+sf::Color WorldGeneration::colorFromBiome(Biome b)
+{
+    switch(b)
+    {
+        case WATER:
+            return sf::Color(0,0,255);
+        case BEACH:
+            return sf::Color(255,255,0);
+        case FOREST:
+            return sf::Color(0,255,0);
+        case JUNGLE:
+            return sf::Color(30,255,30);
+        case WOODS:
+            return sf::Color(150,75,0);
+        default:
+            return sf::Color(10,10,10);
+
+    }
 }

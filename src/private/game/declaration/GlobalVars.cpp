@@ -34,5 +34,5 @@ namespace conf
     float perlinSmoothness = 0.1f;
     unsigned int seed = 12345;
     int perlinLayers = 3;
-    double perlinFlatness = 0.3f;
+    double perlinFlatness = 1.0f;
 }
