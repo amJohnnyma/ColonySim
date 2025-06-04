@@ -6,6 +6,8 @@
 #include <numeric>
 #include <algorithm>
 #include <random>
+#include "GlobalVars.h"
+#include <iostream>
 
 class PerlinNoise
 {
@@ -15,6 +17,7 @@ class PerlinNoise
         PerlinNoise(unsigned int seed = std::default_random_engine::default_seed);
         ~PerlinNoise();
         float noise(float x, float y);
+        float val(float x, float y);
     private:
         static float fade(float t) {
             return t * t * t * (t * (t * 6 - 15) + 10); // 6t^5 - 15t^4 + 10t^3
@@ -34,6 +37,9 @@ class PerlinNoise
                 default: return 0; // unreachable
             }
         }
+
+        float elevation(float nx, float ny, int layers);
+        float amplitude(float nx, float ny, int fac, double multFac);
 };
 
 #endif

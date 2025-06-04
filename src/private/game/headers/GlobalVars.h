@@ -29,6 +29,8 @@ namespace conf
     extern int chunkSize;
     extern float perlinSmoothness;
     extern unsigned int seed;
+    extern int perlinLayers;
+    extern double perlinFlatness;
 
 }
 

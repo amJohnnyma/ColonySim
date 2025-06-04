@@ -232,7 +232,7 @@ void WorldGeneration::generateTerrain()
                     int worldY = cy * conf::chunkSize + y;
                     float nx = worldX * conf::perlinSmoothness;
                     float ny = worldY * conf::perlinSmoothness;
-                    float val = perlinNoise->noise(nx,ny);
+                    float val = perlinNoise->val(nx,ny);
                     chunk.get()->push_back(createCell(worldX,worldY,conf::cellSize, val));
                 }
             }
@@ -263,7 +263,7 @@ void WorldGeneration::generateEntities(int num, int col)
 
     for (int b = 1; b <= conf::numBases; b++)
     {
-        std::cout << std::to_string(b) << std::endl;
+        //std::cout << std::to_string(b) << std::endl;
         int xVal = 0;
         int yVal = 0;
 
@@ -276,7 +276,7 @@ void WorldGeneration::generateEntities(int num, int col)
 
             //hard lock on where bases can spawn for now
             float difficulty = getDifficulty(xVal, yVal);
-            if(difficulty > 0.3f)
+            if(difficulty > 0.8f)
             {
                 createBuilding(xVal,yVal, "");
                 building = true;

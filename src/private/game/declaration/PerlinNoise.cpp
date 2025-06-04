@@ -16,13 +16,19 @@ PerlinNoise::~PerlinNoise()
 {
 }
 
-float PerlinNoise::noise(float x, float y)
-{
-    int xi = static_cast<int>(std::floor(x)) & 255;
-    int yi = static_cast<int>(std::floor(y)) & 255;
+//recursive function to apply elevation smoothing?
+/*
 
-    float xf = x - std::floor(x);
-    float yf = y - std::floor(y);
+
+
+*/
+float PerlinNoise::noise(float nx, float ny)
+{
+    int xi = static_cast<int>(std::floor(nx)) & 255;
+    int yi = static_cast<int>(std::floor(ny)) & 255;
+
+    float xf = nx - std::floor(nx);
+    float yf = ny - std::floor(ny);
 
     float u = fade(xf);
     float v = fade(yf);
@@ -40,4 +46,43 @@ float PerlinNoise::noise(float x, float y)
                     grad(bb, xf - 1, yf - 1), u); // Top-right
 
     return (lerp(x1, x2, v) + 1.0f) / 2.0f; // Normalize to [0,1]
+}
+
+float PerlinNoise::val(float x, float y)
+{    
+    float e = elevation(x, y, conf::perlinLayers);
+    std::cout << "elevation: " << e << ", pow base before clamp" << std::endl;
+
+    if (e < 0.0f) e = 0.0f;
+
+    std::cout << "elevation after clamp: " << e << std::endl;
+    std::cout << "exponent: " << conf::perlinFlatness << std::endl;
+
+    float val = static_cast<float>(std::pow(e, conf::perlinFlatness));
+
+    std::cout << "pow result: " << val << std::endl;
+
+    return val;
+}
+
+float PerlinNoise::elevation(float nx, float ny, int layers)
+{
+    float e = 0.0f;
+    float maxAmpl = 0.0f;
+
+    for (int i = 0; i < layers; i++)
+    {
+        int fac = 1 << i;                // frequency factor: 1, 2, 4, 8, ...
+        double ampl = pow(0.5, i);       // amplitude: 1, 0.5, 0.25, ...
+
+        e += amplitude(nx, ny, fac, ampl);
+        maxAmpl += ampl;
+    }
+
+    return e / maxAmpl;
+}
+
+float PerlinNoise::amplitude(float nx, float ny, int fac, double amplitude)
+{
+    return amplitude * noise(fac * nx, fac * ny);
 }
