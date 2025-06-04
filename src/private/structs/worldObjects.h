@@ -17,6 +17,7 @@ enum Biome
     JUNGLE,
     WOODS
 };
+
 struct GridObject
 {
     virtual ~GridObject() = default;
@@ -44,7 +45,7 @@ struct CellData
     pheromone p; 
     std::vector<std::unique_ptr<Entity>> entities;
     Biome biome;
-        
+
 };
 
 //make this a class

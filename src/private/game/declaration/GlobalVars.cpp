@@ -35,4 +35,19 @@ namespace conf
     unsigned int seed = 12345;
     int perlinLayers = 5;
     double perlinFlatness = 0.95f;
+    const float biomeThresholds[biomeSize] = {
+    0.35f,  // WATER
+    0.4f,   // BEACH
+    0.54f,  // FOREST
+    0.68f,  // JUNGLE
+    1.0f    // WOODS (catch-all max)
+    };
+
+    const sf::Color biomeColors[biomeSize] = {
+        sf::Color(0, 0, 255),     // WATER
+        sf::Color(255, 255, 0),   // BEACH
+        sf::Color(0, 255, 0),     // FOREST
+        sf::Color(30, 255, 30),   // JUNGLE
+        sf::Color(150, 75, 0)     // WOODS
+    };
 }

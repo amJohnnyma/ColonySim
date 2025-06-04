@@ -421,7 +421,7 @@ void WorldGeneration::generateLocations(int num)
                 continue;
             }
 
-            if(!cell->data.entities.empty())
+            if(!cell->data.entities.empty() || cell->data.biome == WATER)
             {
                 continue;
             }
@@ -474,30 +474,18 @@ void WorldGeneration::createBuilding(int x, int y, std::string type)
 
 Biome WorldGeneration::getBiome(float e)
 {
-    if (e < 0.35) return WATER;
-    else if (e < 0.4) return BEACH;
-    else if (e < 0.54) return FOREST;
-    else if (e < 0.68) return JUNGLE;
-    else return WOODS;
-    
+    for (int i = 0; i < conf::biomeSize; ++i)
+    {
+        if (e < conf::biomeThresholds[i])
+            return static_cast<Biome>(i);
+    }
+    return WOODS; // Fallback (should not reach here if thresholds are valid)
 }
 
 sf::Color WorldGeneration::colorFromBiome(Biome b)
 {
-    switch(b)
-    {
-        case WATER:
-            return sf::Color(0,0,255);
-        case BEACH:
-            return sf::Color(255,255,0);
-        case FOREST:
-            return sf::Color(0,255,0);
-        case JUNGLE:
-            return sf::Color(30,255,30);
-        case WOODS:
-            return sf::Color(150,75,0);
-        default:
-            return sf::Color(10,10,10);
+    if (b >= 0 && b < conf::biomeSize)
+        return conf::biomeColors[b];
 
-    }
+    return sf::Color(10, 10, 10); // Default/fallback
 }

@@ -31,6 +31,9 @@ namespace conf
     extern unsigned int seed;
     extern int perlinLayers;
     extern double perlinFlatness;
+    constexpr int biomeSize = 5;
+    extern const float biomeThresholds[biomeSize];
+    extern const sf::Color biomeColors[biomeSize];
 
 }
 
