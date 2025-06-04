@@ -474,10 +474,10 @@ void WorldGeneration::createBuilding(int x, int y, std::string type)
 
 Biome WorldGeneration::getBiome(float e)
 {
-    if (e < 0.4) return WATER;
-    else if (e < 0.47) return BEACH;
-    else if (e < 0.55) return FOREST;
-    else if (e < 0.7) return JUNGLE;
+    if (e < 0.35) return WATER;
+    else if (e < 0.4) return BEACH;
+    else if (e < 0.54) return FOREST;
+    else if (e < 0.68) return JUNGLE;
     else return WOODS;
     
 }

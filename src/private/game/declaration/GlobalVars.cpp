@@ -33,6 +33,6 @@ namespace conf
     int chunkSize = 16;
     float perlinSmoothness = 0.1f;
     unsigned int seed = 12345;
-    int perlinLayers = 3;
-    double perlinFlatness = 1.0f;
+    int perlinLayers = 5;
+    double perlinFlatness = 0.95f;
 }
