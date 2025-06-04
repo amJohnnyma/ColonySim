@@ -307,6 +307,11 @@ void WorldGeneration::generateEntities(int num, int col)
         int localY = yVal % conf::chunkSize;   
         int chunkX = xVal / conf::chunkSize;
         int chunkY = yVal / conf::chunkSize; 
+        if(grid[{chunkX, chunkY}].get()->at(localX,localY)->data.biome == WATER)
+        {
+            b--;
+            continue;
+        }
         previousLocations.emplace_back(xVal, yVal);
         TeamInfo p = 0;
         p = setTeam(p, b);
@@ -476,7 +481,7 @@ Biome WorldGeneration::getBiome(float e)
 {
     for (int i = 0; i < conf::biomeSize; ++i)
     {
-        if (e < conf::biomeThresholds[i])
+        if (e < conf::biomeThresholds[i].first)
             return static_cast<Biome>(i);
     }
     return WOODS; // Fallback (should not reach here if thresholds are valid)

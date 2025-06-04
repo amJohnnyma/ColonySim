@@ -35,12 +35,12 @@ namespace conf
     unsigned int seed = 12345;
     int perlinLayers = 5;
     double perlinFlatness = 0.95f;
-    const float biomeThresholds[biomeSize] = {
-    0.35f,  // WATER
-    0.4f,   // BEACH
-    0.54f,  // FOREST
-    0.68f,  // JUNGLE
-    1.0f    // WOODS (catch-all max)
+    const std::pair<float, bool> biomeThresholds[biomeSize] = {
+    {0.35f, false},  // WATER (not passable)
+    {0.4f,  true},   // BEACH
+    {0.54f, true},   // FOREST
+    {0.68f, true},   // JUNGLE
+    {1.0f,  true}    // WOODS
     };
 
     const sf::Color biomeColors[biomeSize] = {
