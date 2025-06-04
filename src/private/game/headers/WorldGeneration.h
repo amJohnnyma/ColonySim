@@ -24,6 +24,7 @@
 class WorldGeneration
 {
     private:
+        PerlinNoise* perlinNoise = new PerlinNoise(conf::seed);
         unsigned int seed;
         std::map<std::pair<int, int>, std::unique_ptr<Chunk>> grid;
         int width,height,cellSize;
@@ -47,6 +48,7 @@ class WorldGeneration
         void assignTextures();
         std::unique_ptr<sf::Sprite> createLocationShape(int x, int y, float cellSize, double difficulty);
         void generateLocations(int num);
+        float getDifficulty(int x, int y);
 };
 
 #endif

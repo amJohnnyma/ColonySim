@@ -40,9 +40,4 @@ float PerlinNoise::noise(float x, float y)
                     grad(bb, xf - 1, yf - 1), u); // Top-right
 
     return (lerp(x1, x2, v) + 1.0f) / 2.0f; // Normalize to [0,1]
-
-
-
-
-    return 0.0;
 }

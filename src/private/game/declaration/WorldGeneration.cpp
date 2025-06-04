@@ -29,6 +29,7 @@ WorldGeneration::WorldGeneration(unsigned int seed, int xWidth, int yWidth, int 
 
 WorldGeneration::~WorldGeneration()
 {
+    delete perlinNoise;
 }
 
 std::map<std::pair<int, int>, std::unique_ptr<Chunk>> WorldGeneration::getResult() {
@@ -220,7 +221,6 @@ void WorldGeneration::logAllEntities()
 
 void WorldGeneration::generateTerrain()
 {
-    PerlinNoise perlinNoise(conf::seed);
     for (int cx = 0; cx < conf::worldSize.x / conf::chunkSize; ++cx) {
         for (int cy = 0; cy < conf::worldSize.y / conf::chunkSize; ++cy) {
             auto chunk = std::make_unique<Chunk>(cx, cy, conf::chunkSize);
@@ -232,7 +232,7 @@ void WorldGeneration::generateTerrain()
                     int worldY = cy * conf::chunkSize + y;
                     float nx = worldX * conf::perlinSmoothness;
                     float ny = worldY * conf::perlinSmoothness;
-                    float val = perlinNoise.noise(nx,ny);
+                    float val = perlinNoise->noise(nx,ny);
                     chunk.get()->push_back(createCell(worldX,worldY,conf::cellSize, val));
                 }
             }
@@ -243,7 +243,7 @@ void WorldGeneration::generateTerrain()
 }
 
 int getEdgeBiased(int max) {
-    static std::mt19937 rng(std::random_device{}());
+    static std::mt19937 rng(conf::seed);
     std::uniform_real_distribution<float> dist(0.0f, 1.0f);
     float r = dist(rng);
 
@@ -272,6 +272,10 @@ void WorldGeneration::generateEntities(int num, int col)
         {
             xVal = getEdgeBiased(conf::worldSize.x);
             yVal = getEdgeBiased(conf::worldSize.y);
+
+            //hard lock on where bases can spawn for now
+            float difficulty = getDifficulty(xVal, yVal);
+            if(difficulty > 0.3f) continue;
 
             // Check if this (xVal, yVal) is within 10 units of any previous location
             tooClose = std::any_of(previousLocations.begin(), previousLocations.end(),
@@ -414,4 +418,14 @@ void WorldGeneration::generateLocations(int num)
         }
         // else retry without incrementing created
     }
+}
+
+float WorldGeneration::getDifficulty(int x, int y)
+{    
+    int localX = x % conf::chunkSize;
+    int localY = y % conf::chunkSize;   
+    int chunkX = x / conf::chunkSize;
+    int chunkY = y / conf::chunkSize; 
+    double val = static_cast<double>(grid[{chunkX, chunkY}]->at(localX,localY)->data.difficulty);
+    return val;
 }
