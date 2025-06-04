@@ -17,7 +17,7 @@ namespace conf
     */
     const uint32_t max_framerate = 60;
     const float dt = 1.0f / static_cast<float>(max_framerate);
-    const int numAnts = 2; //per base
+    const int numAnts = 200; //per base
     const int numBases = 10; //one base per team
     const int numLocations =5;
     const int antPathDrawLength = 10;
