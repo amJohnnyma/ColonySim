@@ -21,14 +21,6 @@
 #include "Chunk.h"
 #include "PerlinNoise.h"
 
-enum Biome
-{
-    WATER,
-    BEACH,
-    FOREST,
-    JUNGLE,
-    WOODS
-};
 
 class WorldGeneration
 {

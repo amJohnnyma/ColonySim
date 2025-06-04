@@ -8,7 +8,7 @@
 #include <random>
 #include "GlobalVars.h"
 #include <iostream>
-
+//https://www.redblobgames.com/maps/terrain-from-noise/
 class PerlinNoise
 {
     private:

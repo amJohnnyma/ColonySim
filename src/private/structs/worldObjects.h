@@ -9,6 +9,14 @@
 #include "../entities/Entity.h"
 #include "../shapes/Shape.h"
 
+enum Biome
+{
+    WATER,
+    BEACH,
+    FOREST,
+    JUNGLE,
+    WOODS
+};
 struct GridObject
 {
     virtual ~GridObject() = default;
@@ -35,8 +43,8 @@ struct CellData
     double difficulty = 0;
     pheromone p; 
     std::vector<std::unique_ptr<Entity>> entities;
-
-    
+    Biome biome;
+        
 };
 
 //make this a class

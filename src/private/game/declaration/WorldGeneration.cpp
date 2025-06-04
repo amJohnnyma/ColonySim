@@ -67,19 +67,22 @@ std::unique_ptr<Rectangle> WorldGeneration::createCellShape(int x, int y, float 
 std::unique_ptr<Cell> WorldGeneration::createCell(int x, int y, float cellSize, float noise)
 {
     auto cell = std::make_unique<Cell>();
+    Biome cellBiome = getBiome(noise);
 
     CellData cd;
     cd.type = "(" + std::to_string(x) + ", " + std::to_string(y) + ")";
     //cd.difficulty = std::clamp(generateDifficulty() * 2, 0.5, 1.0);
     cd.difficulty = noise;
+    cd.biome = cellBiome;
 
     auto pheromones = createPheromones(x, y);
     
     cd.p = pheromones;
 
     cell->cellShape = createCellShape(x, y, cellSize);
+    
 
-    sf::Color biomec = colorFromBiome(getBiome(noise));
+    sf::Color biomec = colorFromBiome(cellBiome);
     biomec.a = static_cast<sf::Uint8>(cd.difficulty * 255);
     cell->setColor(biomec);
     cell->x = x;
