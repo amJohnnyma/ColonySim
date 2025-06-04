@@ -5,25 +5,10 @@
 #include <vector>
 #include <memory>
 #include <SFML/Graphics.hpp>
-#include "GlobalVars.h"
 #include "../entities/Entity.h"
 #include "../shapes/Shape.h"
+#include "biomDef.h"
 
-enum Biome
-{
-    WATER,
-    BEACH,
-    FOREST,
-    JUNGLE,
-    WOODS
-};
-
-struct BiomeData {
-    float threshold;     // max elevation value for this biome
-    bool passable;       // is this biome passable?
-    sf::Color color;     // visualization color
-    Biome biome; //the actual biom
-};
 
 struct GridObject
 {
@@ -50,8 +35,8 @@ struct CellData
     std::string terrain ="flat";
     double difficulty = 0;
     pheromone p; 
-    BiomeData biome;
     std::vector<std::unique_ptr<Entity>> entities;
+    BiomeData biomeinfo;
 
 };
 

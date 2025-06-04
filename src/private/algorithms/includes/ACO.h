@@ -1,7 +1,7 @@
 #ifndef ACO_H
 #define ACO_H
 
-//#include "../../structs/worldObjects.h"
+#include "../../structs/worldObjects.h"
 #include <iostream>
 #include <cmath>
 #include <random>
@@ -12,6 +12,7 @@
 #include "../../entities/FoodLocation.h"
 #include "../../entities/BuildingLocation.h"
 #include "../../game/headers/World.h"
+#include "../../game/headers/GlobalVars.h"
 
 class World;
 class ACO

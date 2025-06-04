@@ -73,7 +73,7 @@ std::unique_ptr<Cell> WorldGeneration::createCell(int x, int y, float cellSize, 
     cd.type = "(" + std::to_string(x) + ", " + std::to_string(y) + ")";
     //cd.difficulty = std::clamp(generateDifficulty() * 2, 0.5, 1.0);
     cd.difficulty = noise;
-    cd.biome = cellBiome;
+   // cd.biomeinfo = cellBiome;
 
     auto pheromones = createPheromones(x, y);
     
@@ -307,11 +307,11 @@ void WorldGeneration::generateEntities(int num, int col)
         int localY = yVal % conf::chunkSize;   
         int chunkX = xVal / conf::chunkSize;
         int chunkY = yVal / conf::chunkSize; 
-        if(grid[{chunkX, chunkY}].get()->at(localX,localY)->data.biome.biome == WATER)
-        {
-            b--;
-            continue;
-        }
+        // if(grid[{chunkX, chunkY}].get()->at(localX,localY)->data.biomeinfo.biome == WATER)
+        // {
+        //     b--;
+        //     continue;
+        // }
         previousLocations.emplace_back(xVal, yVal);
         TeamInfo p = 0;
         p = setTeam(p, b);
@@ -426,7 +426,7 @@ void WorldGeneration::generateLocations(int num)
                 continue;
             }
 
-            if(!cell->data.entities.empty() || cell->data.biome.biome == WATER)
+            if(!cell->data.entities.empty() /*|| cell->data.biomeinfo.biome == WATER*/)
             {
                 continue;
             }
@@ -481,7 +481,7 @@ BiomeData WorldGeneration::getBiome(float e)
 {
     for (int i = 0; i < conf::biomeSize; ++i)
     {
-        if (e < conf::biomeInfo[i].threshhold)
+        if (e < conf::biomeInfo[i].threshold)
             return conf::biomeInfo[i];
     }
     return conf::biomeInfo[conf::biomeSize-1]; // Fallback (should not reach here if thresholds are valid)
