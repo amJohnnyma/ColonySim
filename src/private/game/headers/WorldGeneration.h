@@ -19,6 +19,7 @@
 #include "../../entities/FoodLocation.h"
 #include "../../entities/BuildingLocation.h"
 #include "Chunk.h"
+#include "PerlinNoise.h"
 
 class WorldGeneration
 {
@@ -35,7 +36,7 @@ class WorldGeneration
         pheromone createPheromones(int x, int y);
         double generateDifficulty();
         std::unique_ptr<Rectangle> createCellShape(int x, int y, float size);
-        std::unique_ptr<Cell> createCell(int x, int y, float cellSize);
+        std::unique_ptr<Cell> createCell(int x, int y, float cellSize, float noise);
         void generateTerrain();
         std::unique_ptr<sf::Sprite> createAntShape(sf::Color fillColor, int x, int y, float cellSize);
         std::unique_ptr<sf::Sprite> createBaseShape(sf::Color fillColor, int x, int y, float cellSize);

@@ -27,3 +27,7 @@ void Chunk::push_back(std::unique_ptr<Cell> cell)
 {
     cells.push_back(std::move(cell));
 }
+
+Chunk::~Chunk()
+{
+}

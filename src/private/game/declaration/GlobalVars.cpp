@@ -31,4 +31,6 @@ namespace conf
     float terrainDifficultyScale = 0.05f;
     int baseSeparationDistance = 5;
     int chunkSize = 16;
+    float perlinSmoothness = 0.1f;
+    unsigned int seed = 12345;
 }

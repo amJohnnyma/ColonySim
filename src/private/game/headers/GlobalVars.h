@@ -27,6 +27,8 @@ namespace conf
     extern float terrainDifficultyScale;
     extern int baseSeparationDistance;
     extern int chunkSize;
+    extern float perlinSmoothness;
+    extern unsigned int seed;
 
 }
 

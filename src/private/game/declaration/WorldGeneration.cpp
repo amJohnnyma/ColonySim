@@ -63,14 +63,14 @@ std::unique_ptr<Rectangle> WorldGeneration::createCellShape(int x, int y, float 
     return shape;
 }
 
-std::unique_ptr<Cell> WorldGeneration::createCell(int x, int y, float cellSize)
+std::unique_ptr<Cell> WorldGeneration::createCell(int x, int y, float cellSize, float noise)
 {
     auto cell = std::make_unique<Cell>();
 
     CellData cd;
     cd.type = "(" + std::to_string(x) + ", " + std::to_string(y) + ")";
     //cd.difficulty = std::clamp(generateDifficulty() * 2, 0.5, 1.0);
-    cd.difficulty = 1;
+    cd.difficulty = noise;
 
     auto pheromones = createPheromones(x, y);
     
@@ -220,6 +220,7 @@ void WorldGeneration::logAllEntities()
 
 void WorldGeneration::generateTerrain()
 {
+    PerlinNoise perlinNoise(conf::seed);
     for (int cx = 0; cx < conf::worldSize.x / conf::chunkSize; ++cx) {
         for (int cy = 0; cy < conf::worldSize.y / conf::chunkSize; ++cy) {
             auto chunk = std::make_unique<Chunk>(cx, cy, conf::chunkSize);
@@ -229,7 +230,10 @@ void WorldGeneration::generateTerrain()
                 {
                     int worldX = cx * conf::chunkSize + x;
                     int worldY = cy * conf::chunkSize + y;
-                    chunk.get()->push_back(createCell(worldX,worldY,conf::cellSize));
+                    float nx = worldX * conf::perlinSmoothness;
+                    float ny = worldY * conf::perlinSmoothness;
+                    float val = perlinNoise.noise(nx,ny);
+                    chunk.get()->push_back(createCell(worldX,worldY,conf::cellSize, val));
                 }
             }
             grid[{cy, cx}] = std::move(chunk);
