@@ -67,7 +67,7 @@ std::unique_ptr<Rectangle> WorldGeneration::createCellShape(int x, int y, float 
 std::unique_ptr<Cell> WorldGeneration::createCell(int x, int y, float cellSize, float noise)
 {
     auto cell = std::make_unique<Cell>();
-    Biome cellBiome = getBiome(noise);
+    BiomeData cellBiome = getBiome(noise);
 
     CellData cd;
     cd.type = "(" + std::to_string(x) + ", " + std::to_string(y) + ")";
@@ -82,7 +82,7 @@ std::unique_ptr<Cell> WorldGeneration::createCell(int x, int y, float cellSize, 
     cell->cellShape = createCellShape(x, y, cellSize);
     
 
-    sf::Color biomec = colorFromBiome(cellBiome);
+    sf::Color biomec = colorFromBiome(cellBiome.biome);
     biomec.a = static_cast<sf::Uint8>(cd.difficulty * 255);
     cell->setColor(biomec);
     cell->x = x;
@@ -307,7 +307,7 @@ void WorldGeneration::generateEntities(int num, int col)
         int localY = yVal % conf::chunkSize;   
         int chunkX = xVal / conf::chunkSize;
         int chunkY = yVal / conf::chunkSize; 
-        if(grid[{chunkX, chunkY}].get()->at(localX,localY)->data.biome == WATER)
+        if(grid[{chunkX, chunkY}].get()->at(localX,localY)->data.biome.biome == WATER)
         {
             b--;
             continue;
@@ -426,7 +426,7 @@ void WorldGeneration::generateLocations(int num)
                 continue;
             }
 
-            if(!cell->data.entities.empty() || cell->data.biome == WATER)
+            if(!cell->data.entities.empty() || cell->data.biome.biome == WATER)
             {
                 continue;
             }
@@ -477,20 +477,20 @@ void WorldGeneration::createBuilding(int x, int y, std::string type)
 
 }
 
-Biome WorldGeneration::getBiome(float e)
+BiomeData WorldGeneration::getBiome(float e)
 {
     for (int i = 0; i < conf::biomeSize; ++i)
     {
-        if (e < conf::biomeThresholds[i].first)
-            return static_cast<Biome>(i);
+        if (e < conf::biomeInfo[i].threshhold)
+            return conf::biomeInfo[i];
     }
-    return WOODS; // Fallback (should not reach here if thresholds are valid)
+    return conf::biomeInfo[conf::biomeSize-1]; // Fallback (should not reach here if thresholds are valid)
 }
 
 sf::Color WorldGeneration::colorFromBiome(Biome b)
 {
     if (b >= 0 && b < conf::biomeSize)
-        return conf::biomeColors[b];
+        return conf::biomeInfo[b].color;
 
     return sf::Color(10, 10, 10); // Default/fallback
 }

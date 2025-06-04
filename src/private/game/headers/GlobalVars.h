@@ -2,6 +2,7 @@
 #define GLOBALVARS_H
 
 #include <SFML/Graphics.hpp>
+#include "../../structs/worldObjects.h"
 
 namespace conf
 {
@@ -32,8 +33,7 @@ namespace conf
     extern int perlinLayers;
     extern double perlinFlatness;
     constexpr int biomeSize = 5;
-    extern const std::pair<float, bool> biomeThresholds[biomeSize];
-    extern const sf::Color biomeColors[biomeSize];
+    extern const BiomeData biomeInfo[biomeSize];
 
 }
 

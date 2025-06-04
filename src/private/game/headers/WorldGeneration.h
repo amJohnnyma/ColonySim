@@ -51,7 +51,7 @@ class WorldGeneration
         void generateLocations(int num);
         float getDifficulty(int x, int y);
         void createBuilding(int x, int y, std::string type);
-        Biome getBiome(float val);
+        BiomeData getBiome(float val);
         sf::Color colorFromBiome(Biome b);
 };
 
