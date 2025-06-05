@@ -1,7 +1,7 @@
 #include "../headers/WorldGeneration.h"
-#include "WorldGeneration.h"
 #include <unordered_set>
 
+#include "../headers/ChunkManager.h"
 WorldGeneration::WorldGeneration(unsigned int seed, ChunkManager* cm, int cellSize)
 {
     seed = seed;

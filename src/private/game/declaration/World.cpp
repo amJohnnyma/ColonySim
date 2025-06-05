@@ -279,7 +279,7 @@ void World::render(sf::RenderWindow &window)
     window.clear();
     //drawGrid(window);
     drawTerrain(window);
-    drawEntities(window);
+   // drawEntities(window);
 
 }
 

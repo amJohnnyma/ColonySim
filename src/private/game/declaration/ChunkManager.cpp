@@ -1,4 +1,5 @@
 #include "../headers/ChunkManager.h"
+#include "../headers/WorldGeneration.h"
 
 
 ChunkManager::ChunkManager()

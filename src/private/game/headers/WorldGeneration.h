@@ -18,9 +18,9 @@
 #include "../../entities/FoodLocation.h"
 #include "../../entities/BuildingLocation.h"
 #include "PerlinNoise.h"
-#include "ChunkManager.h"
 
 class Chunk;
+class ChunkManager;
 class WorldGeneration
 {
     private:

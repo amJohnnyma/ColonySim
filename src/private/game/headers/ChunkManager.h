@@ -3,18 +3,12 @@
 
 #include <iostream>
 #include "Chunk.h"
-#include "WorldGeneration.h"
 
 //This is the only place where chunks can be modified
 //Every system must comply and work through chunk manager
 // -> For thread safety later on
 // -> For serializing data to load in and out of RAM
 
-struct ChunkWrapper
-{
-    std::unique_ptr<Chunk> chunk;
-    state chunkState;
-};
 
 enum state //Manager stores chunks in a hash map and assigns a status to allow access
 {
@@ -25,7 +19,13 @@ enum state //Manager stores chunks in a hash map and assigns a status to allow a
 
 
 };
+struct ChunkWrapper
+{
+    std::unique_ptr<Chunk> chunk;
+    state chunkState;
+};
 
+class WorldGeneration;
 class ChunkManager
 {
     private:

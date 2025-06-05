@@ -5,7 +5,7 @@ Game* Game::instance = nullptr;
 void Game::run()
 {
     using clock = std::chrono::steady_clock;
-    constexpr std::chrono::duration<double, std::milli> targetFrameTime(16.6667); // ~60 FPS
+    constexpr std::chrono::duration<double, std::milli> targetFrameTime(0.000001); // ~60 FPS = 16.667
 
     while (wind->wndw->isOpen())
     {
