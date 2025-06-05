@@ -7,6 +7,7 @@ namespace conf
     double maxPheromone = 0;
     const sf::Vector2f window_size = {1000, 1000};
     const sf::Vector2f window_size_f = static_cast<sf::Vector2f>(window_size);
+    int chunkSize = 32;
     const sf::Vector2i worldSize = {128, 128}; // factor of 16 for now (should be how many chunks) 16,32,48,64,128,256
     /*
     16,16 = 1x1
@@ -30,7 +31,6 @@ namespace conf
     float antSpeed = 500.0f;
     float terrainDifficultyScale = 0.05f;
     int baseSeparationDistance = 5;
-    int chunkSize = 16;
     float perlinSmoothness = 0.1f;
     unsigned int seed = 12345;
     int perlinLayers = 5;

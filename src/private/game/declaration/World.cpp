@@ -8,11 +8,9 @@ World::World(int w, int h, sf::RenderWindow& window)
     width = w;
     height = h;        
     trackedVars = new TrackedVariables();
-    WorldGeneration gen(0,w,h,cellSize);
-    grid = gen.getResult();    
-    createACO();
-
-   // gen.~WorldGeneration();
+    gen = new WorldGeneration(conf::seed,w,h,cellSize);
+    grid = gen->getResult();    
+    createACO(); 
 
 
 }
@@ -164,7 +162,7 @@ void World::createACO()
 //helper render
 void World::drawTerrain(sf::RenderWindow& window)
 {
-    sf::VertexArray combinedVA(sf::TriangleFan); // Use TriangleFan or better TriangleStrip/Quads if possible
+    sf::VertexArray combinedVA(sf::TriangleFan); 
     combinedVA.resize(0); // Clear just in case
 
     const sf::View& view = window.getView();
@@ -389,6 +387,7 @@ void World::destroyBuilding(std::string type)
 World::~World()
 {
     delete trackedVars;
+    delete gen;
 }
 
 int World::getWidth()

@@ -29,6 +29,7 @@ class World
         TrackedVariables* trackedVars;
         Entity* antBase; //temporary
         sf::Clock antClock;
+        WorldGeneration* gen;
 
     public:
     private:

@@ -23,8 +23,6 @@ WorldGeneration::WorldGeneration(unsigned int seed, int xWidth, int yWidth, int 
     assignTextures();
     std::cout << "Gen te d" << std::endl;
 
-
-
 }
 
 WorldGeneration::~WorldGeneration()
