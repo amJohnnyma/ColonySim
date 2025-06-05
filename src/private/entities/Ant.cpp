@@ -41,7 +41,7 @@ void Ant::updateMovement(float dt)
     sf::Vector2f direction = targetPos - pos;
     float distance = std::sqrt(direction.x * direction.x + direction.y * direction.y);
 
-    if (distance < 1.0f)
+    if (distance < conf::simulationSpeed)
     {
         hitbox->setPosition(targetPos); // Snap to final target
         x = targetPos.x/conf::cellSize;

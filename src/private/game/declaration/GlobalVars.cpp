@@ -7,8 +7,8 @@ namespace conf
     double maxPheromone = 0;
     const sf::Vector2f window_size = {1000, 1000};
     const sf::Vector2f window_size_f = static_cast<sf::Vector2f>(window_size);
-    int chunkSize = 32;
-    const sf::Vector2i worldSize = {96, 96}; // factor of 16 for now (should be how many chunks) 16,32,48,64,128,256
+    int chunkSize = 16;
+    const sf::Vector2i worldSize = {48, 48}; // factor of 16 for now (should be how many chunks) 16,32,48,64,128,256
     /*
     16,16 = 1x1
     32,32 = 2x2
@@ -19,9 +19,9 @@ namespace conf
     const uint32_t max_framerate = 60;
     const float dt = 1.0f / static_cast<float>(max_framerate);
     float calcDT = 0;
-    const int numAnts = 200; //per base
-    const int numBases = 20; //one base per team
-    const int numLocations =1;
+    const int numAnts = 100; //per base
+    const int numBases = 4; //one base per team
+    const int numLocations =3;
     const int antPathDrawLength = 10;
     int Q = 1;
     double pF = 0.5; //pheremone influnce
@@ -42,5 +42,6 @@ namespace conf
     {0.54f, true,  sf::Color(0, 255, 0), FOREST},     // FOREST
     {0.68f, true,  sf::Color(100, 255, 100), JUNGLE},   // JUNGLE
     {1.0f,  false,  sf::Color(150, 75, 0), WOODS}     // WOODS
-};
+    };
+    int simulationSpeed = 10;
 }

@@ -472,7 +472,7 @@ void WorldGeneration::generateLocations(int num)
                 continue;
             }
 
-            if(!cell->data.entities.empty() || cell->data.biomeinfo.biome == WATER)
+            if(!cell->data.entities.empty() || !cell->data.biomeinfo.passable)
             {
                 continue;
             }
@@ -484,8 +484,8 @@ void WorldGeneration::generateLocations(int num)
             auto rs = createLocationShape(x, y, cellSize, difficulty);
             std::string name = "location" + std::to_string(created);
 
-            auto locationEntity = std::make_unique<FoodLocation>(x, y, name, 100, std::move(rs), cell);
-            locationEntity->giveResource(100.0);
+            auto locationEntity = std::make_unique<FoodLocation>(x, y, name, 10000, std::move(rs), cell);
+            locationEntity->giveResource(100000.0);
 
             cell->data.entities.push_back(std::move(locationEntity));
 

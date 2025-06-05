@@ -35,6 +35,7 @@ namespace conf
     extern double perlinFlatness;
     constexpr int biomeSize = 5;
     extern const BiomeData biomeInfo[biomeSize];
+    extern int simulationSpeed;
 
 }
 

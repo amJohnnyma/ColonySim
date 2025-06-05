@@ -67,43 +67,42 @@ void ACO::assignRandomTarget(std::vector<Cell *> &raw_goals)
 
 void ACO::getNewTarget(Ant *ant)
 {
- //   if (ant->getTarget() != nullptr)
-  //      std::cout << "Current target: " << ant->getTarget()->getX() << ", " << ant->getTarget()->getY() << std::endl;
-
-    std::random_device rd;
-    std::mt19937 gen(rd());
-
-  //  std::cout << "tl.size(): " << tl.size() << std::endl;
     if (tl.empty())
         return;
 
-    std::uniform_int_distribution<> dis(0, tl.size() - 1);
-    int startIndex = dis(gen);
-    int counter = 0;
-    Entity* e = nullptr;
+    std::vector<std::tuple<float, int, int, Entity*>> scoredTargets;
 
-    while (counter < tl.size()) {
-        int idx = (startIndex + counter) % tl.size();
-        Cell* cell = world->at(tl[idx].first, tl[idx].second);
-        if (!cell) {
-            counter++;
+    for (const auto& loc : tl) {
+        Cell* cell = world->at(loc.first, loc.second);
+        if (!cell)
             continue;
-        }
 
         for (auto& entity : cell->data.entities) {
-            if (dynamic_cast<FoodLocation*>(entity.get())) {
-                e = entity.get();
-                break;
+            auto* food = dynamic_cast<FoodLocation*>(entity.get());
+            if (food) {
+                float dx = loc.first - ant->getX();
+                float dy = loc.second - ant->getY();
+                float distSq = dx * dx + dy * dy;
+
+                float resource = static_cast<float>(food->getResource());
+
+                // Define a scoring function: lower score is better                /
+                float score = distSq / (resource + 1.0f); // +1 to avoid divide by zero
+
+                scoredTargets.emplace_back(score, loc.first, loc.second, food);
             }
         }
+    }
 
-        if (e) {
-            ant->setTarget(e);
+    // Sort by score (closest & richest food first)
+    std::sort(scoredTargets.begin(), scoredTargets.end());
+
+    for (const auto& [score, x, y, food] : scoredTargets) {
+        if (food) {
+            ant->setTarget(food);
             possibleLocations = true;
             return;
         }
-
-        counter++;
     }
 
     // No valid target found, fall back to base
@@ -351,6 +350,11 @@ void ACO::returnHome(Cell *cell, Ant *e)
             if (containsTarget)
             {
              //   std::cout << "Target rand -----------------------------------------------------------------------------" << base->getTeam() << std::endl;
+                
+                std::cout << "e:"<< e->getTeam() << " b:" << base->getTeam() << " aco:" << team << std::endl;
+                if (!(e->getTeam() == base->getTeam() && base->getTeam() == team)) {
+                    exit(0);
+                }
                 base->giveResource(e->takeResource(10));
                 getNewTarget(e);
             }
