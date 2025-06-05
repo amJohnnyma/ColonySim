@@ -27,12 +27,13 @@ class WorldGeneration
         PerlinNoise* perlinNoise = new PerlinNoise(conf::seed);
         unsigned int seed;
         //std::map<std::pair<int, int>, std::unique_ptr<Chunk>> grid;
-        std::unordered_map<std::pair<int, int>, std::unique_ptr<Chunk>, pair_hash> grid;
+        std::unordered_map<std::pair<int, int>, uint32_t, pair_hash> grid; //throwaway int value
         ChunkManager* cm;
+        uint32_t chunkCount = 0;
+        int cellSize;
 
-        int width,height,cellSize;
     public:
-        WorldGeneration(unsigned int seed, int xWidth, int yWidth, int cellSize);
+        WorldGeneration(unsigned int seed, ChunkManager* cm, int cellSize);
         ~WorldGeneration();
         std::unordered_map<std::pair<int, int>, Chunk*, pair_hash> getResult();
         void ensureChunksAround(int playerChunkX, int playerChunkY, int radius);

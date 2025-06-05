@@ -9,6 +9,7 @@
 #include <algorithm>
 #include "TrackedVariables.h"
 #include "Chunk.h"
+#include "ChunkManager.h"
 //#include "../../controller/InputManager.h"
 
 
@@ -19,12 +20,7 @@ class World
     private:
         int temp = 0;
         int width, height;
-        //std::map<std::pair<int, int>, std::unique_ptr<Chunk>> grid;
-        std::unordered_map<std::pair<int, int>, Chunk*, pair_hash> grid;
 
-     //   std::vector<Cell> drawShapes; //drawShapes.push_back(*grid[i]);
-      //  std::vector<Cell> base; //still needs to be assigned
-        const int cellSize = 50;
         float baseSpeed = 1.0f;
         float speed;
         std::vector<ACO*> sims;
@@ -32,7 +28,8 @@ class World
         TrackedVariables* trackedVars;
         Entity* antBase; //temporary
         sf::Clock antClock;
-        WorldGeneration* gen;
+        //WorldGeneration* gen;
+        std::unique_ptr<ChunkManager> chunkManager;
 
     public:
     private:

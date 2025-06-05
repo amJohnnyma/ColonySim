@@ -2,8 +2,11 @@
 
 
 ChunkManager::ChunkManager()
+: worldGen(std::make_unique<WorldGeneration>(conf::seed, this, conf::cellSize)) 
 {
+    
 }
+
 
 ChunkManager::~ChunkManager()
 {
@@ -21,6 +24,10 @@ void ChunkManager::addChunk(std::pair<int, int> key, ChunkWrapper newChunk)
 
 Chunk *ChunkManager::getChunk(int x, int y)
 {
+    if(grid[{x,y}].chunkState == state::AVAILABLE)
+    {
+        return grid[{x,y}].chunk.get();
+    }
     return nullptr;
 }
 

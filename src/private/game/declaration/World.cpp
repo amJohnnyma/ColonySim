@@ -8,8 +8,7 @@ World::World(int w, int h, sf::RenderWindow& window)
     width = w;
     height = h;        
     trackedVars = new TrackedVariables();
-    gen = new WorldGeneration(conf::seed,w,h,cellSize);
-    grid = gen->getResult();    
+    chunkManager = std::make_unique<ChunkManager>();
     createACO(); 
 
 
@@ -19,14 +18,12 @@ Cell* World::at(int x, int y) {
     int cx = x / conf::chunkSize;
     int cy = y / conf::chunkSize;
     int lx = x % conf::chunkSize;
-    int ly = y % conf::chunkSize;
-    return grid[{cx, cy}]->at(lx, ly);
+    int ly = y % conf::chunkSize;    
+    return chunkManager->getChunk(cx,cy)->at(lx, ly);
 }
 
 Chunk* World::getChunkAt(int chunkX, int chunkY) {
-    auto& chunkMap = gen->getGridRef();
-    auto it = chunkMap.find({chunkX, chunkY});
-    return it != chunkMap.end() ? it->second.get() : nullptr;
+    return chunkManager->getChunk(chunkX, chunkY);
 }
 
 void World::update()
@@ -127,20 +124,26 @@ void World::createACO()
 {    
     std::vector<Cell*> raw_goals;
 
-    for (auto& [coord, chunkPtr] : grid) {
-    Chunk* chunk = chunkPtr;
-       for (auto& cellPtr : chunk->getCells()) { // assuming Chunk is a container of Cells
-            for (auto& eg : cellPtr->data.entities) {
-                if (eg->getName().find("location") != std::string::npos) {
-                    raw_goals.push_back(cellPtr.get());
-                    std::cout << "Pushed back location" << std::endl;
+    for(int x = 0; x < width/conf::chunkSize; x++)
+    {
+        for(int y = 0; y < height/conf::chunkSize;y++)
+        {
+            Chunk* chunk = getChunkAt(x,y);
+            if(!chunk) continue;
+            for (auto& cellPtr : chunk->getCells()) { // assuming Chunk is a container of Cells
+                for (auto& eg : cellPtr->data.entities) {
+                    if (eg->getName().find("location") != std::string::npos) {
+                        raw_goals.push_back(cellPtr.get());
+                        std::cout << "Pushed back location" << std::endl;
+                    }
+                    if (eg->getName().find("Base") != std::string::npos) {
+                        trackedVars->setBase(eg.get());
+                    }
                 }
-                if (eg->getName().find("Base") != std::string::npos) {
-                    trackedVars->setBase(eg.get());
-                }
-            }
         } 
+        }
     }
+
 
     for(auto & base : trackedVars->getBases())
     {
@@ -223,10 +226,10 @@ void World::drawGrid(sf::RenderWindow & window)
         for (int y = 0; y < height; y++) {
             int index = (x+y*width) *4;
             
-            float px = x * cellSize;
-            float py = y * cellSize;
+            float px = x * conf::cellSize;
+            float py = y * conf::cellSize;
 
-            sf::FloatRect cellBounds(px,py, cellSize,cellSize);
+            sf::FloatRect cellBounds(px,py, conf::cellSize,conf::cellSize);
             if(!viewRect.intersects(cellBounds))
             {
                 skippedCount++;
@@ -272,10 +275,7 @@ void World::drawGrid(sf::RenderWindow & window)
 
 void World::render(sf::RenderWindow &window)
 {
-    if(grid.empty())
-    {
-        return;
-    }
+
     window.clear();
     //drawGrid(window);
     drawTerrain(window);
@@ -297,11 +297,6 @@ void World::handleInput(InputManager& inputManager, sf::RenderWindow& window) {
     if (inputManager.isKeyHeld(sf::Keyboard::Num2)) running = false;
 
     if (inputManager.isKeyHeld(sf::Keyboard::R)) {
-        sims.clear();
-        grid.clear();
-        WorldGeneration gen(0, width, height, cellSize);
-        grid = gen.getResult();
-        createACO();
     }
 
     if (inputManager.isKeyHeld(sf::Keyboard::Escape)) window.close();
@@ -386,7 +381,7 @@ void World::destroyBuilding(std::string type)
 World::~World()
 {
     delete trackedVars;
-    delete gen;
+    
 }
 
 int World::getWidth()

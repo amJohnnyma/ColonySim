@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include "Chunk.h"
+#include "WorldGeneration.h"
 
 //This is the only place where chunks can be modified
 //Every system must comply and work through chunk manager
@@ -29,6 +30,7 @@ class ChunkManager
 {
     private:
         std::unordered_map<std::pair<int, int>, ChunkWrapper, pair_hash> grid;
+        std::unique_ptr<WorldGeneration> worldGen;
     private:
         bool canWrite(/*Hash value?*/); //edit a chunk
         bool canRead(); //use a chunk
@@ -38,6 +40,7 @@ class ChunkManager
         ~ChunkManager();
         bool isAvailable(std::string type);
         void addChunk(std::pair<int, int> key, ChunkWrapper);
+        void createChunk(int x, int y);
         Chunk* getChunk(int x, int y);
         void saveInRam(int x, int y);
 
