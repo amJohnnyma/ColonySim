@@ -3,10 +3,9 @@
 #include "../../controller/InputManager.h" 
 #include "World.h"
 
-World::World(int w, int h, sf::RenderWindow& window)
+World::World(sf::RenderWindow& window)
 {
-    width = w;
-    height = h;        
+ 
     trackedVars = new TrackedVariables();
     chunkManager = std::make_unique<ChunkManager>();
     createACO(); 
@@ -41,15 +40,15 @@ void World::update()
     trackedVars->setNumAnts(numAnts);
 
     //temp
-    // sf::Vector2f viewCenter = trackedVars->getViewCenter();
-    // int chunkX = static_cast<int>(viewCenter.x / (conf::chunkSize * conf::cellSize));
-    // int chunkY = static_cast<int>(viewCenter.y / (conf::chunkSize * conf::cellSize));
+     sf::Vector2f viewCenter = trackedVars->getViewCenter();
+     int chunkX = static_cast<int>(viewCenter.x / (conf::chunkSize * conf::cellSize));
+     int chunkY = static_cast<int>(viewCenter.y / (conf::chunkSize * conf::cellSize));
 
     // std::cout << "View Center: " << viewCenter.x << ", " << viewCenter.y << std::endl;
-    // std::cout << "Chunk Center: " << chunkX << ", " << chunkY << std::endl;
+   //  std::cout << "Chunk Center: " << chunkX << ", " << chunkY << std::endl;
     // // Load necessary chunks and unload distant ones
-    // gen->ensureChunksAround(chunkX, chunkY, 2);  // load chunks in a 5x5 area
-    // gen->unloadDistantChunks(chunkX, chunkY, 4); // unload chunks beyond 9x9 area
+    chunkManager->ensureChunksAround(chunkX, chunkY, 2);  // load chunks in a 5x5 area
+    chunkManager->unloadDistantChunks(chunkX, chunkY, 4); // unload chunks beyond 9x9 area
 
    
 
@@ -71,8 +70,8 @@ void World::drawEntities(sf::RenderWindow& window)
 
     startX = std::max(0, startX);
     startY = std::max(0, startY);
-    endX   = std::min(height, endX);
-    endY   = std::min(width, endY);
+    endX   = std::min(conf::worldSize.x, endX);
+    endY   = std::min(conf::worldSize.y, endY);
 
     // Iterate over relevant cells
     for (int x = startX; x < endX; x++)
@@ -124,9 +123,9 @@ void World::createACO()
 {    
     std::vector<Cell*> raw_goals;
 
-    for(int x = 0; x < width/conf::chunkSize; x++)
+    for(int x = 0; x < conf::worldSize.x/conf::chunkSize; x++)
     {
-        for(int y = 0; y < height/conf::chunkSize;y++)
+        for(int y = 0; y < conf::worldSize.y/conf::chunkSize;y++)
         {
             Chunk* chunk = getChunkAt(x,y);
             if(!chunk) continue;
@@ -147,7 +146,7 @@ void World::createACO()
 
     for(auto & base : trackedVars->getBases())
     {
-        ACO* aco = new ACO(raw_goals, this, width, height, base);
+        ACO* aco = new ACO(raw_goals, this, base);
         sims.push_back(aco);
     }
     
@@ -172,8 +171,8 @@ void World::drawTerrain(sf::RenderWindow& window)
 
     startX = std::max(0, startX);
     startY = std::max(0, startY);
-    endX   = std::min(width, endX);
-    endY   = std::min(height, endY);
+    endX   = std::min(conf::worldSize.x, endX);
+    endY   = std::min(conf::worldSize.y, endY);
 
     // Using sf::Quads is more efficient for rectangles
     combinedVA.setPrimitiveType(sf::Quads);
@@ -222,9 +221,9 @@ void World::drawGrid(sf::RenderWindow & window)
         window.getView().getSize().x,
         window.getView().getSize().y
     );
-    for (int x = 0; x < width; x++) {
-        for (int y = 0; y < height; y++) {
-            int index = (x+y*width) *4;
+    for (int x = 0; x < conf::worldSize.x; x++) {
+        for (int y = 0; y < conf::worldSize.y; y++) {
+            int index = (x+y*conf::worldSize.x) *4;
             
             float px = x * conf::cellSize;
             float py = y * conf::cellSize;

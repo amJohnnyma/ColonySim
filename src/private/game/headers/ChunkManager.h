@@ -43,6 +43,8 @@ class ChunkManager
         void createChunk(int x, int y);
         Chunk* getChunk(int x, int y);
         void saveInRam(int x, int y);
+        void ensureChunksAround(int playerChunkX, int playerChunkY, int radius);
+        void unloadDistantChunks(int playerChunkX, int playerChunkY, int radius);
 
 };
 

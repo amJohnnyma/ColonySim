@@ -1,7 +1,7 @@
 #include "../includes/ACO.h"
 #include "../../game/headers/GlobalVars.h"
 
-ACO::ACO(std::vector<Cell *> &goals, World* world, int width, int height, Entity* base)
+ACO::ACO(std::vector<Cell *> &goals, World* world,  Entity* base)
 {
 std::cout << "ACO const" << std::endl;
 
@@ -15,8 +15,6 @@ std::cout << "ACO const" << std::endl;
     }
 
     this->world = world;
-    worldWidth = width;
-    worldHeight = height;
 
     assignRandomTarget(goals);
 
@@ -371,7 +369,7 @@ void ACO::returnHome(Cell *cell, Ant *e)
     }
 }
 bool ACO::isInBounds(int x, int y) const {
-    return x >= 0 && x < worldWidth && y >= 0 && y < worldHeight;
+    return x >= 0 && x < conf::worldSize.x && y >= 0 && y < conf::worldSize.y;
 }
 
 bool ACO::isCellBlocked(Cell* tile) const {

@@ -19,7 +19,6 @@ class World
 {
     private:
         int temp = 0;
-        int width, height;
 
         float baseSpeed = 1.0f;
         float speed;
@@ -38,7 +37,7 @@ class World
         void drawEntities(sf::RenderWindow& window);
         void createACO();
     public:
-        World(int w, int h, sf::RenderWindow& window);
+        World(sf::RenderWindow& window);
         ~World();
     public:
         int getWidth();

@@ -25,8 +25,6 @@ class ACO
         World* world;
         float theta = 0.0f;
         std::vector<std::pair<int, int>> adjCells;
-        int worldWidth;
-        int worldHeight;
         std::vector<std::pair<int, int>> visited;
         int numberAnts = 0;
         Entity* base;
@@ -64,7 +62,7 @@ class ACO
 
         
     public:
-        ACO(std::vector<Cell*>& goals, World* world, int width, int height, Entity* base);
+        ACO(std::vector<Cell*>& goals, World* world,  Entity* base);
         ~ACO();
         void update();
         void assignRandomTarget(std::vector<Cell*> &raw_goals);

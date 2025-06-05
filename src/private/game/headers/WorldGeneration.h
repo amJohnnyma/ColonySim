@@ -36,8 +36,7 @@ class WorldGeneration
         WorldGeneration(unsigned int seed, ChunkManager* cm, int cellSize);
         ~WorldGeneration();
         std::unordered_map<std::pair<int, int>, Chunk*, pair_hash> getResult();
-        void ensureChunksAround(int playerChunkX, int playerChunkY, int radius);
-        void unloadDistantChunks(int playerChunkX, int playerChunkY, int radius);
+        void createChunk(int chunkX, int chunkY);
         const std::unordered_map<std::pair<int, int>, std::unique_ptr<Chunk>, pair_hash> &getGridRef() const;
 
     private:
@@ -46,7 +45,6 @@ class WorldGeneration
         std::unique_ptr<Rectangle> createCellShape(int x, int y, float size);
         std::unique_ptr<Cell> createCell(int x, int y, float cellSize, float noise);
         void generateTerrain();
-        void createChunk(int chunkX, int chunkY);
         std::unique_ptr<sf::Sprite> createAntShape(sf::Color fillColor, int x, int y, float cellSize);
         std::unique_ptr<sf::Sprite> createBaseShape(sf::Color fillColor, int x, int y, float cellSize);
         std::unique_ptr<Ant> createAnt(int x, int y);

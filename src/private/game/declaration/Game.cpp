@@ -5,7 +5,7 @@ Game* Game::instance = nullptr;
 void Game::run()
 {
     using clock = std::chrono::steady_clock;
-    constexpr std::chrono::duration<double, std::milli> targetFrameTime(0.000001); // ~60 FPS = 16.667
+    constexpr std::chrono::duration<double, std::milli> targetFrameTime(0.001); // ~60 FPS = 16.667
 
     while (wind->wndw->isOpen())
     {
@@ -148,7 +148,7 @@ void Game::handleEvent(Event event) {
 Game::Game(int windowWidth, int windowHeight, int worldWidth, int worldHeight)
 {
     wind = new window(windowWidth,windowHeight);
-    world = new World(worldWidth,worldHeight,*wind->wndw);
+    world = new World(*wind->wndw);
     uiMan = new UIManager(world);
     inputManager = new InputManager(world,*wind->wndw);    
     handleEvent(Event::PAUSE);    

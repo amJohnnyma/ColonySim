@@ -124,8 +124,8 @@ void WorldGeneration::createChunk(int chunkX, int chunkY)
 }
 void WorldGeneration::generateTerrain()
 {
-    for (int cx = 0; cx < conf::worldSize.x / conf::chunkSize; ++cx) {
-        for (int cy = 0; cy < conf::worldSize.y / conf::chunkSize; ++cy) {
+    for (int cx = 0; cx < conf::worldSize.x / conf::chunkSize; cx++) {
+        for (int cy = 0; cy < conf::worldSize.y / conf::chunkSize; cy++) {
             createChunk(cx,cy);
         }
     }
@@ -262,37 +262,7 @@ void WorldGeneration::logAllEntities()
 
 
 
-void WorldGeneration::ensureChunksAround(int centerChunkX, int centerChunkY, int radius) {
-    for (int dx = -radius; dx <= radius; ++dx) {
-        for (int dy = -radius; dy <= radius; ++dy) {
-            int cx = centerChunkX + dx;
-            int cy = centerChunkY + dy;
-            if (grid.find({cx, cy}) == grid.end()) {
-                createChunk(cx, cy); // returns unique_ptr<Chunk>
-            }
-        }
-    }
-}
 
-
-void WorldGeneration::unloadDistantChunks(int playerChunkX, int playerChunkY, int radius)
-{
-    for (auto it = grid.begin(); it != grid.end(); ) {
-        int cx = it->first.second;
-        int cy = it->first.first;
-
-        if (abs(cx - playerChunkX) > radius || abs(cy - playerChunkY) > radius) {
-            /*
-            // Save chunk data before deletion
-            Chunk* chunk = it->second.get(); //this will require serialization
-            saveChunkToFile(cx, cy, chunk); // cache in RAM
-            */
-            it = grid.erase(it); // Automatically deletes chunk memory
-        } else {
-            ++it;
-        }
-    }
-}
 const std::unordered_map<std::pair<int, int>, std::unique_ptr<Chunk>, pair_hash>& WorldGeneration::getGridRef() const {
     //return grid;
 }
