@@ -162,54 +162,55 @@ void World::createACO()
     
 
 //helper render
-void World::drawTerrain(sf::RenderWindow & window)
+void World::drawTerrain(sf::RenderWindow& window)
 {
-    int drawCount = 0;
+    sf::VertexArray combinedVA(sf::TriangleFan); // Use TriangleFan or better TriangleStrip/Quads if possible
+    combinedVA.resize(0); // Clear just in case
 
-    std::vector<const sf::VertexArray*> allgridshapes;    
-    const sf::View view = window.getView();
-     int startX = static_cast<int>((view.getCenter().y - view.getSize().y / 2) / conf::cellSize) - 1;
-        int endX   = static_cast<int>((view.getCenter().y + view.getSize().y / 2) / conf::cellSize) + 1;
+    const sf::View& view = window.getView();
 
-        int startY = static_cast<int>((view.getCenter().x - view.getSize().x / 2) / conf::cellSize) - 1;
-        int endY   = static_cast<int>((view.getCenter().x + view.getSize().x / 2) / conf::cellSize) + 1;
+    int startX = static_cast<int>((view.getCenter().y - view.getSize().y / 2) / conf::cellSize) - 1;
+    int endX   = static_cast<int>((view.getCenter().y + view.getSize().y / 2) / conf::cellSize) + 1;
+    int startY = static_cast<int>((view.getCenter().x - view.getSize().x / 2) / conf::cellSize) - 1;
+    int endY   = static_cast<int>((view.getCenter().x + view.getSize().x / 2) / conf::cellSize) + 1;
 
-        // Clamp to map bounds
-        startX = std::max(0, startX);
-        startY = std::max(0, startY);
-        endX   = std::min(width, endX);
-        endY   = std::min(height, endY);
+    startX = std::max(0, startX);
+    startY = std::max(0, startY);
+    endX   = std::min(width, endX);
+    endY   = std::min(height, endY);
 
-        // Draw loop
-        for (int x = startX; x < endX; x++) {
-            for (int y = startY; y < endY; y++) {   
+    // Using sf::Quads is more efficient for rectangles
+    combinedVA.setPrimitiveType(sf::Quads);
 
-            
-            //for debuggin
-            drawCount++;       
-
-            Cell* dc = this->at(x,y);
-            //draw pheromone on dc at some point
-            if(dc->cellShape)
-            {
+    for (int x = startX; x < endX; x++) {
+        for (int y = startY; y < endY; y++) {
+            Cell* dc = this->at(x, y);
+            if (dc && dc->cellShape) {
                 Rectangle* shape = static_cast<Rectangle*>(dc->cellShape.get());
-                if(shape)
-                {          
+                if (shape) {
+                    const sf::VertexArray& va = shape->getVA();
 
-                    allgridshapes.push_back(&shape->getVA());
+                    // We assume shape->getVA() uses sf::TriangleFan, so we have 6 vertices (center + 4 corners + close)
 
-                
+                    // Convert the TriangleFan to quads here, or just append the four corners for quads:
+
+                    // Extract corners (vertices 1 to 4) to add to combined VA as a quad:
+                    if (va.getVertexCount() >= 5) {
+                        size_t baseIndex = combinedVA.getVertexCount();
+                        combinedVA.resize(baseIndex + 4);
+
+                        // Copy the 4 corners (skip center and last duplicate vertex)
+                        combinedVA[baseIndex + 0] = va[1];
+                        combinedVA[baseIndex + 1] = va[2];
+                        combinedVA[baseIndex + 2] = va[3];
+                        combinedVA[baseIndex + 3] = va[4];
+                    }
                 }
             }
-
-            
         }
     }
 
-    for (auto& shape : allgridshapes) 
-    {
-        window.draw(*shape);
-    }
+    window.draw(combinedVA);
 }
 
 void World::drawGrid(sf::RenderWindow & window)
