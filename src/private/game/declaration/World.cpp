@@ -164,10 +164,22 @@ void World::drawTerrain(sf::RenderWindow & window)
         std::cerr << "Failed to load font!" << std::endl;
         return;
     }
-   
-    for (int x = 0; x < width; x++) {
-        for (int y = 0; y < height; y++) {
-           
+    const sf::View view = window.getView();
+     int startX = static_cast<int>((view.getCenter().y - view.getSize().y / 2) / conf::cellSize) - 1;
+        int endX   = static_cast<int>((view.getCenter().y + view.getSize().y / 2) / conf::cellSize) + 1;
+
+        int startY = static_cast<int>((view.getCenter().x - view.getSize().x / 2) / conf::cellSize) - 1;
+        int endY   = static_cast<int>((view.getCenter().x + view.getSize().x / 2) / conf::cellSize) + 1;
+
+        // Clamp to map bounds
+        startX = std::max(0, startX);
+        startY = std::max(0, startY);
+        endX   = std::min(width, endX);
+        endY   = std::min(height, endY);
+
+        // Draw loop
+        for (int x = startX; x < endX; x++) {
+            for (int y = startY; y < endY; y++) {   
 
             
             //for debuggin
