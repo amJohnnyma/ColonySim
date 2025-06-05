@@ -41,6 +41,7 @@ void Game::run()
         {
             std::this_thread::sleep_for(targetFrameTime - elapsed);
         }
+             //   std::this_thread::sleep_for(std::chrono::milliseconds(1)); // Prevents CPU spinning
     }
 }
 
@@ -70,7 +71,7 @@ void Game::runningState()
 {
     using clock = std::chrono::steady_clock;
     static auto lastUpdate = clock::now();
-    const std::chrono::milliseconds updateInterval(50);
+    const std::chrono::milliseconds updateInterval(0);
 
     sf::Event event;
     while (wind->wndw->pollEvent(event))

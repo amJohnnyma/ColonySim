@@ -18,6 +18,7 @@ namespace conf
     */
     const uint32_t max_framerate = 60;
     const float dt = 1.0f / static_cast<float>(max_framerate);
+    float calcDT = 0;
     const int numAnts = 200; //per base
     const int numBases = 20; //one base per team
     const int numLocations =1;
@@ -28,7 +29,7 @@ namespace conf
     double pheremoneEvap = 0.005;
     unsigned int timestep = 500;
     double locationFoodRegenerationRate = 100;
-    float antSpeed = 500.0f;
+    float antSpeed = 250.0f;
     float terrainDifficultyScale = 0.05f;
     int baseSeparationDistance = 5;
     float perlinSmoothness = 0.1f;

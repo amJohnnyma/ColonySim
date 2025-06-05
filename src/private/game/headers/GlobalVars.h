@@ -14,6 +14,7 @@ namespace conf
     extern const sf::Vector2i worldSize;
     extern const uint32_t max_framerate;
     extern const float dt;
+    extern float calcDT;
     extern const int numAnts;
     extern const int numBases;
     extern const int numLocations;
