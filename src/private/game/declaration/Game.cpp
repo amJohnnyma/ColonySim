@@ -5,11 +5,13 @@ Game* Game::instance = nullptr;
 void Game::run()
 {
     using clock = std::chrono::steady_clock;
-    auto lastUpdate = clock::now();
-    const std::chrono::milliseconds updateInterval(50); 
-    while(wind->wndw->isOpen())
-    {
+    constexpr std::chrono::duration<double, std::milli> targetFrameTime(16.6667); // ~60 FPS
 
+    while (wind->wndw->isOpen())
+    {
+        auto frameStart = clock::now();
+
+        // Handle game state
         switch (currentState)
         {
             case State::IDLE:
@@ -25,14 +27,21 @@ void Game::run()
                 stoppedState();
                 break;
             default:
-                std::cerr << "Unkown state" << std::endl;
+                std::cerr << "Unknown state" << std::endl;
                 wind->wndw->close();
                 break;
         }
-        std::this_thread::sleep_for(std::chrono::milliseconds(1)); // Prevents CPU spinning
-}
 
+        // Calculate how long frame took
+        auto frameEnd = clock::now();
+        auto elapsed = frameEnd - frameStart;
 
+        // Sleep to limit frame rate, if frame finished early
+        if (elapsed < targetFrameTime)
+        {
+            std::this_thread::sleep_for(targetFrameTime - elapsed);
+        }
+    }
 }
 
 void Game::renderFrame() {

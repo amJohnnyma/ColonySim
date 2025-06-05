@@ -49,6 +49,7 @@ class World
         std::vector<std::unique_ptr<Cell>> getGrid();
         std::vector<Cell> getBase();
         Cell* at(int x, int y);
+        Chunk *getChunkAt(int chunkX, int chunkY);
         void update();
         void render(sf::RenderWindow & window);
         //temp input

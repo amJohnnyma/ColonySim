@@ -23,6 +23,11 @@ Cell* World::at(int x, int y) {
     return grid[{cx, cy}]->at(lx, ly);
 }
 
+Chunk* World::getChunkAt(int chunkX, int chunkY) {
+    auto& chunkMap = gen->getGridRef();
+    auto it = chunkMap.find({chunkX, chunkY});
+    return it != chunkMap.end() ? it->second.get() : nullptr;
+}
 
 void World::update()
 {
@@ -37,30 +42,19 @@ void World::update()
         //std::cout << "done" << std::endl;
     }
     trackedVars->setNumAnts(numAnts);
-    //this sucks only update when the world has changed
-    /*
-    std::vector<Cell*> rawPointers;
-    rawPointers.reserve(grid.size());
-    for (const auto& cellPtr : grid) {
-        rawPointers.push_back(cellPtr.get());
-        for(const auto& e : cellPtr.get()->data.entities)
-        {
-            if(e.get()->getName() == "Base")
-            {
-                antBase = {cellPtr.get()->x, cellPtr.get()->y};
-            }
-        }
-    }
-    trackedVars.setWorld(rawPointers);
-    */
-    
-    for (auto& [key, chunk] : grid) {
-        //chunk->update();
-        //chunk->render();
-    }
-  
 
+    //temp
+    // sf::Vector2f viewCenter = trackedVars->getViewCenter();
+    // int chunkX = static_cast<int>(viewCenter.x / (conf::chunkSize * conf::cellSize));
+    // int chunkY = static_cast<int>(viewCenter.y / (conf::chunkSize * conf::cellSize));
 
+    // std::cout << "View Center: " << viewCenter.x << ", " << viewCenter.y << std::endl;
+    // std::cout << "Chunk Center: " << chunkX << ", " << chunkY << std::endl;
+    // // Load necessary chunks and unload distant ones
+    // gen->ensureChunksAround(chunkX, chunkY, 2);  // load chunks in a 5x5 area
+    // gen->unloadDistantChunks(chunkX, chunkY, 4); // unload chunks beyond 9x9 area
+
+   
 
 }
 
@@ -277,12 +271,15 @@ void World::drawGrid(sf::RenderWindow & window)
 
 void World::render(sf::RenderWindow &window)
 {
+    if(grid.empty())
+    {
+        return;
+    }
     window.clear();
     //drawGrid(window);
     drawTerrain(window);
     drawEntities(window);
 
-  //  window.display();
 }
 
 // Usage in World::handleInput
@@ -344,6 +341,7 @@ void World::handleInput(InputManager& inputManager, sf::RenderWindow& window) {
         std::cout << "New timestep: " << conf::timestep << std::endl;
     }
     window.setView(view);
+    trackedVars->setViewCenter(view.getCenter());
 }
 void World::toggleSimState()
 {

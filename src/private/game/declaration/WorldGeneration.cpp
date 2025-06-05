@@ -241,6 +241,36 @@ void WorldGeneration::generateTerrain()
 
 }
 
+void WorldGeneration::ensureChunksAround(int centerChunkX, int centerChunkY, int radius) {
+    for (int dx = -radius; dx <= radius; ++dx) {
+        for (int dy = -radius; dy <= radius; ++dy) {
+            int cx = centerChunkX + dx;
+            int cy = centerChunkY + dy;
+            if (grid.find({cx, cy}) == grid.end()) {
+                createChunk(cx, cy); // returns unique_ptr<Chunk>
+            }
+        }
+    }
+}
+
+
+void WorldGeneration::unloadDistantChunks(int playerChunkX, int playerChunkY, int radius)
+{
+    for (auto it = grid.begin(); it != grid.end(); ) {
+        int cx = it->first.second;
+        int cy = it->first.first;
+
+        if (abs(cx - playerChunkX) > radius || abs(cy - playerChunkY) > radius) {
+            it = grid.erase(it); // Automatically deletes chunk memory
+        } else {
+            ++it;
+        }
+    }
+}
+const std::unordered_map<std::pair<int, int>, std::unique_ptr<Chunk>, pair_hash>& WorldGeneration::getGridRef() const {
+    return grid;
+}
+
 void WorldGeneration::createChunk(int chunkX, int chunkY)
 {
     std::pair<int, int> key = {chunkY, chunkX};

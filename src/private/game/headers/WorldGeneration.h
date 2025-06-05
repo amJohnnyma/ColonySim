@@ -35,6 +35,9 @@ class WorldGeneration
         WorldGeneration(unsigned int seed, int xWidth, int yWidth, int cellSize);
         ~WorldGeneration();
         std::unordered_map<std::pair<int, int>, Chunk*, pair_hash> getResult();
+        void ensureChunksAround(int playerChunkX, int playerChunkY, int radius);
+        void unloadDistantChunks(int playerChunkX, int playerChunkY, int radius);
+        const std::unordered_map<std::pair<int, int>, std::unique_ptr<Chunk>, pair_hash> &getGridRef() const;
 
     private:
         pheromone createPheromones(int x, int y);
@@ -59,3 +62,4 @@ class WorldGeneration
 };
 
 #endif
+

@@ -51,16 +51,16 @@ float PerlinNoise::noise(float nx, float ny)
 float PerlinNoise::val(float x, float y)
 {    
     float e = elevation(x, y, conf::perlinLayers);
-    std::cout << "elevation: " << e << ", pow base before clamp" << std::endl;
+   // std::cout << "elevation: " << e << ", pow base before clamp" << std::endl;
 
     if (e < 0.0f) e = 0.0f;
 
-    std::cout << "elevation after clamp: " << e << std::endl;
-    std::cout << "exponent: " << conf::perlinFlatness << std::endl;
+   // std::cout << "elevation after clamp: " << e << std::endl;
+    //std::cout << "exponent: " << conf::perlinFlatness << std::endl;
 
     float val = static_cast<float>(std::pow(e, conf::perlinFlatness));
 
-    std::cout << "pow result: " << val << std::endl;
+    //std::cout << "pow result: " << val << std::endl;
 
     return val;
 }
