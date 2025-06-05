@@ -11,26 +11,29 @@ WorldGeneration::WorldGeneration(unsigned int seed, int xWidth, int yWidth, int 
     grid.clear();
 
     std::cout << "Gen t s" << std::endl;
-    generateTerrain();
+    generateTerrain(); //Condense into this
     std::cout << "Gen t d" << std::endl;
-    std::cout << "Gen e s" << std::endl;
-    generateEntities(conf::numAnts,conf::numBases);
-    std::cout << "Gen e d" << std::endl;
-    std::cout << "Gen l s" << std::endl;
-    generateLocations(conf::numLocations);
-    std::cout << "Gen l d" << std::endl;
-    std::cout << "Gen te s" << std::endl;
-    assignTextures();
-    std::cout << "Gen te d" << std::endl;
+    // std::cout << "Gen e s" << std::endl;
+    // generateEntities(conf::numAnts,conf::numBases);
+    // std::cout << "Gen e d" << std::endl;
+    // std::cout << "Gen l s" << std::endl;
+    // generateLocations(conf::numLocations);
+    // std::cout << "Gen l d" << std::endl;
+    // std::cout << "Gen te s" << std::endl;
+    // assignTextures();
+    // std::cout << "Gen te d" << std::endl;
 
 }
 
 WorldGeneration::~WorldGeneration()
 {
     delete perlinNoise;
+    delete cm;
 }
 
 std::unordered_map<std::pair<int, int>, Chunk *, pair_hash> WorldGeneration::getResult() {
+
+    //ask chunk manager for results (i.e. world must ask chunk manager not worldgen)
     std::unordered_map<std::pair<int, int>, Chunk*, pair_hash> result;
 
     for (const auto& [key, chunkPtr] : grid) {
@@ -97,6 +100,41 @@ std::unique_ptr<Cell> WorldGeneration::createCell(int x, int y, float cellSize, 
 
     return cell;
 }
+void WorldGeneration::createChunk(int chunkX, int chunkY)
+{
+    std::pair<int, int> key = {chunkY, chunkX};
+    if (grid.find(key) != grid.end()) return; // Already generated
+
+    auto chunk = std::make_unique<Chunk>(chunkX, chunkY, conf::chunkSize);
+
+    for (int x = 0; x < conf::chunkSize; ++x) {
+        for (int y = 0; y < conf::chunkSize; ++y) {
+            int worldX = chunkX * conf::chunkSize + x;
+            int worldY = chunkY * conf::chunkSize + y;
+
+            float nx = worldX * conf::perlinSmoothness;
+            float ny = worldY * conf::perlinSmoothness;
+            float val = perlinNoise->val(nx, ny);
+
+            chunk->push_back(createCell(worldX, worldY, conf::cellSize, val));
+            //spawn colonies + base 1% chance per chunk
+            //spawn buildings
+            //spawn whatever else
+        }
+    }
+    cm->addChunk(key, {std::move(chunk), state::AVAILABLE}); 
+
+}
+void WorldGeneration::generateTerrain()
+{
+    for (int cx = 0; cx < conf::worldSize.x / conf::chunkSize; ++cx) {
+        for (int cy = 0; cy < conf::worldSize.y / conf::chunkSize; ++cy) {
+            createChunk(cx,cy);
+        }
+    }
+}
+
+
 std::unique_ptr<sf::Sprite> WorldGeneration::createAntShape(sf::Color fillColor, int x, int y, float cellSize)
 {
     auto& manager = TextureManager::getInstance();
@@ -225,15 +263,7 @@ void WorldGeneration::logAllEntities()
 
 
 
-void WorldGeneration::generateTerrain()
-{
-    for (int cx = 0; cx < conf::worldSize.x / conf::chunkSize; ++cx) {
-        for (int cy = 0; cy < conf::worldSize.y / conf::chunkSize; ++cy) {
-            createChunk(cx,cy);
-        }
-    }
 
-}
 
 void WorldGeneration::ensureChunksAround(int centerChunkX, int centerChunkY, int radius) {
     for (int dx = -radius; dx <= radius; ++dx) {
@@ -270,31 +300,7 @@ const std::unordered_map<std::pair<int, int>, std::unique_ptr<Chunk>, pair_hash>
     return grid;
 }
 
-void WorldGeneration::createChunk(int chunkX, int chunkY)
-{
-    std::pair<int, int> key = {chunkY, chunkX};
-    if (grid.find(key) != grid.end()) return; // Already generated
 
-    auto chunk = std::make_unique<Chunk>(chunkX, chunkY, conf::chunkSize);
-
-    for (int x = 0; x < conf::chunkSize; ++x) {
-        for (int y = 0; y < conf::chunkSize; ++y) {
-            int worldX = chunkX * conf::chunkSize + x;
-            int worldY = chunkY * conf::chunkSize + y;
-
-            float nx = worldX * conf::perlinSmoothness;
-            float ny = worldY * conf::perlinSmoothness;
-            float val = perlinNoise->val(nx, ny);
-
-            chunk->push_back(createCell(worldX, worldY, conf::cellSize, val));
-            //spawn colonies + base 1% chance per chunk
-            //spawn buildings
-            //spawn whatever else
-        }
-    }
-
-    grid[key] = std::move(chunk);
-}
 
 int getEdgeBiased(int max) {
     static std::mt19937 rng(conf::seed);

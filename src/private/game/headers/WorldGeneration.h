@@ -5,7 +5,6 @@
 #include <array>
 #include <random>
 
-//can all be forward decalred??
 #include "../../structs/worldObjects.h"
 #include "../../utils/headers/TextureManager.h"
 #include "../../entities/Entity.h"
@@ -18,10 +17,10 @@
 #include "../../entities/Location.h"
 #include "../../entities/FoodLocation.h"
 #include "../../entities/BuildingLocation.h"
-#include "Chunk.h"
 #include "PerlinNoise.h"
+#include "ChunkManager.h"
 
-
+class Chunk;
 class WorldGeneration
 {
     private:
@@ -29,6 +28,7 @@ class WorldGeneration
         unsigned int seed;
         //std::map<std::pair<int, int>, std::unique_ptr<Chunk>> grid;
         std::unordered_map<std::pair<int, int>, std::unique_ptr<Chunk>, pair_hash> grid;
+        ChunkManager* cm;
 
         int width,height,cellSize;
     public:
