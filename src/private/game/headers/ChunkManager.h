@@ -45,7 +45,8 @@ class ChunkManager
         void saveInRam(int x, int y);
         void ensureChunksAround(int playerChunkX, int playerChunkY, int radius);
         void unloadDistantChunks(int playerChunkX, int playerChunkY, int radius);
-
+        bool hasLoaded(int x, int y);
+        void updateWorldSize();
 };
 
 #endif

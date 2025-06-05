@@ -16,8 +16,12 @@ World::World(sf::RenderWindow& window)
 Cell* World::at(int x, int y) {
     int cx = x / conf::chunkSize;
     int cy = y / conf::chunkSize;
+    if(!chunkManager->hasLoaded(cx,cy))
+    {
+        return nullptr;
+    } 
     int lx = x % conf::chunkSize;
-    int ly = y % conf::chunkSize;    
+    int ly = y % conf::chunkSize;   
     return chunkManager->getChunk(cx,cy)->at(lx, ly);
 }
 
@@ -68,10 +72,10 @@ void World::drawEntities(sf::RenderWindow& window)
     int startY = static_cast<int>((view.getCenter().y - view.getSize().y / 2) / conf::cellSize) - 1;
     int endY   = static_cast<int>((view.getCenter().y + view.getSize().y / 2) / conf::cellSize) + 1;
 
-    startX = std::max(0, startX);
-    startY = std::max(0, startY);
-    endX   = std::min(conf::worldSize.x, endX);
-    endY   = std::min(conf::worldSize.y, endY);
+   // startX = std::max(0, startX);
+    //startY = std::max(0, startY);
+   // endX   = std::min(conf::worldSize.x, endX);
+    //endY   = std::min(conf::worldSize.y, endY);
 
     // Iterate over relevant cells
     for (int x = startX; x < endX; x++)
@@ -169,18 +173,22 @@ void World::drawTerrain(sf::RenderWindow& window)
     int startY = static_cast<int>((view.getCenter().x - view.getSize().x / 2) / conf::cellSize) - 1;
     int endY   = static_cast<int>((view.getCenter().x + view.getSize().x / 2) / conf::cellSize) + 1;
 
+  
     startX = std::max(0, startX);
     startY = std::max(0, startY);
-    endX   = std::min(conf::worldSize.x, endX);
-    endY   = std::min(conf::worldSize.y, endY);
+  //  endX   = std::min(conf::worldSize.x, endX);
+  //  endY   = std::min(conf::worldSize.y, endY);
 
     // Using sf::Quads is more efficient for rectangles
     combinedVA.setPrimitiveType(sf::Quads);
-
+//std::cout << "Boom" << std::endl;
     for (int x = startX; x < endX; x++) {
         for (int y = startY; y < endY; y++) {
+          //  std::cout << "Bam" << std::endl;
             Cell* dc = this->at(x, y);
-            if (dc && dc->cellShape) {
+          //  std::cout << "Crash" << std::endl;
+            if (dc != nullptr && dc->cellShape) {
+               // std::cout << "Craaaaa" << std::endl;
                 Rectangle* shape = static_cast<Rectangle*>(dc->cellShape.get());
                 if (shape) {
                     const sf::VertexArray& va = shape->getVA();
@@ -277,7 +285,9 @@ void World::render(sf::RenderWindow &window)
 
     window.clear();
     //drawGrid(window);
+   // std::cout << "Draw terrain" << std::endl;
     drawTerrain(window);
+   // std::cout << "Fin draw" << std::endl;
    // drawEntities(window);
 
 }
