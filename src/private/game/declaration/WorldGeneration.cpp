@@ -109,12 +109,6 @@ std::unique_ptr<sf::Sprite> WorldGeneration::createAntShape(sf::Color fillColor,
    // std::cout << "Scale: " << scaleX << ", " << scaleY << std::endl;
     shape->setScale(scaleX, scaleY);
 
-    // shape->setOrigin(
-    //     antTexture->getSize().x / 2.f,
-    //     antTexture->getSize().y / 2.f
-    // );
-
-    // Now position it based on grid
     shape->setPosition(
         (x) * conf::cellSize,
         (y) * conf::cellSize
@@ -261,6 +255,11 @@ void WorldGeneration::unloadDistantChunks(int playerChunkX, int playerChunkY, in
         int cy = it->first.first;
 
         if (abs(cx - playerChunkX) > radius || abs(cy - playerChunkY) > radius) {
+            /*
+            // Save chunk data before deletion
+            Chunk* chunk = it->second.get(); //this will require serialization
+            saveChunkToFile(cx, cy, chunk); // cache in RAM
+            */
             it = grid.erase(it); // Automatically deletes chunk memory
         } else {
             ++it;
@@ -288,6 +287,9 @@ void WorldGeneration::createChunk(int chunkX, int chunkY)
             float val = perlinNoise->val(nx, ny);
 
             chunk->push_back(createCell(worldX, worldY, conf::cellSize, val));
+            //spawn colonies + base 1% chance per chunk
+            //spawn buildings
+            //spawn whatever else
         }
     }
 

@@ -29,7 +29,7 @@ namespace conf
     double pheremoneEvap = 0.005;
     unsigned int timestep = 500;
     double locationFoodRegenerationRate = 100;
-    float antSpeed = 250.0f;
+    float antSpeed = 250; //250 / log(simSpeed + 0.1) + 1 -> decent scaling
     float terrainDifficultyScale = 0.05f;
     int baseSeparationDistance = 5;
     float perlinSmoothness = 0.1f;
