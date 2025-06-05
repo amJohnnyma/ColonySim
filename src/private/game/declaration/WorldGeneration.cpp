@@ -282,7 +282,7 @@ void WorldGeneration::generateEntities(int num, int col)
 
             //hard lock on where bases can spawn for now
             float difficulty = getDifficulty(xVal, yVal);
-            if(difficulty > 0.8f)
+            if(difficulty > 0.75f)
             {
                 createBuilding(xVal,yVal, "");
                 building = true;

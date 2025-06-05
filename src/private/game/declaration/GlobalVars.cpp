@@ -39,7 +39,7 @@ namespace conf
     {0.35f, false, sf::Color(0, 0, 255), WATER},     // WATER
     {0.4f,  true,  sf::Color(255, 255, 0), BEACH},   // BEACH
     {0.54f, true,  sf::Color(0, 255, 0), FOREST},     // FOREST
-    {0.68f, true,  sf::Color(30, 255, 30), JUNGLE},   // JUNGLE
-    {1.0f,  true,  sf::Color(150, 75, 0), WOODS}     // WOODS
+    {0.68f, true,  sf::Color(100, 255, 100), JUNGLE},   // JUNGLE
+    {1.0f,  false,  sf::Color(150, 75, 0), WOODS}     // WOODS
 };
 }

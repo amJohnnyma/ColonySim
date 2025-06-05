@@ -421,7 +421,7 @@ void ACO::getAdjCells(int x, int y, Entity* e) {
         int nx = x + dx[i];
         int ny = y + dy[i];
 
-        if (!isInBounds(nx, ny) || world->at(nx,ny)->data.biomeinfo.biome == WATER) {
+        if (!isInBounds(nx, ny) || !world->at(nx,ny)->data.biomeinfo.passable) {
            // std::cout << "Not in bound" << std::endl;
             continue;
         } 
