@@ -71,45 +71,56 @@ void World::drawEntities(sf::RenderWindow& window)
 {
     std::vector<Ant*> ants;
     std::vector<BuildingLocation*> buildings;
-    std::vector<sf::VertexArray> pathTraces;  // Each ants path
 
-for (auto& [chunkCoords, chunkPtr] : grid)
-{
-    if (!chunkPtr) continue;
+    // Get visible area
+    const sf::View view = window.getView();
 
-    for (auto& cellPtr : chunkPtr->getCells())
+    int startX = static_cast<int>((view.getCenter().x - view.getSize().x / 2) / conf::cellSize) - 1;
+    int endX   = static_cast<int>((view.getCenter().x + view.getSize().x / 2) / conf::cellSize) + 1;
+
+    int startY = static_cast<int>((view.getCenter().y - view.getSize().y / 2) / conf::cellSize) - 1;
+    int endY   = static_cast<int>((view.getCenter().y + view.getSize().y / 2) / conf::cellSize) + 1;
+
+    startX = std::max(0, startX);
+    startY = std::max(0, startY);
+    endX   = std::min(height, endX);
+    endY   = std::min(width, endY);
+
+    // Iterate over relevant cells
+    for (int x = startX; x < endX; x++)
     {
-        if (!cellPtr) continue;
-
-        for (auto& entityPtr : cellPtr->data.entities)
+        for (int y = startY; y < endY; y++)
         {
-            if (!entityPtr) continue;
+            Cell* cell = this->at(x, y);
+            if (!cell) continue;
 
-            if (Ant* ant = dynamic_cast<Ant*>(entityPtr.get()))
+            for (auto& entityPtr : cell->data.entities)
             {
-                ants.push_back(ant);
+                if (!entityPtr) continue;
 
-            }
-            else if (BuildingLocation* bl = dynamic_cast<BuildingLocation*>(entityPtr.get()))
-            {
-                buildings.push_back(bl);
-            }
-            else
-            {
-                window.draw(*entityPtr->getHitbox());
+                if (Ant* ant = dynamic_cast<Ant*>(entityPtr.get()))
+                {
+                    ants.push_back(ant);
+                }
+                else if (BuildingLocation* bl = dynamic_cast<BuildingLocation*>(entityPtr.get()))
+                {
+                    buildings.push_back(bl);
+                }
+                else
+                {
+                    window.draw(*entityPtr->getHitbox());
+                }
             }
         }
     }
-    }
-
 
     float dt = antClock.restart().asSeconds();
-    // Draw the waitList (RectangleShape for entities)
-    for (auto& e : ants)
+
+    for (Ant* e : ants)
     {
-        if(e->stillAnimating())
+        if (e->stillAnimating())
             e->updateMovement(dt);
-        
+
         window.draw(*e);
     }
 
@@ -118,6 +129,7 @@ for (auto& [chunkCoords, chunkPtr] : grid)
         window.draw(*bl);
     }
 }
+
 
 void World::createACO()
 {    
