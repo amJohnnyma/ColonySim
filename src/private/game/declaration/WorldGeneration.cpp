@@ -30,8 +30,14 @@ WorldGeneration::~WorldGeneration()
     delete perlinNoise;
 }
 
-std::map<std::pair<int, int>, std::unique_ptr<Chunk>> WorldGeneration::getResult() {
-    return std::move(grid); // Transfer ownership safely
+std::unordered_map<std::pair<int, int>, Chunk *, pair_hash> WorldGeneration::getResult() {
+    std::unordered_map<std::pair<int, int>, Chunk*, pair_hash> result;
+
+    for (const auto& [key, chunkPtr] : grid) {
+        result[key] = chunkPtr.get();  // get raw pointer
+    }
+
+    return result;
 }
 
 pheromone WorldGeneration::createPheromones(int x, int y)
@@ -229,23 +235,33 @@ void WorldGeneration::generateTerrain()
 {
     for (int cx = 0; cx < conf::worldSize.x / conf::chunkSize; ++cx) {
         for (int cy = 0; cy < conf::worldSize.y / conf::chunkSize; ++cy) {
-            auto chunk = std::make_unique<Chunk>(cx, cy, conf::chunkSize);
-            for(int x = 0; x < conf::chunkSize; x++)
-            {
-                for(int y = 0; y < conf::chunkSize; y++)
-                {
-                    int worldX = cx * conf::chunkSize + x;
-                    int worldY = cy * conf::chunkSize + y;
-                    float nx = worldX * conf::perlinSmoothness;
-                    float ny = worldY * conf::perlinSmoothness;
-                    float val = perlinNoise->val(nx,ny);
-                    chunk.get()->push_back(createCell(worldX,worldY,conf::cellSize, val));
-                }
-            }
-            grid[{cy, cx}] = std::move(chunk);
+            createChunk(cx,cy);
         }
     }
 
+}
+
+void WorldGeneration::createChunk(int chunkX, int chunkY)
+{
+    std::pair<int, int> key = {chunkY, chunkX};
+    if (grid.find(key) != grid.end()) return; // Already generated
+
+    auto chunk = std::make_unique<Chunk>(chunkX, chunkY, conf::chunkSize);
+
+    for (int x = 0; x < conf::chunkSize; ++x) {
+        for (int y = 0; y < conf::chunkSize; ++y) {
+            int worldX = chunkX * conf::chunkSize + x;
+            int worldY = chunkY * conf::chunkSize + y;
+
+            float nx = worldX * conf::perlinSmoothness;
+            float ny = worldY * conf::perlinSmoothness;
+            float val = perlinNoise->val(nx, ny);
+
+            chunk->push_back(createCell(worldX, worldY, conf::cellSize, val));
+        }
+    }
+
+    grid[key] = std::move(chunk);
 }
 
 int getEdgeBiased(int max) {
@@ -349,7 +365,7 @@ std::mt19937& getRandomEngine() {
 }
 
 // Hash function for pairs so we can use unordered_set
-struct pair_hash {
+struct pair_hash_vis {
     template <class T1, class T2>
     std::size_t operator() (const std::pair<T1,T2>& p) const {
         return std::hash<T1>()(p.first) ^ (std::hash<T2>()(p.second) << 1);
@@ -385,7 +401,7 @@ std::unique_ptr<sf::Sprite> WorldGeneration::createLocationShape(int x, int y, f
 
 void WorldGeneration::generateLocations(int num)
 {
-    std::unordered_set<std::pair<int,int>, pair_hash> visited;
+    std::unordered_set<std::pair<int,int>, pair_hash_vis> visited;
 
     auto& gen = getRandomEngine();
     std::uniform_int_distribution<> xdist(0, width-1);

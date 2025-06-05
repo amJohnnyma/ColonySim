@@ -11,6 +11,7 @@
 #include "Chunk.h"
 //#include "../../controller/InputManager.h"
 
+
 class InputManager;
 class ACO;
 class World
@@ -18,7 +19,9 @@ class World
     private:
         int temp = 0;
         int width, height;
-        std::map<std::pair<int, int>, std::unique_ptr<Chunk>> grid;
+        //std::map<std::pair<int, int>, std::unique_ptr<Chunk>> grid;
+        std::unordered_map<std::pair<int, int>, Chunk*, pair_hash> grid;
+
      //   std::vector<Cell> drawShapes; //drawShapes.push_back(*grid[i]);
       //  std::vector<Cell> base; //still needs to be assigned
         const int cellSize = 50;

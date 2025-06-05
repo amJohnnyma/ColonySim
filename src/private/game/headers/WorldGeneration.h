@@ -27,12 +27,14 @@ class WorldGeneration
     private:
         PerlinNoise* perlinNoise = new PerlinNoise(conf::seed);
         unsigned int seed;
-        std::map<std::pair<int, int>, std::unique_ptr<Chunk>> grid;
+        //std::map<std::pair<int, int>, std::unique_ptr<Chunk>> grid;
+        std::unordered_map<std::pair<int, int>, std::unique_ptr<Chunk>, pair_hash> grid;
+
         int width,height,cellSize;
     public:
         WorldGeneration(unsigned int seed, int xWidth, int yWidth, int cellSize);
         ~WorldGeneration();
-        std::map<std::pair<int, int>, std::unique_ptr<Chunk>> getResult();
+        std::unordered_map<std::pair<int, int>, Chunk*, pair_hash> getResult();
 
     private:
         pheromone createPheromones(int x, int y);
@@ -40,6 +42,7 @@ class WorldGeneration
         std::unique_ptr<Rectangle> createCellShape(int x, int y, float size);
         std::unique_ptr<Cell> createCell(int x, int y, float cellSize, float noise);
         void generateTerrain();
+        void createChunk(int chunkX, int chunkY);
         std::unique_ptr<sf::Sprite> createAntShape(sf::Color fillColor, int x, int y, float cellSize);
         std::unique_ptr<sf::Sprite> createBaseShape(sf::Color fillColor, int x, int y, float cellSize);
         std::unique_ptr<Ant> createAnt(int x, int y);

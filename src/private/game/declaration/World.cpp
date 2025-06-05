@@ -133,7 +133,7 @@ void World::createACO()
     std::vector<Cell*> raw_goals;
 
     for (auto& [coord, chunkPtr] : grid) {
-    Chunk* chunk = chunkPtr.get();
+    Chunk* chunk = chunkPtr;
        for (auto& cellPtr : chunk->getCells()) { // assuming Chunk is a container of Cells
             for (auto& eg : cellPtr->data.entities) {
                 if (eg->getName().find("location") != std::string::npos) {
