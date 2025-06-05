@@ -8,7 +8,7 @@ namespace conf
     const sf::Vector2f window_size = {1000, 1000};
     const sf::Vector2f window_size_f = static_cast<sf::Vector2f>(window_size);
     int chunkSize = 32;
-    const sf::Vector2i worldSize = {128, 128}; // factor of 16 for now (should be how many chunks) 16,32,48,64,128,256
+    const sf::Vector2i worldSize = {96, 96}; // factor of 16 for now (should be how many chunks) 16,32,48,64,128,256
     /*
     16,16 = 1x1
     32,32 = 2x2

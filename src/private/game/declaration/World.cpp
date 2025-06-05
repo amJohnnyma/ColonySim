@@ -106,7 +106,7 @@ void World::drawEntities(sf::RenderWindow& window)
     }
 
     float dt = antClock.restart().asSeconds();
-    std::cout << dt << std::endl;
+    //std::cout << dt << std::endl;
 
     for (Ant* e : ants)
     {
