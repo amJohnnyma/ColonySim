@@ -1,6 +1,7 @@
 #include "InputManager.h"
 
-void InputManager::processEvent(const sf::Event& event, sf::RenderWindow& window) {
+ void InputManager::processEvent(const sf::Event& event, sf::RenderWindow& window)
+{
     if (event.type == sf::Event::KeyPressed) {
         if (!keyStates[event.key.code]) {
             keysPressedOnce.insert(event.key.code);
@@ -23,6 +24,36 @@ void InputManager::processEvent(const sf::Event& event, sf::RenderWindow& window
             controller->selectCells(start, end, {}); // Pass your filter if needed
         }
     }
+    if (event.type == sf::Event::MouseWheelScrolled) {
+    if (event.mouseWheelScroll.wheel == sf::Mouse::VerticalWheel) {
+        // Step 1: Get mouse world position before zoom
+        sf::Vector2i pixelPos = sf::Mouse::getPosition(window);
+        sf::Vector2f beforeZoom = window.mapPixelToCoords(pixelPos);
+
+        // Step 2: Get current view
+        view = window.getView();
+
+        // Step 3: Apply zoom
+        if (event.mouseWheelScroll.delta > 0) {
+            view.zoom(1.f / zoomFactor);
+            currentZoom /= zoomFactor;
+        } else if (event.mouseWheelScroll.delta < 0) {
+            view.zoom(zoomFactor);
+            currentZoom *= zoomFactor;
+        }
+
+        // Step 4: Get mouse world position after zoom
+        window.setView(view);
+        sf::Vector2f afterZoom = window.mapPixelToCoords(pixelPos);
+
+        // Step 5: Adjust view center to keep mouse anchored
+        sf::Vector2f offset = beforeZoom - afterZoom;
+        view.move(offset);
+
+        // Final set
+        window.setView(view);
+    }
+}
 }
 
 void InputManager::update(sf::RenderWindow& window) {
@@ -57,10 +88,11 @@ std::optional<std::pair<sf::Vector2i, sf::Vector2i>> InputManager::getSelectionB
     return std::nullopt;
 }
 
-InputManager::InputManager(World *world)
+InputManager::InputManager(World *world, sf::RenderWindow& window)
 {
     controller = new PlayerController(world);
     selectionBox = new SelectionBox();
+    view = window.getDefaultView();
 }
 
 InputManager::~InputManager()

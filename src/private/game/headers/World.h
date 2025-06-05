@@ -22,8 +22,6 @@ class World
      //   std::vector<Cell> drawShapes; //drawShapes.push_back(*grid[i]);
       //  std::vector<Cell> base; //still needs to be assigned
         const int cellSize = 50;
-        sf::View view;
-        float currentZoom = 1.0f;
         float baseSpeed = 1.0f;
         float speed;
         std::vector<ACO*> sims;

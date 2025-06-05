@@ -140,7 +140,7 @@ Game::Game(int windowWidth, int windowHeight, int worldWidth, int worldHeight)
     wind = new window(windowWidth,windowHeight);
     world = new World(worldWidth,worldHeight,*wind->wndw);
     uiMan = new UIManager(world);
-    inputManager = new InputManager(world);    
+    inputManager = new InputManager(world,*wind->wndw);    
     handleEvent(Event::PAUSE);    
 }
 

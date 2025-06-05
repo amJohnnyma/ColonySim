@@ -6,8 +6,7 @@
 World::World(int w, int h, sf::RenderWindow& window)
 {
     width = w;
-    height = h;
-    view = window.getDefaultView();
+    height = h;        
     trackedVars = new TrackedVariables();
     WorldGeneration gen(0,w,h,cellSize);
     grid = gen.getResult();    
@@ -323,22 +322,13 @@ void World::render(sf::RenderWindow &window)
 
 // Usage in World::handleInput
 void World::handleInput(InputManager& inputManager, sf::RenderWindow& window) {
-    window.setView(view);
-    speed = baseSpeed * currentZoom;
-
+    speed = baseSpeed * inputManager.getCurrentZoom();
+    sf::View& view = inputManager.getView();
     if (inputManager.isKeyHeld(sf::Keyboard::W)) view.move(0, -speed);
     if (inputManager.isKeyHeld(sf::Keyboard::S)) view.move(0, speed);
     if (inputManager.isKeyHeld(sf::Keyboard::A)) view.move(-speed * 0.5f, 0);
     if (inputManager.isKeyHeld(sf::Keyboard::D)) view.move(speed * 0.5f, 0);
 
-    if (inputManager.isKeyHeld(sf::Keyboard::Q)) {
-        view.zoom(1.001f);
-        currentZoom *= 1.001f;
-    }
-    if (inputManager.isKeyHeld(sf::Keyboard::E)) {
-        view.zoom(0.999f);
-        currentZoom *= 0.999f;
-    }
 
     if (inputManager.isKeyHeld(sf::Keyboard::Num1)) running = true;
     if (inputManager.isKeyHeld(sf::Keyboard::Num2)) running = false;
@@ -388,6 +378,7 @@ void World::handleInput(InputManager& inputManager, sf::RenderWindow& window) {
         conf::timestep -= 1;
         std::cout << "New timestep: " << conf::timestep << std::endl;
     }
+    window.setView(view);
 }
 void World::toggleSimState()
 {
