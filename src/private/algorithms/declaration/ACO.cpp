@@ -144,6 +144,10 @@ void ACO::update()
                         {
                             break;
                         }
+                        if(ant->stillAnimating())
+                        {
+                            break;
+                        }
  
                       //     std::cout << "found ant" << std::endl;
                    //       std::cout << "Target name: " << ant->getTarget()->getName() << std::endl;
