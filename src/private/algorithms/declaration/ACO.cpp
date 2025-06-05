@@ -124,6 +124,7 @@ void ACO::update()
     double runBest = 0;
     //  std::cout << "Updating aco" << std::endl;
     // from start cell, look at each entity (ant)
+    //would be better to store a list of ants
     for (int x = 0; x < conf::worldSize.x; x++)
     {
         for (int y = 0; y < conf::worldSize.y; y++)
@@ -143,10 +144,7 @@ void ACO::update()
                         {
                             break;
                         }
-                        if (ant->stillAnimating())
-                        {
-                            break;
-                        }
+ 
                       //     std::cout << "found ant" << std::endl;
                    //       std::cout << "Target name: " << ant->getTarget()->getName() << std::endl;
                      //     std::cout << "target pos: " << ant->getTarget()->getX() <<", " << ant->getTarget()->getY() << std::endl;
