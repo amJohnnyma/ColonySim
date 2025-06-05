@@ -57,6 +57,8 @@ double WorldGeneration::generateDifficulty()
     return dis(gen);
 }
 
+//these will probably end up using some complex texturing else there will be thousands of draw calls
+//just using a rectangle with color for now
 std::unique_ptr<Rectangle> WorldGeneration::createCellShape(int x, int y, float size)
 {
     auto shape = std::make_unique<Rectangle>(x, y, size, size);

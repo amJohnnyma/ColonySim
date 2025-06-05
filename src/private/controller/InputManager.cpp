@@ -21,19 +21,19 @@
         sf::Vector2i start, end;
         if (selectionBox->endDrag(start, end)) {
             // Selection drag is complete — call controller
-            controller->selectCells(start, end, {}); // Pass your filter if needed
+            controller->selectCells(start, end, {}); // Pass whatever the filter is when needed
         }
     }
     if (event.type == sf::Event::MouseWheelScrolled) {
     if (event.mouseWheelScroll.wheel == sf::Mouse::VerticalWheel) {
-        // Step 1: Get mouse world position before zoom
+        //Get mouse world position before zoom
         sf::Vector2i pixelPos = sf::Mouse::getPosition(window);
         sf::Vector2f beforeZoom = window.mapPixelToCoords(pixelPos);
 
-        // Step 2: Get current view
+        //Get current view
         view = window.getView();
 
-        // Step 3: Apply zoom
+        // Apply zoom
         if (event.mouseWheelScroll.delta > 0) {
             view.zoom(1.f / zoomFactor);
             currentZoom /= zoomFactor;
@@ -42,11 +42,11 @@
             currentZoom *= zoomFactor;
         }
 
-        // Step 4: Get mouse world position after zoom
+        // SGet mouse world position after zoom
         window.setView(view);
         sf::Vector2f afterZoom = window.mapPixelToCoords(pixelPos);
 
-        // Step 5: Adjust view center to keep mouse anchored
+        //djust view center to keep mouse anchored
         sf::Vector2f offset = beforeZoom - afterZoom;
         view.move(offset);
 

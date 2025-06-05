@@ -166,15 +166,7 @@ void World::drawTerrain(sf::RenderWindow & window)
 {
     int drawCount = 0;
 
-    std::vector<sf::VertexArray> allgridshapes;    
-    std::vector<sf::Text> allTexts;
-
-    sf::Font font;
-    if (!font.loadFromFile("src/fonts/pixel.ttf")) {
-        // Make sure to include a fallback or log this
-        std::cerr << "Failed to load font!" << std::endl;
-        return;
-    }
+    std::vector<const sf::VertexArray*> allgridshapes;    
     const sf::View view = window.getView();
      int startX = static_cast<int>((view.getCenter().y - view.getSize().y / 2) / conf::cellSize) - 1;
         int endX   = static_cast<int>((view.getCenter().y + view.getSize().y / 2) / conf::cellSize) + 1;
@@ -200,31 +192,12 @@ void World::drawTerrain(sf::RenderWindow & window)
             //draw pheromone on dc at some point
             if(dc->cellShape)
             {
-                Rectangle* shape = dynamic_cast<Rectangle*>(dc->cellShape.get());
+                Rectangle* shape = static_cast<Rectangle*>(dc->cellShape.get());
                 if(shape)
                 {          
-                 //   float normalized = dc->data.p[0].strength; //find food pheromone for now          
 
-                    allgridshapes.push_back(shape->getVA());
+                    allgridshapes.push_back(&shape->getVA());
 
-                    /*
-                    
-                    sf::Vector2f center = circleShape->getVA()[0].position;
-
-                    // Prepare text
-                    sf::Text text;
-                    text.setFont(font);
-                    text.setString(std::to_string(dc->x) + "," + std::to_string(dc->y));
-                    text.setCharacterSize(12); // Adjust as needed
-                    text.setFillColor(sf::Color::Red);
-                    
-                    // Center the text
-                    sf::FloatRect bounds = text.getLocalBounds();
-                    text.setOrigin(bounds.width / 2, bounds.height / 2);
-                    text.setPosition(center);
-
-                    allTexts.push_back(text);
-                    */
                 
                 }
             }
@@ -235,16 +208,9 @@ void World::drawTerrain(sf::RenderWindow & window)
 
     for (auto& shape : allgridshapes) 
     {
-        window.draw(shape);
+        window.draw(*shape);
     }
-
-        for (auto& text : allTexts) {
-        window.draw(text);
-    }
-//std::cout << "terrain drawn: " + std::to_string(drawCount) << std::endl;
-//std::cout << "terrain skipped: " + std::to_string(skippedCount) << std::endl;
 }
-
 
 void World::drawGrid(sf::RenderWindow & window)
 {
