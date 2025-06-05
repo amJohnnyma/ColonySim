@@ -27,7 +27,6 @@ WorldGeneration::WorldGeneration(unsigned int seed, ChunkManager* cm, int cellSi
 WorldGeneration::~WorldGeneration()
 {
     delete perlinNoise;
-    delete cm;
 }
 
 std::unordered_map<std::pair<int, int>, Chunk *, pair_hash> WorldGeneration::getResult() {
