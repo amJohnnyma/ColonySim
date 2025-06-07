@@ -6,6 +6,7 @@
 #include <random>
 
 #include "../../structs/worldObjects.h"
+#include "../../game/headers/Cell.h"
 #include "../../utils/headers/TextureManager.h"
 #include "../../entities/Entity.h"
 #include "../../shapes/Shape.h"

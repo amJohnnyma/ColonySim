@@ -13,6 +13,7 @@
 #include "../../entities/BuildingLocation.h"
 #include "../../game/headers/World.h"
 #include "../../game/headers/GlobalVars.h"
+#include "../../game/headers/Cell.h"
 
 class World;
 class ACO

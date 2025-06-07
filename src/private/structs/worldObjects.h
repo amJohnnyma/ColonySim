@@ -35,7 +35,7 @@ struct pheromone
 
 };
 
-//make this a class
+
 struct CellData
 {
     std::string type = "Default";
@@ -45,44 +45,15 @@ struct CellData
     std::vector<std::unique_ptr<Entity>> entities;
     BiomeData biomeinfo;
 
+        // Move-only
+    CellData() = default;
+    CellData(CellData&&) = default;
+    CellData& operator=(CellData&&) = default;
+
+    // Disable copy
+    CellData(const CellData&) = delete;
+    CellData& operator=(const CellData&) = delete;
 };
-
-//make this a class
-struct Cell
-{
- //   std::unique_ptr<sf::CircleShape> cs = std::make_unique<sf::CircleShape>();
-    std::unique_ptr<Shape> cellShape;
-    //grid position
-    int x,y;
-    CellData data;
-    sf::Color originalColor;
-
-    //need copy constructor and operator=
-    void setColor(sf::Color col)
-    {
-        originalColor = col;
-        this->cellShape->setFillColor(col);
-    }
-    void setFilterOverlay(sf::Color overlay, float weight = 0.5f)
-    {
-        sf::Color base = this->cellShape->getColor();
-        this->cellShape->setFillColor(lerpColor(base, overlay, weight));
-    }
-        sf::Color lerpColor(sf::Color base, sf::Color overlay, float weight)
-    {
-        sf::Uint8 r = static_cast<sf::Uint8>(base.r * (1.0f - weight) + overlay.r * weight);
-        sf::Uint8 g = static_cast<sf::Uint8>(base.g * (1.0f - weight) + overlay.g * weight);
-        sf::Uint8 b = static_cast<sf::Uint8>(base.b * (1.0f - weight) + overlay.b * weight);
-        sf::Uint8 a = static_cast<sf::Uint8>(base.a * (1.0f - weight) + overlay.a * weight);
-        return sf::Color(r, g, b, a);
-    }
-    void restoreColor()
-    {
-        this->cellShape->setFillColor(originalColor);
-    }
-    ~Cell() {}
-};
-
 
 
 
