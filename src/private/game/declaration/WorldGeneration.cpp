@@ -97,7 +97,7 @@ std::unique_ptr<Cell> WorldGeneration::createCell(int x, int y, float cellSize, 
 void WorldGeneration::createChunk(int chunkX, int chunkY)
 {
     std::pair<int, int> key = {chunkY, chunkX};
-    if (grid.find(key) != grid.end()) return; // Already generated
+   // if (grid.find(key) != grid.end()) return; // Already generated
 
     auto chunk = std::make_unique<Chunk>(chunkX, chunkY, conf::chunkSize);
 
