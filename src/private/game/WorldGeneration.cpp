@@ -97,7 +97,6 @@ std::unique_ptr<Cell> WorldGeneration::createCell(int x, int y, float cellSize, 
 void WorldGeneration::createChunk(int chunkX, int chunkY)
 {
     std::pair<int, int> key = {chunkY, chunkX};
-   // if (grid.find(key) != grid.end()) return; // Already generated
 
     auto chunk = std::make_unique<Chunk>(chunkX, chunkY, conf::chunkSize);
 
@@ -118,7 +117,9 @@ void WorldGeneration::createChunk(int chunkX, int chunkY)
         }
     }
     cm->addChunk(key, {std::move(chunk), state::AVAILABLE}); 
-    grid[key] = chunkCount;
+    if (grid.find(key) != grid.end()) return; // Already generated
+    grid[key] = chunkCount;    // --> Load these into RAM aswell and when they are in a certain radius load back into this key
+    std::cout << "Num chunks: " << chunkCount << " -> Map size: " << grid.size() << std::endl;
     chunkCount++;
 
 }

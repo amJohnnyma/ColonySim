@@ -21,7 +21,7 @@ bool ChunkManager::isAvailable(std::string type)
 
 void ChunkManager::addChunk(std::pair<int, int> key, ChunkWrapper newChunk)
 {
-    std::cout << "Chunk at: " << key.first << ", " << key.second << std::endl;
+   // std::cout << "Chunk at: " << key.first << ", " << key.second << std::endl;
     grid[key] = std::move(newChunk);
 }
 
@@ -59,14 +59,18 @@ void ChunkManager::ensureChunksAround(int centerChunkX, int centerChunkY, int ra
             if (grid.find({cy, cx}) == grid.end()) {
                 if(grid.size() < 256) //hard limit
                 {
-                std::cout << grid.size() << std::endl;
-                std::cout << "World size: " <<  conf::worldSize.x << ", " << conf::worldSize.y << std::endl;
-                worldGen->createChunk(cx, cy); // returns unique_ptr<Chunk>
+                std::cout << "Loaded grid " << grid.size() << std::endl;
+               // std::cout << "World size: " <<  conf::worldSize.x << ", " << conf::worldSize.y << std::endl;
+                worldGen->createChunk(cx, cy); 
                 updateWorldSize();
-                std::cout << "Created chunk: " << cy << ", " << cx << std::endl;
+               // std::cout << "Created chunk: " << cy << ", " << cx << std::endl;
 
                 }
             }
+            //else
+            /*
+            deserialize the chunk from memory
+            */
         }
     }
     //std::cout << "Load fin" << std::endl;
@@ -87,8 +91,9 @@ void ChunkManager::unloadDistantChunks(int playerChunkX, int playerChunkY, int r
             saveChunkToFile(cx, cy, chunk); // cache in RAM
             */
             it = grid.erase(it); // Automatically deletes chunk memory
+            // -> and then serialize into RAM before deleting
             updateWorldSize();
-            std::cout << "deleted chunk" << std::endl;
+           // std::cout << "deleted chunk" << std::endl;
         } else {
             ++it;
         }
