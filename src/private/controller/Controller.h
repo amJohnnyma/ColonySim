@@ -1,7 +1,7 @@
 #ifndef CONTROLLER_H
 #define CONTROLLER_H    
 
-#include "../game/headers/World.h"
+#include "../game/World.h"
 #include "../structs/worldObjects.h"
 #include <iostream>
 #include <sstream>

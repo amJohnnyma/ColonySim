@@ -1,4 +1,4 @@
-#include "../headers/GlobalVars.h"
+#include "GlobalVars.h"
 //put in wrapper to modify vars at runtime
 namespace conf
 {

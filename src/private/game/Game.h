@@ -1,11 +1,11 @@
 #ifndef GAME_H
 #define GAME_H
 #include "World.h"
-#include "../../structs/gfx.h"
-#include "../../UI/UIManager.h"
-#include "../../controller/InputManager.h"
+#include "../structs/gfx.h"
+#include "../UI/UIManager.h"
+#include "../controller/InputManager.h"
 #include "GlobalVars.h"
-#include "../../structs/enums.h"
+#include "../structs/enums.h"
 
 #include <thread>
 #include <chrono>

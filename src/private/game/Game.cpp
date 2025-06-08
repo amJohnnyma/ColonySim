@@ -1,4 +1,4 @@
-#include "../headers/Game.h"
+#include "Game.h"
 
 Game* Game::instance = nullptr;
 

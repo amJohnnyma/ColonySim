@@ -2,9 +2,9 @@
 #define WORLD_H
 
 #include <iostream>
-#include "../../structs/worldObjects.h"
+#include "../structs/worldObjects.h"
 #include "WorldGeneration.h"
-#include "../../algorithms/includes/ACO.h"
+#include "../algorithms/ACO.h"
 #include <array>
 #include <algorithm>
 #include "TrackedVariables.h"

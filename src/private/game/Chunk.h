@@ -3,8 +3,8 @@
 
 #include <vector>
 #include <memory>
-#include "../../structs/worldObjects.h"
-#include "../../game/headers/Cell.h"
+#include "../structs/worldObjects.h"
+#include "../game/Cell.h"
 
 class Chunk {
 private:

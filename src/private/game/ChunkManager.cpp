@@ -1,6 +1,5 @@
-#include "../headers/ChunkManager.h"
-#include "../headers/WorldGeneration.h"
 #include "ChunkManager.h"
+#include "WorldGeneration.h"
 #include <climits>
 
 

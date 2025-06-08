@@ -1,7 +1,7 @@
 #ifndef TRACKED_VARIABLES_H
 #define TRACKED_VARIABLES_H
 
-#include "../../structs/worldObjects.h"
+#include "../structs/worldObjects.h"
 
 
 class TrackedVariables

@@ -1,5 +1,5 @@
-#include "../includes/ACO.h"
-#include "../../game/headers/GlobalVars.h"
+#include "ACO.h"
+#include "../game/GlobalVars.h"
 
 ACO::ACO(std::vector<Cell *> &goals, World* world,  Entity* base)
 {

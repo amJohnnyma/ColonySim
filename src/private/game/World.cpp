@@ -1,6 +1,6 @@
-#include "../headers/World.h"
-#include "../headers/GlobalVars.h"
-#include "../../controller/InputManager.h" 
+#include "World.h"
+#include "GlobalVars.h"
+#include "../controller/InputManager.h" 
 #include "World.h"
 
 World::World(sf::RenderWindow& window)

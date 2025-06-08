@@ -1,19 +1,19 @@
 #ifndef ACO_H
 #define ACO_H
 
-#include "../../structs/worldObjects.h"
+#include "../structs/worldObjects.h"
 #include <iostream>
 #include <cmath>
 #include <random>
 #include <unordered_set>
-#include "../../entities/Entity.h"
-#include "../../entities/Ant.h"
-#include "../../entities/Location.h"
-#include "../../entities/FoodLocation.h"
-#include "../../entities/BuildingLocation.h"
-#include "../../game/headers/World.h"
-#include "../../game/headers/GlobalVars.h"
-#include "../../game/headers/Cell.h"
+#include "../entities/Entity.h"
+#include "../entities/Ant.h"
+#include "../entities/Location.h"
+#include "../entities/FoodLocation.h"
+#include "../entities/BuildingLocation.h"
+#include "../game/World.h"
+#include "../game/GlobalVars.h"
+#include "../game/Cell.h"
 
 class World;
 class ACO

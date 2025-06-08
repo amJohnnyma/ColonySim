@@ -2,7 +2,7 @@
 #define GLOBALVARS_H
 
 #include <SFML/Graphics.hpp>
-#include "../../structs/biomDef.h"
+#include "../structs/biomDef.h"
 
 namespace conf
 {

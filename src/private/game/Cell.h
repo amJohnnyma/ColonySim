@@ -4,7 +4,7 @@
 #include <SFML/Graphics.hpp>
 #include <memory>
 #include <vector>
-#include "../../structs/worldObjects.h"
+#include "../structs/worldObjects.h"
 
 
 class Cell {

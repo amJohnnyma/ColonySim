@@ -4,8 +4,8 @@
 #include <SFML/Graphics.hpp>
 #include <memory>
 #include <string>
-#include "../game/headers/GlobalVars.h"
-#include "../utils/headers/TextureManager.h"
+#include "../game/GlobalVars.h"
+#include "../utils/TextureManager.h"
 
 #include <cstdint>
 #include <sstream>

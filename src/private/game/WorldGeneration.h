@@ -5,19 +5,19 @@
 #include <array>
 #include <random>
 
-#include "../../structs/worldObjects.h"
-#include "../../game/headers/Cell.h"
-#include "../../utils/headers/TextureManager.h"
-#include "../../entities/Entity.h"
-#include "../../shapes/Shape.h"
-#include "../../shapes/Triangle.h"
-#include "../../shapes/Circle.h"
-#include "../../shapes/RoundedRectangle.h"
-#include "../../shapes/Rectangle.h"
-#include "../../entities/Ant.h"
-#include "../../entities/Location.h"
-#include "../../entities/FoodLocation.h"
-#include "../../entities/BuildingLocation.h"
+#include "../structs/worldObjects.h"
+#include "../game/Cell.h"
+#include "../utils/TextureManager.h"
+#include "../entities/Entity.h"
+#include "../shapes/Shape.h"
+#include "../shapes/Triangle.h"
+#include "../shapes/Circle.h"
+#include "../shapes/RoundedRectangle.h"
+#include "../shapes/Rectangle.h"
+#include "../entities/Ant.h"
+#include "../entities/Location.h"
+#include "../entities/FoodLocation.h"
+#include "../entities/BuildingLocation.h"
 #include "PerlinNoise.h"
 
 class Chunk;

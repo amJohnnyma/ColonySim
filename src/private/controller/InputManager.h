@@ -1,6 +1,6 @@
 #ifndef INPUT_MANAGER_H
 #define INPUT_MANAGER_H
-#include "../game/headers/GlobalVars.h"
+#include "../game/GlobalVars.h"
 #include <SFML/Graphics.hpp>
 #include <optional>
 #include <map>
