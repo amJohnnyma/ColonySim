@@ -10,7 +10,7 @@ void PlayerController::update() {
 
 
 
-void PlayerController::selectCells(sf::Vector2i from, sf::Vector2i to, std::vector<std::string> filter)
+void PlayerController::selectCells(sf::Vector2i from, sf::Vector2i to)
 {
        // simplify edge cases by creating new float with bottom left and top right edges
        int left = std::min(from.x, to.x);

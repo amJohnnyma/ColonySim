@@ -19,7 +19,7 @@ class Controller
         virtual void update() = 0; //Whatever a controller needs to update
         virtual ~Controller() = default;
         //select cells from to
-        virtual void selectCells(sf::Vector2i from, sf::Vector2i to,std::vector<std::string> filter) = 0;
+        virtual void selectCells(sf::Vector2i from, sf::Vector2i to) = 0;
     private: //helper functions    
 };
 

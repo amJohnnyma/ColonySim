@@ -117,8 +117,6 @@ bool same(int x, int y, int w, int v)
 void ACO::update()
 {
 
-    bool noBetterF = true;
-    double runBest = 0;
     //  std::cout << "Updating aco" << std::endl;
     // from start cell, look at each entity (ant)
     //would be better to store a list of ants
@@ -229,19 +227,13 @@ void ACO::moveToCell(std::pair<int, int> from, std::pair<int, int> to, Entity *e
 
    // std::cout << "Entity to move was NOT found in the from cell's entities!" << std::endl;
 }
-// not used currently
-void ACO::depositPheremones(Cell *c)
-{
-    double pheremones = 0.0;
-}
-
 void ACO::findFood(Cell *cell, Ant *e)
 {
 
    // std::cout << "Finding food" << std::endl;
     curCell = {cell->x, cell->y};
     //   std::cout<<"Getting adj cells"<<std::endl;
-    getAdjCells(cell->x, cell->y, e);
+    getAdjCells(cell->x, cell->y);
     if (adjCells.size() == 0)
     {
         //     std::cout << "No adj cells" << std::endl;
@@ -252,7 +244,7 @@ void ACO::findFood(Cell *cell, Ant *e)
     std::vector<std::pair<Cell *, double>> scores;
     for (const auto &ac : adjCells)
     {
-        double score = pheromoneCalc(world->at(ac.first, ac.second), e->getTarget(), false);
+        double score = pheromoneCalc(world->at(ac.first, ac.second), e->getTarget());
         scores.push_back({world->at(ac.first,ac.second), score});
     }
 
@@ -308,7 +300,7 @@ void ACO::returnHome(Cell *cell, Ant *e)
     //   std::cout << "Returning home!" << std::endl;
     curCell = {cell->x,cell->y};
     //   std::cout<<"Getting adj cells"<<std::endl;
-    getAdjCells(cell->x, cell->y, e);
+    getAdjCells(cell->x, cell->y);
     if (adjCells.size() == 0)
     {
         //     std::cout << "No adj cells" << std::endl;
@@ -319,7 +311,7 @@ void ACO::returnHome(Cell *cell, Ant *e)
     std::vector<std::pair<Cell *, double>> scores;
     for (const auto &ac : adjCells)
     {
-        double score = pheromoneCalc(world->at(ac.first, ac.second), e->getTarget(), true);
+        double score = pheromoneCalc(world->at(ac.first, ac.second), e->getTarget());
         scores.push_back({world->at(ac.first,ac.second), score});
     }
 
@@ -414,7 +406,7 @@ void ACO::handleEnemiesInCell(Cell* tile, Entity* e) {
     }
 }
 
-void ACO::getAdjCells(int x, int y, Entity* e) {
+void ACO::getAdjCells(int x, int y) {
     const int dx[] = {0, 0, -1, 1, -1, -1, 1, 1};
     const int dy[] = {1, -1, 0, 0, -1, 1, -1, 1};
 
@@ -453,7 +445,7 @@ void ACO::getAdjCells(int x, int y, Entity* e) {
 • β is a parameter that controls the influence of the heuristic value.
 • Ni is the set of feasible nodes that can be visited from node i.
 */
-double ACO::pheromoneCalc(Cell *cell, Entity *target, bool returningHome)
+double ACO::pheromoneCalc(Cell *cell, Entity *target)
 {
     // std::cout << cell->x << ", " << cell->y << " c:t " << target->getX() << ", " << target->getY() << std::endl;
     double Nij = calculateHeuristic(cell, target);
@@ -464,13 +456,13 @@ double ACO::pheromoneCalc(Cell *cell, Entity *target, bool returningHome)
    // std::cout << "Tij: " + std::to_string(Tij) << std::endl;
 
     double numerator = std::pow(Tij, conf::pF) * std::pow(Nij , conf::hF);
-    double denominator = sumOfFeasiblePheremoneProb(target, returningHome) + 0.00001;
+    double denominator = sumOfFeasiblePheremoneProb(target) + 0.00001;
 
     // std::cout << numerator / denominator << std::endl;
     return numerator / denominator;
 }
 
-double ACO::sumOfFeasiblePheremoneProb(Entity *target, bool returningHome)
+double ACO::sumOfFeasiblePheremoneProb(Entity *target)
 {
 
     double sum = 0.0;

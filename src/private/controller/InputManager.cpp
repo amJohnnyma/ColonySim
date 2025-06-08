@@ -21,7 +21,7 @@
         sf::Vector2i start, end;
         if (selectionBox->endDrag(start, end)) {
             // Selection drag is complete — call controller
-            controller->selectCells(start, end, {}); // Pass whatever the filter is when needed
+            controller->selectCells(start, end);
         }
     }
     if (event.type == sf::Event::MouseWheelScrolled) {

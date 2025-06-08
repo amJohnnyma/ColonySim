@@ -37,7 +37,7 @@ class ACO
 
     private:
         void handleEnemiesInCell(Cell *tile, Entity *e);
-        void getAdjCells(int x, int y, Entity *e);
+        void getAdjCells(int x, int y);
         /*
         • τij (t) is the pheromone value on edge (i, j) at time t.
         • ηij is the heuristic value (often the inverse of the distance) for edge (i, j).
@@ -45,12 +45,11 @@ class ACO
         • β is a parameter that controls the influence of the heuristic value.
         • Ni is the set of feasible nodes that can be visited from node i.
         */
-        double pheromoneCalc(Cell* cell, Entity* target, bool flag);   
-        double sumOfFeasiblePheremoneProb(Entity *target, bool flag);     
+        double pheromoneCalc(Cell* cell, Entity* target);   
+        double sumOfFeasiblePheremoneProb(Entity *target);     
         double calculateHeuristic(Cell* next, Entity* target);
         //pair<cell, score>
         void moveToCell(std::pair<int, int> from, std::pair<int, int> to, Entity *e);
-        void depositPheremones(Cell* c);
         void findFood(Cell* cell, Ant* e);
         void returnHome(Cell* cell, Ant* e);
         bool isInBounds(int x, int y) const;
