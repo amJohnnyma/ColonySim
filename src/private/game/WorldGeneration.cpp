@@ -130,7 +130,7 @@ void WorldGeneration::createChunk(int chunkX, int chunkY)
             int team = static_cast<int>(dist(rng)*conf::numberOfTeams);
             TeamInfo p = 0;
             p = setTeam(p, team);
-            if(baserng < conf::baseSpawnChance)
+            if(baserng < conf::baseSpawnChance && counter == 0) //temporary count to only have one base
             {
                 //spawn base and the ants in this cell
                 auto base = createBase(worldX, worldY, p);
@@ -142,10 +142,10 @@ void WorldGeneration::createChunk(int chunkX, int chunkY)
                     ant->setTeam(p);
                     cell.get()->data.entities.push_back(std::move(ant));               
                 }
-
+                counter++;
             }
             float locationrng = dist(rng);
-            if(locationrng < conf::locationSpawnChance)
+            if(locationrng < conf::locationSpawnChance && counter == 1)
             {
                 //spawn a location here
                 if (!cell->data.entities.empty() || !cell->data.biomeinfo.passable)
@@ -155,6 +155,7 @@ void WorldGeneration::createChunk(int chunkX, int chunkY)
                 double difficulty = cell->data.difficulty; // consistent indexing: row major
                 auto location = createLocation(worldX,worldY,difficulty);
                 cell.get()->data.entities.push_back(std::move(location));
+                counter++;
             }
             //spawn buildings
             //spawn whatever else
@@ -296,26 +297,31 @@ std::unique_ptr<Location> WorldGeneration::createLocation(int x, int y, double d
 
 void WorldGeneration::logAllEntities()
 {
-    for (const auto& [chunkCoord, chunkPtr] : grid)
+    for (int chunkY = 0; chunkY < conf::worldSize.y; ++chunkY)
     {
-        if (!chunkPtr) continue;
-
-        for (int y = 0; y < conf::chunkSize; ++y)
+        for (int chunkX = 0; chunkX < conf::worldSize.x; ++chunkX)
         {
-            for (int x = 0; x < conf::chunkSize; ++x)
-            {
-               // Cell* cell = chunkPtr->at(x, y);
-              //  if (!cell) continue;
+            Chunk* chunk = cm->getChunk(chunkX, chunkY);
+            if (!chunk) continue;
 
-                // for (const auto& entityPtr : cell->data.entities)
-                // {
-                //     if (!entityPtr) continue;
-                //     std::cout << entityPtr->getName() << ", "
-                //               << entityPtr->getX() << ", "
-                //               << entityPtr->getY() << ", "
-                //               << entityPtr->getTeam()
-                //               << std::endl;
-                // }
+            for (int cy = 0; cy < conf::chunkSize; ++cy)
+            {
+                for (int cx = 0; cx < conf::chunkSize; ++cx)
+                {                   
+
+                    auto cell = chunk->at(cx,cy);
+                    if (!cell) continue;
+
+                    for (const auto& entityPtr : cell->data.entities)
+                    {
+                        if (!entityPtr) continue;
+                        std::cout << entityPtr->getName() << ", "
+                                  << entityPtr->getX() << ", "
+                                  << entityPtr->getY() << ", "
+                                  << entityPtr->getTeam()
+                                  << std::endl;
+                    }
+                }
             }
         }
     }
