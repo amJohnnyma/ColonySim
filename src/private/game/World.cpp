@@ -296,11 +296,24 @@ void World::render(sf::RenderWindow &window)
 void World::handleInput(InputManager& inputManager, sf::RenderWindow& window) {
     speed = baseSpeed * inputManager.getCurrentZoom();
     sf::View& view = inputManager.getView();
-    if (inputManager.isKeyHeld(sf::Keyboard::W)) view.move(0, -speed);
-    if (inputManager.isKeyHeld(sf::Keyboard::S)) view.move(0, speed);
-    if (inputManager.isKeyHeld(sf::Keyboard::A)) view.move(-speed * 0.5f, 0);
-    if (inputManager.isKeyHeld(sf::Keyboard::D)) view.move(speed * 0.5f, 0);
-
+    bool inBounds = true;
+    sf::Vector2f center = view.getCenter();
+    if (inputManager.isKeyHeld(sf::Keyboard::W) && center.y > 0)
+    {
+        view.move(0, -speed);
+    }
+    if (inputManager.isKeyHeld(sf::Keyboard::S) && center.y < conf::max_world_size.y * conf::chunkSize * conf::cellSize)
+    {
+        view.move(0, speed);
+    }
+    if (inputManager.isKeyHeld(sf::Keyboard::A) && center.x > 0)
+    {
+        view.move(-speed, 0);
+    }
+    if (inputManager.isKeyHeld(sf::Keyboard::D)&& center.x < conf::max_world_size.x * conf::chunkSize * conf::cellSize)
+    {
+        view.move(speed, 0);
+    }
 
     if (inputManager.isKeyHeld(sf::Keyboard::Num1)) running = true;
     if (inputManager.isKeyHeld(sf::Keyboard::Num2)) running = false;
