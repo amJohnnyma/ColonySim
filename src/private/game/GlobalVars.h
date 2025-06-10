@@ -37,6 +37,12 @@ namespace conf
     constexpr int biomeSize = 5;
     extern const BiomeData biomeInfo[biomeSize];
     extern int simulationSpeed;
+    extern double baseSpawnChance; //0 - 1
+    extern int defaultNumAntsPerBase;
+    extern double numAntsToSpawn; //0.5 - 1.5
+    extern double locationSpawnChance; //0 - 1
+    extern int numberOfTeams; // >0
+    extern double chosenTeam; //0 - 1 (chosen * num teams = team)
 
 }
 

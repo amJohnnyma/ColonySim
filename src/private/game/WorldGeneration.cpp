@@ -4,7 +4,7 @@
 #include "ChunkManager.h"
 WorldGeneration::WorldGeneration(unsigned int seed, ChunkManager* cm, int cellSize)
 {
-    seed = seed;
+    this->seed = seed;
 
     this->cellSize = cellSize;
     grid.clear();
@@ -109,9 +109,22 @@ void WorldGeneration::createChunk(int chunkX, int chunkY)
             float ny = worldY * conf::perlinSmoothness;
             float val = perlinNoise->val(nx, ny);
 
-            //for now only do terrain
+            //terrain
             chunk->push_back(createCell(worldX, worldY, conf::cellSize, val));
-            //spawn colonies + base 1% chance per chunk
+
+            //colonies
+            std::mt19937 rng(conf::seed);
+            std::uniform_real_distribution<float> dist(0.0f, 1.0f);
+            float base = dist(rng);
+            if(base < conf::baseSpawnChance)
+            {
+                //spawn base and the ants in this cell
+            }
+            float location = dist(rng);
+            if(location < conf::locationSpawnChance)
+            {
+                //spawn a location here
+            }
             //spawn buildings
             //spawn whatever else
         }
