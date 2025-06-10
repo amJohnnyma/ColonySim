@@ -21,6 +21,7 @@ WorldGeneration::WorldGeneration(unsigned int seed, ChunkManager* cm, int cellSi
     // std::cout << "Gen te s" << std::endl;
     // assignTextures();
     // std::cout << "Gen te d" << std::endl;
+    logAllEntities();
 
 }
 
@@ -99,6 +100,8 @@ void WorldGeneration::createChunk(int chunkX, int chunkY)
     std::pair<int, int> key = {chunkY, chunkX};
 
     auto chunk = std::make_unique<Chunk>(chunkX, chunkY, conf::chunkSize);
+            std::mt19937 rng(conf::seed);
+            std::uniform_real_distribution<float> dist(0.0f, 1.0f);
 
     for (int x = 0; x < conf::chunkSize; ++x) {
         for (int y = 0; y < conf::chunkSize; ++y) {
@@ -109,16 +112,27 @@ void WorldGeneration::createChunk(int chunkX, int chunkY)
             float ny = worldY * conf::perlinSmoothness;
             float val = perlinNoise->val(nx, ny);
 
-            //terrain
-            chunk->push_back(createCell(worldX, worldY, conf::cellSize, val));
+            auto cell = createCell(worldX, worldY, conf::cellSize, val);
 
             //colonies
-            std::mt19937 rng(conf::seed);
-            std::uniform_real_distribution<float> dist(0.0f, 1.0f);
-            float base = dist(rng);
-            if(base < conf::baseSpawnChance)
+            float baserng = dist(rng);
+            int team = static_cast<int>(dist(rng)*conf::numberOfTeams);
+            std::cout << baserng << std::endl;
+            if(baserng < conf::baseSpawnChance)
             {
+                TeamInfo p = 0;
+                p = setTeam(p, team);
                 //spawn base and the ants in this cell
+                auto base = createBase(worldX, worldY, p);
+                base->setTeam(p);
+                cell.get()->data.entities.push_back(std::move(base));
+                for (int k = 0; k < conf::defaultNumAntsPerBase; k++)
+                {
+                    auto ant = createAnt(worldX, worldY);
+                    ant->setTeam(p);
+                    cell.get()->data.entities.push_back(std::move(ant));               
+                }
+
             }
             float location = dist(rng);
             if(location < conf::locationSpawnChance)
@@ -127,6 +141,7 @@ void WorldGeneration::createChunk(int chunkX, int chunkY)
             }
             //spawn buildings
             //spawn whatever else
+            chunk->push_back(std::move(cell));
         }
     }
     cm->addChunk(key, {std::move(chunk), state::AVAILABLE}); 
@@ -136,6 +151,8 @@ void WorldGeneration::createChunk(int chunkX, int chunkY)
     chunkCount++;
 
 }
+
+
 void WorldGeneration::generateTerrain()
 {
     for (int cx = 0; cx < conf::worldSize.x / conf::chunkSize; cx++) {

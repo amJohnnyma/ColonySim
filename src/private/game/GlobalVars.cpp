@@ -45,10 +45,10 @@ namespace conf
     {1.0f,  false,  sf::Color(150, 75, 0), WOODS}     // WOODS
     };
     int simulationSpeed = 10;
-    double baseSpawnChance = 0.005; //0 - 1
+    double baseSpawnChance = 0.05; //0 - 1
     int defaultNumAntsPerBase = 200;
     double numAntsToSpawn = 0.5; //0.5 - 1.5
-    double locationSpawnChance = 0.005; //0 - 1
+    double locationSpawnChance = 0.05; //0 - 1
     int numberOfTeams = 16; // >0
     double chosenTeam; //0 - 1 (chosen * num teams = team)
     

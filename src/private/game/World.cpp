@@ -22,6 +22,10 @@ Cell* World::at(int x, int y) {
     } 
     int lx = x % conf::chunkSize;
     int ly = y % conf::chunkSize;   
+    if(lx < 0 || ly < 0)
+    {
+        return nullptr;
+    }
     return chunkManager->getChunk(cx,cy)->at(lx, ly);
 }
 
@@ -285,10 +289,12 @@ void World::render(sf::RenderWindow &window)
 
     window.clear();
     //drawGrid(window);
-   // std::cout << "Draw terrain" << std::endl;
+    //std::cout << "Draw terrain" << std::endl;
     drawTerrain(window);
+    //std::cout << "Fin draw" << std::endl;
+   // std::cout << "Draw ent" << std::endl;
+    drawEntities(window);
    // std::cout << "Fin draw" << std::endl;
-   // drawEntities(window);
 
 }
 
