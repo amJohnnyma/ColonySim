@@ -191,7 +191,7 @@ void ACO::update()
 
 void ACO::moveToCell(std::pair<int, int> from, std::pair<int, int> to, Entity *e)
 {
-    Cell* fromCell = world->at(from.first, from.second);
+    Cell* fromCell = world->at(from.second, from.first);
     Cell* toCell = world->at(to.first, to.second);
 
     if (!fromCell || !toCell) {
@@ -199,7 +199,7 @@ void ACO::moveToCell(std::pair<int, int> from, std::pair<int, int> to, Entity *e
         return;
     }
 
-  //  std::cout << "Moving entity '" << e->getName() << "' from (" << from.first << ", " << from.second << ") to (" << to.first << ", " << to.second << ")" << std::endl;
+   // std::cout << "Moving entity '" << e->getName() << "' from (" << from.first << ", " << from.second << ") to (" << to.first << ", " << to.second << ")" << std::endl;
 
    // std::cout << "Entities in from cell: " << fromCell->data.entities.size() << std::endl;
     for (auto it = fromCell->data.entities.begin(); it != fromCell->data.entities.end(); ++it)
@@ -289,7 +289,7 @@ void ACO::findFood(Cell *cell, Ant *e)
             s.first->data.p.pheromoneMap[team] += updatedP;
 
 
-            moveToCell({cell->y, cell->x}, {s.first->x, s.first->y}, e);
+            moveToCell({cell->x, cell->y}, {s.first->x, s.first->y}, e);
 
             break;
         }
@@ -355,7 +355,7 @@ void ACO::returnHome(Cell *cell, Ant *e)
 
 
 
-            moveToCell({cell->y, cell->x}, {s.first->x, s.first->y}, e);
+            moveToCell({cell->x, cell->y}, {s.first->x, s.first->y}, e);
             break;
         }
     }
@@ -425,7 +425,7 @@ void ACO::getAdjCells(int x, int y) {
 
         //handleEnemiesInCell(world->at(ny,nx), e);
 
-        if (!isCellBlocked(world->at(ny,nx)))
+        if (!isCellBlocked(world->at(nx,ny)))
         {        
             adjCells.push_back({nx,ny});
         }

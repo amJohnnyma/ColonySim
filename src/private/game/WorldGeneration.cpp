@@ -4,7 +4,17 @@
 #include "ChunkManager.h"
 WorldGeneration::WorldGeneration(unsigned int seed, ChunkManager* cm, int cellSize)
 {
-    this->seed = seed;
+
+    if (seed == 0)
+    {
+        seed = std::random_device{}(); // non-deterministic seed
+        std::cout << seed << std::endl;
+        conf::seed = seed;
+    }
+
+    this->seed = conf::seed;
+
+    perlinNoise = new PerlinNoise(conf::seed);
 
     this->cellSize = cellSize;
     grid.clear();
@@ -100,8 +110,9 @@ void WorldGeneration::createChunk(int chunkX, int chunkY)
     std::pair<int, int> key = {chunkY, chunkX};
 
     auto chunk = std::make_unique<Chunk>(chunkX, chunkY, conf::chunkSize);
-            std::mt19937 rng(conf::seed);
-            std::uniform_real_distribution<float> dist(0.0f, 1.0f);
+
+        std::mt19937 rng(conf::seed + chunkX * 73856093 + chunkY * 19349663); 
+        std::uniform_real_distribution<float> dist(0.0f, 1.0f);
 
     for (int x = 0; x < conf::chunkSize; ++x) {
         for (int y = 0; y < conf::chunkSize; ++y) {
@@ -116,7 +127,7 @@ void WorldGeneration::createChunk(int chunkX, int chunkY)
 
             //colonies
             float baserng = dist(rng);
-            int team = 1;//static_cast<int>(dist(rng)*conf::numberOfTeams);
+            int team = static_cast<int>(dist(rng)*conf::numberOfTeams);
             TeamInfo p = 0;
             p = setTeam(p, team);
             if(baserng < conf::baseSpawnChance)
@@ -133,10 +144,17 @@ void WorldGeneration::createChunk(int chunkX, int chunkY)
                 }
 
             }
-            float location = dist(rng);
-            if(location < conf::locationSpawnChance)
+            float locationrng = dist(rng);
+            if(locationrng < conf::locationSpawnChance)
             {
                 //spawn a location here
+                if (!cell->data.entities.empty() || !cell->data.biomeinfo.passable)
+                {
+                    continue;
+                }
+                double difficulty = cell->data.difficulty; // consistent indexing: row major
+                auto location = createLocation(worldX,worldY,difficulty);
+                cell.get()->data.entities.push_back(std::move(location));
             }
             //spawn buildings
             //spawn whatever else
@@ -258,6 +276,22 @@ std::unique_ptr<Location> WorldGeneration::createBase(int x, int y, TeamInfo p)
         // now you can use the cell pointer
     }
     return std::make_unique<Location>(x, y, "Base:"+std::to_string(p), 100000, std::move(shape), cell);
+}
+
+std::unique_ptr<Location> WorldGeneration::createLocation(int x, int y, double difficulty)
+{
+
+
+
+
+    auto rs = createLocationShape(x, y, cellSize, difficulty);
+    std::string name = "location";
+
+    auto locationEntity = std::make_unique<FoodLocation>(x, y, name, 10000, std::move(rs), nullptr);
+    locationEntity->giveResource(100000.0);
+
+    return locationEntity;
+
 }
 
 void WorldGeneration::logAllEntities()

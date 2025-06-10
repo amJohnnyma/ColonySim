@@ -25,7 +25,7 @@ class ChunkManager;
 class WorldGeneration
 {
     private:
-        PerlinNoise* perlinNoise = new PerlinNoise(conf::seed);
+        PerlinNoise* perlinNoise;
         unsigned int seed;
         //std::map<std::pair<int, int>, std::unique_ptr<Chunk>> grid;
         std::unordered_map<std::pair<int, int>, uint32_t, pair_hash> grid; //throwaway int value
@@ -50,6 +50,7 @@ class WorldGeneration
         std::unique_ptr<sf::Sprite> createBaseShape(sf::Color fillColor, int x, int y, float cellSize);
         std::unique_ptr<Ant> createAnt(int x, int y);
         std::unique_ptr<Location> createBase(int x, int y, TeamInfo p);
+        std::unique_ptr<Location> createLocation(int x, int y, double difficulty);
         void logAllEntities();
         void generateEntities(int num, int col);
         void assignTextures();

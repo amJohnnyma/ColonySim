@@ -55,7 +55,7 @@ void World::update()
     // std::cout << "View Center: " << viewCenter.x << ", " << viewCenter.y << std::endl;
    //  std::cout << "Chunk Center: " << chunkX << ", " << chunkY << std::endl;
     // // Load necessary chunks and unload distant ones
-    chunkManager->ensureChunksAround(chunkX, chunkY, 5);  // load chunks in a 5x5 area
+   // chunkManager->ensureChunksAround(chunkX, chunkY, 5);  // load chunks in a 5x5 area
    // chunkManager->unloadDistantChunks(chunkX, chunkY, 5); // unload chunks beyond 9x9 area
 
    
@@ -70,11 +70,11 @@ void World::drawEntities(sf::RenderWindow& window)
     // Get visible area
     const sf::View view = window.getView();
 
-    int startX = static_cast<int>((view.getCenter().x - view.getSize().x / 2) / conf::cellSize) - 1;
-    int endX   = static_cast<int>((view.getCenter().x + view.getSize().x / 2) / conf::cellSize) + 1;
+    int startX = static_cast<int>((view.getCenter().y - view.getSize().y / 2) / conf::cellSize) - 1;
+    int endX   = static_cast<int>((view.getCenter().y + view.getSize().y / 2) / conf::cellSize) + 1;
 
-    int startY = static_cast<int>((view.getCenter().y - view.getSize().y / 2) / conf::cellSize) - 1;
-    int endY   = static_cast<int>((view.getCenter().y + view.getSize().y / 2) / conf::cellSize) + 1;
+    int startY = static_cast<int>((view.getCenter().x - view.getSize().x / 2) / conf::cellSize) - 1;
+    int endY   = static_cast<int>((view.getCenter().x + view.getSize().x / 2) / conf::cellSize) + 1;
 
    // startX = std::max(0, startX);
     //startY = std::max(0, startY);
