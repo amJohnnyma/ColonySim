@@ -292,9 +292,9 @@ void World::render(sf::RenderWindow &window)
     //std::cout << "Draw terrain" << std::endl;
     drawTerrain(window);
     //std::cout << "Fin draw" << std::endl;
-   // std::cout << "Draw ent" << std::endl;
+    //std::cout << "Draw ent" << std::endl;
     drawEntities(window);
-   // std::cout << "Fin draw" << std::endl;
+    //std::cout << "Fin draw" << std::endl;
 
 }
 

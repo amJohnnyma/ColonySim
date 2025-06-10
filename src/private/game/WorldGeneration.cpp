@@ -116,12 +116,11 @@ void WorldGeneration::createChunk(int chunkX, int chunkY)
 
             //colonies
             float baserng = dist(rng);
-            int team = static_cast<int>(dist(rng)*conf::numberOfTeams);
-            std::cout << baserng << std::endl;
+            int team = 1;//static_cast<int>(dist(rng)*conf::numberOfTeams);
+            TeamInfo p = 0;
+            p = setTeam(p, team);
             if(baserng < conf::baseSpawnChance)
             {
-                TeamInfo p = 0;
-                p = setTeam(p, team);
                 //spawn base and the ants in this cell
                 auto base = createBase(worldX, worldY, p);
                 base->setTeam(p);

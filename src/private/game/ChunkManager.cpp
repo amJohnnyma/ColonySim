@@ -60,6 +60,7 @@ void ChunkManager::ensureChunksAround(int centerChunkX, int centerChunkY, int ra
 
             if (grid.find({cy, cx}) == grid.end())
             {
+                std::cout << "Mkae new chunk" << std::endl;
                 if (grid.size() < 256) // hard limit
                 {
                     std::cout << "Loaded grid " << grid.size() << std::endl;
@@ -87,6 +88,10 @@ void ChunkManager::ensureChunksAround(int centerChunkX, int centerChunkY, int ra
                     updateWorldSize();
                     // std::cout << "Created chunk: " << cy << ", " << cx << std::endl;
                 }
+            }
+            else
+            {
+                std::cout << "Chunk already loaded" << std::endl;
             }
             // else
             /*
