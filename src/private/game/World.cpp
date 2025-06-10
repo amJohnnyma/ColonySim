@@ -51,7 +51,7 @@ void World::update()
     // std::cout << "View Center: " << viewCenter.x << ", " << viewCenter.y << std::endl;
    //  std::cout << "Chunk Center: " << chunkX << ", " << chunkY << std::endl;
     // // Load necessary chunks and unload distant ones
-    chunkManager->ensureChunksAround(chunkX, chunkY, 4);  // load chunks in a 5x5 area
+    chunkManager->ensureChunksAround(chunkX, chunkY, 5);  // load chunks in a 5x5 area
     chunkManager->unloadDistantChunks(chunkX, chunkY, 5); // unload chunks beyond 9x9 area
 
    

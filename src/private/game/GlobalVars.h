@@ -11,6 +11,7 @@ namespace conf
     extern double maxPheromone;
     extern const sf::Vector2f window_size;
     extern const sf::Vector2f window_size_f;
+    extern sf::Vector2i max_world_size;
     extern sf::Vector2i worldSize;
     extern const uint32_t max_framerate;
     extern const float dt;

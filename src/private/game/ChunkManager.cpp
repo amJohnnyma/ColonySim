@@ -51,23 +51,44 @@ bool ChunkManager::canSerialize()
 void ChunkManager::ensureChunksAround(int centerChunkX, int centerChunkY, int radius) {
     //std::cout << "Load" << std::endl;
     for (int dx = -radius; dx <= radius; ++dx) {
-        for (int dy = -radius; dy <= radius; ++dy) {
+        for (int dy = -radius; dy <= radius; ++dy)
+        {
             int cx = centerChunkX + dx;
             int cy = centerChunkY + dy;
             if (cx < 0 || cy < 0)
                 continue;
-            if (grid.find({cy, cx}) == grid.end()) {
-                if(grid.size() < 256) //hard limit
-                {
-                std::cout << "Loaded grid " << grid.size() << std::endl;
-               // std::cout << "World size: " <<  conf::worldSize.x << ", " << conf::worldSize.y << std::endl;
-                worldGen->createChunk(cx, cy); 
-                updateWorldSize();
-               // std::cout << "Created chunk: " << cy << ", " << cx << std::endl;
 
+            if (grid.find({cy, cx}) == grid.end())
+            {
+                if (grid.size() < 256) // hard limit
+                {
+                    std::cout << "Loaded grid " << grid.size() << std::endl;
+                    // std::cout << "World size: " <<  conf::worldSize.x << ", " << conf::worldSize.y << std::endl;
+                    // if cx && cy
+                    if (cx > conf::max_world_size.x && cy > conf::max_world_size.y)
+                    {
+                        worldGen->createChunk(conf::max_world_size.x, conf::max_world_size.y);
+                    }
+                    else if (cy > conf::max_world_size.y)
+                    {
+                        worldGen->createChunk(cx, conf::max_world_size.y);
+                    }
+                    else if (cx > conf::max_world_size.x)
+                    {
+                        worldGen->createChunk(conf::max_world_size.x, cy);
+                    }
+                    else
+                    {
+                        worldGen->createChunk(cx, cy);
+                    }
+
+                    // if cy
+                    // if cx
+                    updateWorldSize();
+                    // std::cout << "Created chunk: " << cy << ", " << cx << std::endl;
                 }
             }
-            //else
+            // else
             /*
             deserialize the chunk from memory
             */

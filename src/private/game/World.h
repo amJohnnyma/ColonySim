@@ -20,7 +20,7 @@ class World
     private:
         int temp = 0;
 
-        float baseSpeed = 1.0f;
+        float baseSpeed = 5.0f;
         float speed;
         std::vector<ACO*> sims;
         bool running = false;
