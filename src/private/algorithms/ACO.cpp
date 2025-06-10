@@ -27,20 +27,31 @@ ACO::~ACO()
 void ACO::assignRandomTarget(std::vector<Cell *> &raw_goals)
 {
     std::cout << "Raw goal size: " << std::to_string(raw_goals.size()) << std::endl;
-    for(auto& cell : raw_goals)
+
+    for (auto& cell : raw_goals)
     {
-        // Search for FoodLocation entities and add unique ones to tl
-        for (auto& e : cell->data.entities) {
-            if (FoodLocation* loc = dynamic_cast<FoodLocation*>(e.get())) {
-                // Check if loc is already in tl by comparing (x, y)
+        if (!cell) continue;
+
+        int x = cell->getX();
+        int y = cell->getY();
+
+        Cell* worldCell = world->at(x, y);
+        if (!worldCell) continue;
+
+        for (auto& e : worldCell->data.entities)
+        {
+            if (FoodLocation* loc = dynamic_cast<FoodLocation*>(e.get()))
+            {
+                // Check if already added based on (x, y)
                 bool alreadyAdded = std::any_of(tl.begin(), tl.end(), [&](const std::pair<int, int>& existing) {
                     return existing.first == loc->getX() && existing.second == loc->getY();
                 });
 
-                if (!alreadyAdded) {
-                    tl.push_back({loc->getX(), loc->getY()});
+                if (!alreadyAdded)
+                {
+                    tl.emplace_back(loc->getX(), loc->getY());
                     std::cout << "Added possible location: " << loc->getName()
-                            << " ( " << loc->getX() << ", " << loc->getY() << " )" << std::endl;
+                              << " ( " << loc->getX() << ", " << loc->getY() << " )" << std::endl;
                 }
             }
         }
@@ -97,6 +108,7 @@ void ACO::getNewTarget(Ant *ant)
 
     for (const auto& [score, x, y, food] : scoredTargets) {
         if (food) {
+            std::cout << "Target: " << x << ", " << y << std::endl;
             ant->setTarget(food);
             possibleLocations = true;
             return;
@@ -104,6 +116,7 @@ void ACO::getNewTarget(Ant *ant)
     }
 
     // No valid target found, fall back to base
+    std::cout << "No target" << std::endl;
     possibleLocations = false;
     ant->setTarget(base);
 }
@@ -144,10 +157,10 @@ void ACO::update()
                             break;
                         }
  
-                      //     std::cout << "found ant" << std::endl;
-                   //       std::cout << "Target name: " << ant->getTarget()->getName() << std::endl;
-                     //     std::cout << "target pos: " << ant->getTarget()->getX() <<", " << ant->getTarget()->getY() << std::endl;
-                   //       std::cout << "Current pos: " << ant->getX() << ", " << ant->getY() << std::endl;
+                        //   std::cout << "found ant" << std::endl;
+                        //  std::cout << "Target name: " << ant->getTarget()->getName() << std::endl;
+                        //  std::cout << "target pos: " << ant->getTarget()->getX() <<", " << ant->getTarget()->getY() << std::endl;
+                        //  std::cout << "Current pos: " << ant->getX() << ", " << ant->getY() << std::endl;
 
                         if (ant->getTarget()->getResource() <= 0 && ant->getTarget() != base)
                         {
@@ -155,8 +168,11 @@ void ACO::update()
                         }
                         if (ant->getTarget() && ant->getTarget()->getName() == "Base:" + std::to_string(ant->getTeam()))
                         {
-                            if (!ant->sameTeam(ant->getTeam(), ant->getTarget()->getTeam()))
+                            std::cout << "Base found" << std::endl;
+                            std::cout << ant->getTeam() << ", " << ant->getTarget()->getTeam() << std::endl;
+                            if (!ant->sameTeam(ant->getTeam(), ant->getTarget()->getTeam()) || ant->getTeam() == ant->getTarget()->getTeam())
                             {
+                                std::cout << "Getting new target" << std::endl;
                                 getNewTarget(ant);
                                 break;
                             }
@@ -191,7 +207,7 @@ void ACO::update()
 
 void ACO::moveToCell(std::pair<int, int> from, std::pair<int, int> to, Entity *e)
 {
-    Cell* fromCell = world->at(from.second, from.first);
+    Cell* fromCell = world->at(from.first, from.second);
     Cell* toCell = world->at(to.first, to.second);
 
     if (!fromCell || !toCell) {
@@ -199,7 +215,7 @@ void ACO::moveToCell(std::pair<int, int> from, std::pair<int, int> to, Entity *e
         return;
     }
 
-   // std::cout << "Moving entity '" << e->getName() << "' from (" << from.first << ", " << from.second << ") to (" << to.first << ", " << to.second << ")" << std::endl;
+    std::cout << "Moving entity '" << e->getName() << "' from (" << from.first << ", " << from.second << ") to (" << to.first << ", " << to.second << ")" << std::endl;
 
    // std::cout << "Entities in from cell: " << fromCell->data.entities.size() << std::endl;
     for (auto it = fromCell->data.entities.begin(); it != fromCell->data.entities.end(); ++it)
@@ -418,7 +434,7 @@ void ACO::getAdjCells(int x, int y) {
         int ny = y + dy[i];
 
         if (!isInBounds(nx, ny) || !world->at(nx,ny)->data.biomeinfo.passable) {
-           // std::cout << "Not in bound" << std::endl;
+            //std::cout << "Not in bound" << std::endl;
             continue;
         } 
 

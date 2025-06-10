@@ -49,7 +49,7 @@ namespace conf
     int defaultNumAntsPerBase = 200;
     double numAntsToSpawn = 0.5; //0.5 - 1.5
     double locationSpawnChance = 0.01; //0 - 1
-    int numberOfTeams = 1; // >0
+    int numberOfTeams = 2; // >0
     double chosenTeam; //0 - 1 (chosen * num teams = team)
     
 }
