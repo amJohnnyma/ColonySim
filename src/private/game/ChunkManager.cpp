@@ -58,7 +58,7 @@ void ChunkManager::ensureChunksAround(int centerChunkX, int centerChunkY, int ra
             if (cx < 0 || cy < 0)
                 continue;
 
-            if (grid.find({cy, cx}) == grid.end())
+            if (grid.find({cx, cy}) == grid.end())
             {
                 std::cout << "Mkae new chunk" << std::endl;
                 if (grid.size() < 256) // hard limit
@@ -107,8 +107,8 @@ void ChunkManager::unloadDistantChunks(int playerChunkX, int playerChunkY, int r
 {
     //std::cout << "Unload" << std::endl;
     for (auto it = grid.begin(); it != grid.end(); ) {
-        int cx = it->first.second;
-        int cy = it->first.first;
+        int cx = it->first.first;
+        int cy = it->first.second;
         
         if (abs(cx - playerChunkX) > radius || abs(cy - playerChunkY) > radius) {
             /*

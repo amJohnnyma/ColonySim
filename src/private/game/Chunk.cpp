@@ -6,7 +6,7 @@ Chunk::Chunk(int cx, int cy, int size) : chunkX(cx), chunkY(cy), chunkSize(size)
 }
 
 Cell* Chunk::at(int localX, int localY) {
-    return cells[localY * chunkSize + localX].get();
+    return cells[localX * chunkSize + localY].get();
 }
 
 void Chunk::update() {

@@ -107,7 +107,7 @@ std::unique_ptr<Cell> WorldGeneration::createCell(int x, int y, float cellSize, 
 }
 void WorldGeneration::createChunk(int chunkX, int chunkY)
 {
-    std::pair<int, int> key = {chunkY, chunkX};
+    std::pair<int, int> key = {chunkX, chunkY};
 
     auto chunk = std::make_unique<Chunk>(chunkX, chunkY, conf::chunkSize);
 
@@ -130,7 +130,7 @@ void WorldGeneration::createChunk(int chunkX, int chunkY)
             int team = static_cast<int>(dist(rng)*conf::numberOfTeams);
             TeamInfo p = 0;
             p = setTeam(p, team);
-            if(baserng < conf::baseSpawnChance && counter == 0) //temporary count to only have one base
+            if(baserng < conf::baseSpawnChance) 
             {
                 //spawn base and the ants in this cell
                 auto base = createBase(worldX, worldY, p);
@@ -142,10 +142,9 @@ void WorldGeneration::createChunk(int chunkX, int chunkY)
                     ant->setTeam(p);
                     cell.get()->data.entities.push_back(std::move(ant));               
                 }
-                counter++;
             }
             float locationrng = dist(rng);
-            if(locationrng < conf::locationSpawnChance && counter == 1)
+            if(locationrng < conf::locationSpawnChance)
             {
                 //spawn a location here
                 if (!cell->data.entities.empty() || !cell->data.biomeinfo.passable)
@@ -155,7 +154,6 @@ void WorldGeneration::createChunk(int chunkX, int chunkY)
                 double difficulty = cell->data.difficulty; // consistent indexing: row major
                 auto location = createLocation(worldX,worldY,difficulty);
                 cell.get()->data.entities.push_back(std::move(location));
-                counter++;
             }
             //spawn buildings
             //spawn whatever else

@@ -32,7 +32,6 @@ class WorldGeneration
         ChunkManager* cm;
         uint32_t chunkCount = 0;
         int cellSize;
-        int counter = 0;
 
     public:
         WorldGeneration(unsigned int seed, ChunkManager* cm, int cellSize);

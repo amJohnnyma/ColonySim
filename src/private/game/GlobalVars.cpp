@@ -7,9 +7,9 @@ namespace conf
     double maxPheromone = 0;
     const sf::Vector2f window_size = {1000, 1000};
     const sf::Vector2f window_size_f = static_cast<sf::Vector2f>(window_size);
-    sf::Vector2i max_world_size = {2, 2}; //in chunks
+    sf::Vector2i max_world_size = {20, 20}; //in chunks
     int chunkSize = 16;
-    sf::Vector2i worldSize = {32, 32};//the initial size 
+    sf::Vector2i worldSize = {16*2, 16*2};//the initial size 
     /*
     16,16 = 1x1
     32,32 = 2x2
@@ -45,10 +45,10 @@ namespace conf
     {1.0f,  false,  sf::Color(150, 75, 0), WOODS}     // WOODS
     };
     int simulationSpeed = 10;
-    double baseSpawnChance = 0.01; //0 - 1
-    int defaultNumAntsPerBase = 200;
+    double baseSpawnChance = 0.001; //0 - 1
+    int defaultNumAntsPerBase = 20;
     double numAntsToSpawn = 0.5; //0.5 - 1.5
-    double locationSpawnChance = 0.01; //0 - 1
+    double locationSpawnChance = 0.001; //0 - 1
     int numberOfTeams = 2; // >0
     double chosenTeam; //0 - 1 (chosen * num teams = team)
     
