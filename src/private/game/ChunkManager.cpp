@@ -141,8 +141,8 @@ void ChunkManager::updateWorldSize() {
     int minY = INT_MAX, maxY = INT_MIN;
 
     for (const auto& entry : grid) {
-        int y = entry.first.first;
-        int x = entry.first.second;
+        int x = entry.first.first;
+        int y = entry.first.second;
 
         minX = std::min(minX, x);
         maxX = std::max(maxX, x);
