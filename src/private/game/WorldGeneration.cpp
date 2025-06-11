@@ -97,7 +97,8 @@ std::unique_ptr<Cell> WorldGeneration::createCell(int x, int y, float cellSize, 
     
 
     sf::Color biomec = colorFromBiome(cellBiome.biome);
-    biomec.a = static_cast<sf::Uint8>(cd.difficulty * 255);
+    double val = std::max(0.2, cd.difficulty);
+    biomec.a = static_cast<sf::Uint8>(255 * val);
     cell->setColor(biomec);
     cell->x = x;
     cell->y = y;
@@ -142,6 +143,8 @@ void WorldGeneration::createChunk(int chunkX, int chunkY)
                     ant->setTeam(p);
                     cell.get()->data.entities.push_back(std::move(ant));               
                 }
+
+                
             }
             float locationrng = dist(rng);
             if(locationrng < conf::locationSpawnChance)

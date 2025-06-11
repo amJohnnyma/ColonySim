@@ -8,7 +8,7 @@ World::World(sf::RenderWindow& window)
  
     trackedVars = new TrackedVariables();
     chunkManager = std::make_unique<ChunkManager>();
-    createACO(); 
+    //createACO(); 
 
 
 }
@@ -55,7 +55,7 @@ void World::update()
     // std::cout << "View Center: " << viewCenter.x << ", " << viewCenter.y << std::endl;
    //  std::cout << "Chunk Center: " << chunkX << ", " << chunkY << std::endl;
     // // Load necessary chunks and unload distant ones
-    chunkManager->ensureChunksAround(chunkX, chunkY, 5);  // load chunks in a 5x5 area
+    chunkManager->ensureChunksAround(chunkX, chunkY, 4);  // load chunks in a 5x5 area
     chunkManager->unloadDistantChunks(chunkX, chunkY, 5); // unload chunks beyond 9x9 area
 
    
@@ -161,8 +161,37 @@ void World::createACO()
 
 }
 
-    
-    
+void World::createACO(int chunkX, int chunkY)
+{
+    std::vector<Cell *> raw_goals;
+    std::vector<Entity *> t_bases;
+
+    Chunk *chunk = getChunkAt(chunkX, chunkY);
+    if (!chunk)
+        return;
+    for (auto &cellPtr : chunk->getCells())
+    { // assuming Chunk is a container of Cells
+        for (auto &eg : cellPtr->data.entities)
+        {
+            if (eg->getName().find("location") != std::string::npos)
+            {
+                raw_goals.push_back(cellPtr.get());
+                std::cout << "Pushed back location" << std::endl;
+            }
+            if (eg->getName().find("Base") != std::string::npos)
+            {
+                trackedVars->setBase(eg.get());
+                t_bases.push_back(eg.get());
+            }
+        }
+    }
+
+    for (auto &base : t_bases)
+    {
+        ACO *aco = new ACO(raw_goals, this, base);
+        sims.push_back(aco);
+    }
+}
 
 //helper render
 void World::drawTerrain(sf::RenderWindow& window)

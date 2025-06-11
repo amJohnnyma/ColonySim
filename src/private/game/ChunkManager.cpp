@@ -49,7 +49,7 @@ bool ChunkManager::canSerialize()
 }
 
 void ChunkManager::ensureChunksAround(int centerChunkX, int centerChunkY, int radius) {
-    //std::cout << "Load" << std::endl;
+    std::cout << "Load" << std::endl;
     for (int dx = -radius; dx <= radius; ++dx) {
         for (int dy = -radius; dy <= radius; ++dy)
         {
@@ -60,8 +60,8 @@ void ChunkManager::ensureChunksAround(int centerChunkX, int centerChunkY, int ra
 
             if (grid.find({cx, cy}) == grid.end())
             {
-              //  std::cout << "Mkae new chunk" << std::endl;
-                if (grid.size() < 256) // hard limit
+                std::cout << "Mkae new chunk" << std::endl;
+                if (grid.size() < 512) // hard limit
                 {
                    // std::cout << "Loaded grid " << grid.size() << std::endl;
                     // std::cout << "World size: " <<  conf::worldSize.x << ", " << conf::worldSize.y << std::endl;
@@ -86,7 +86,7 @@ void ChunkManager::ensureChunksAround(int centerChunkX, int centerChunkY, int ra
                     // if cy
                     // if cx
                     updateWorldSize();
-                    // std::cout << "Created chunk: " << cy << ", " << cx << std::endl;
+                     std::cout << "Created chunk: " << cy << ", " << cx << std::endl;
                 }
             }
             else
@@ -105,7 +105,7 @@ void ChunkManager::ensureChunksAround(int centerChunkX, int centerChunkY, int ra
 
 void ChunkManager::unloadDistantChunks(int playerChunkX, int playerChunkY, int radius)
 {
-    //std::cout << "Unload" << std::endl;
+    std::cout << "Unload" << std::endl;
     for (auto it = grid.begin(); it != grid.end(); ) {
         int cx = it->first.first;
         int cy = it->first.second;
@@ -119,7 +119,7 @@ void ChunkManager::unloadDistantChunks(int playerChunkX, int playerChunkY, int r
             it = grid.erase(it); // Automatically deletes chunk memory
             // -> and then serialize into RAM before deleting
             updateWorldSize();
-           // std::cout << "deleted chunk" << std::endl;
+            std::cout << "deleted chunk" << std::endl;
         } else {
             ++it;
         }

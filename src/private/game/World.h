@@ -36,6 +36,8 @@ class World
         void drawTerrain(sf::RenderWindow & window);
         void drawEntities(sf::RenderWindow& window);
         void createACO();
+        void createACO(int chunkX, int chunkY);
+
     public:
         World(sf::RenderWindow& window);
         ~World();
