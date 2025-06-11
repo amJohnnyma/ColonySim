@@ -40,10 +40,10 @@ void World::update()
     for(auto &a : sims)
     {
         //if(in simulated) -> i.e. not manually controlled
-        //std::cout << "Update aco" << std::endl;
-      //  a->update();
+        std::cout << "Update aco" << std::endl;
+        a->update();
         numAnts += a->getNumberAnts();
-        //std::cout << "done" << std::endl;
+        std::cout << "done" << std::endl;
     }
     trackedVars->setNumAnts(numAnts);
 
@@ -180,8 +180,8 @@ void World::drawTerrain(sf::RenderWindow& window)
   
     startX = std::max(0, startX);
     startY = std::max(0, startY);
-  //  endX   = std::min(conf::worldSize.x, endX);
-  //  endY   = std::min(conf::worldSize.y, endY);
+    endX   = std::min(conf::worldSize.x, endX);
+    endY   = std::min(conf::worldSize.y, endY);
 
     // Using sf::Quads is more efficient for rectangles
     combinedVA.setPrimitiveType(sf::Quads);
@@ -194,7 +194,7 @@ void World::drawTerrain(sf::RenderWindow& window)
             if (dc != nullptr && dc->cellShape) {
                // std::cout << "Craaaaa" << std::endl;
                 Rectangle* shape = static_cast<Rectangle*>(dc->cellShape.get());
-                if (shape) {
+                if (shape && shape->getVA().getVertexCount()>0) {
                     const sf::VertexArray& va = shape->getVA();
 
                     // We assume shape->getVA() uses sf::TriangleFan, so we have 6 vertices (center + 4 corners + close)
@@ -289,12 +289,12 @@ void World::render(sf::RenderWindow &window)
 
     window.clear();
     //drawGrid(window);
-    //std::cout << "Draw terrain" << std::endl;
+    std::cout << "Draw terrain" << std::endl;
     drawTerrain(window);
-    //std::cout << "Fin draw" << std::endl;
-    //std::cout << "Draw ent" << std::endl;
+    std::cout << "Fin draw" << std::endl;
+    std::cout << "Draw ent" << std::endl;
     drawEntities(window);
-    //std::cout << "Fin draw" << std::endl;
+    std::cout << "Fin draw" << std::endl;
 
 }
 

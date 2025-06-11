@@ -138,6 +138,7 @@ void ACO::update()
         for (int y = 0; y < conf::worldSize.y; y++)
         {
             Cell *cell = world->at(x, y);
+            if(cell)
             for (auto &e : cell->data.entities)
             {
                 //  std::cout << "Checking entity" << std::endl;
