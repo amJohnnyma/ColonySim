@@ -130,7 +130,7 @@ bool same(int x, int y, int w, int v)
 void ACO::update()
 {
 
-    //  std::cout << "Updating aco" << std::endl;
+      std::cout << "Updating aco" << std::endl;
     // from start cell, look at each entity (ant)
     //would be better to store a list of ants
     for (int x = 0; x < conf::worldSize.x; x++)

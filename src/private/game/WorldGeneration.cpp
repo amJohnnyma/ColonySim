@@ -1,6 +1,7 @@
 #include "WorldGeneration.h"
 #include <unordered_set>
 
+#include "World.h"
 #include "ChunkManager.h"
 WorldGeneration::WorldGeneration(unsigned int seed, ChunkManager* cm, int cellSize)
 {
@@ -31,6 +32,7 @@ WorldGeneration::WorldGeneration(unsigned int seed, ChunkManager* cm, int cellSi
     // std::cout << "Gen te s" << std::endl;
     // assignTextures();
     // std::cout << "Gen te d" << std::endl;
+    //cm->ensureChunksAround(1,1,conf::worldSize.x);
     logAllEntities();
 
 }
@@ -106,9 +108,10 @@ std::unique_ptr<Cell> WorldGeneration::createCell(int x, int y, float cellSize, 
 
     return cell;
 }
-void WorldGeneration::createChunk(int chunkX, int chunkY)
+void WorldGeneration::createChunk(int chunkX, int chunkY, World* world)
 {
     std::pair<int, int> key = {chunkX, chunkY};
+   // std::cout << chunkX << ", " << chunkY << std::endl;
 
     auto chunk = std::make_unique<Chunk>(chunkX, chunkY, conf::chunkSize);
 
@@ -143,7 +146,8 @@ void WorldGeneration::createChunk(int chunkX, int chunkY)
                     ant->setTeam(p);
                     cell.get()->data.entities.push_back(std::move(ant));               
                 }
-
+                if(world)
+                    world->createACO(chunkX,chunkY);
                 
             }
             float locationrng = dist(rng);
@@ -166,7 +170,7 @@ void WorldGeneration::createChunk(int chunkX, int chunkY)
     cm->addChunk(key, {std::move(chunk), state::AVAILABLE}); 
     if (grid.find(key) != grid.end()) return; // Already generated
     grid[key] = chunkCount;    // --> Load these into RAM aswell and when they are in a certain radius load back into this key
-    std::cout << "Num chunks: " << chunkCount << " -> Map size: " << grid.size() << std::endl;
+   // std::cout << "Num chunks: " << chunkCount << " -> Map size: " << grid.size() << std::endl;
     chunkCount++;
 
 }
@@ -176,7 +180,7 @@ void WorldGeneration::generateTerrain()
 {
     for (int cx = 0; cx < conf::worldSize.x / conf::chunkSize; cx++) {
         for (int cy = 0; cy < conf::worldSize.y / conf::chunkSize; cy++) {
-            createChunk(cx,cy);
+            createChunk(cx,cy, nullptr);
         }
     }
 }

@@ -22,6 +22,7 @@
 
 class Chunk;
 class ChunkManager;
+class World;
 class WorldGeneration
 {
     private:
@@ -37,7 +38,7 @@ class WorldGeneration
         WorldGeneration(unsigned int seed, ChunkManager* cm, int cellSize);
         ~WorldGeneration();
         std::unordered_map<std::pair<int, int>, Chunk*, pair_hash> getResult();
-        void createChunk(int chunkX, int chunkY);
+        void createChunk(int chunkX, int chunkY, World* world);
         const std::unordered_map<std::pair<int, int>, std::unique_ptr<Chunk>, pair_hash> &getGridRef() const;
 
     private:

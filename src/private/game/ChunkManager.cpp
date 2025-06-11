@@ -3,8 +3,8 @@
 #include <climits>
 
 
-ChunkManager::ChunkManager()
-: worldGen(std::make_unique<WorldGeneration>(conf::seed, this, conf::cellSize)) 
+ChunkManager::ChunkManager(World* world)
+: worldGen(std::make_unique<WorldGeneration>(conf::seed, this, conf::cellSize)), world(world) 
 {
     
 }
@@ -28,6 +28,7 @@ void ChunkManager::addChunk(std::pair<int, int> key, ChunkWrapper newChunk)
 Chunk* ChunkManager::getChunk(int x, int y) {
     auto it = grid.find({x, y});
     if (it != grid.end() && it->second.chunkState == state::AVAILABLE) {
+        //std::cout << "Found chunk CM" << std::endl;
         return it->second.chunk.get();
     }
     return nullptr;
@@ -49,7 +50,7 @@ bool ChunkManager::canSerialize()
 }
 
 void ChunkManager::ensureChunksAround(int centerChunkX, int centerChunkY, int radius) {
-    std::cout << "Load" << std::endl;
+  //  std::cout << "Load" << std::endl;
     for (int dx = -radius; dx <= radius; ++dx) {
         for (int dy = -radius; dy <= radius; ++dy)
         {
@@ -60,33 +61,34 @@ void ChunkManager::ensureChunksAround(int centerChunkX, int centerChunkY, int ra
 
             if (grid.find({cx, cy}) == grid.end())
             {
-                std::cout << "Mkae new chunk" << std::endl;
+               // std::cout << "Mkae new chunk" << std::endl;
                 if (grid.size() < 512) // hard limit
                 {
                    // std::cout << "Loaded grid " << grid.size() << std::endl;
-                    // std::cout << "World size: " <<  conf::worldSize.x << ", " << conf::worldSize.y << std::endl;
+                     //std::cout << "World size: " <<  conf::worldSize.x << ", " << conf::worldSize.y << std::endl;
                     // if cx && cy
                     if (cx > conf::max_world_size.x && cy > conf::max_world_size.y)
                     {
-                        worldGen->createChunk(conf::max_world_size.x, conf::max_world_size.y);
+                        worldGen->createChunk(conf::max_world_size.x, conf::max_world_size.y, world);                        
                     }
                     else if (cy > conf::max_world_size.y)
                     {
-                        worldGen->createChunk(cx, conf::max_world_size.y);
+                        worldGen->createChunk(cx, conf::max_world_size.y,world);
                     }
                     else if (cx > conf::max_world_size.x)
                     {
-                        worldGen->createChunk(conf::max_world_size.x, cy);
+                        worldGen->createChunk(conf::max_world_size.x, cy,world);
                     }
                     else
                     {
-                        worldGen->createChunk(cx, cy);
+                        //std::cout<<"else"<<std::endl;
+                        worldGen->createChunk(cx, cy,world);
                     }
 
                     // if cy
                     // if cx
                     updateWorldSize();
-                     std::cout << "Created chunk: " << cy << ", " << cx << std::endl;
+                    // std::cout << "Created chunk: " << cy << ", " << cx << std::endl;
                 }
             }
             else
@@ -105,7 +107,7 @@ void ChunkManager::ensureChunksAround(int centerChunkX, int centerChunkY, int ra
 
 void ChunkManager::unloadDistantChunks(int playerChunkX, int playerChunkY, int radius)
 {
-    std::cout << "Unload" << std::endl;
+  //  std::cout << "Unload" << std::endl;
     for (auto it = grid.begin(); it != grid.end(); ) {
         int cx = it->first.first;
         int cy = it->first.second;
@@ -119,7 +121,7 @@ void ChunkManager::unloadDistantChunks(int playerChunkX, int playerChunkY, int r
             it = grid.erase(it); // Automatically deletes chunk memory
             // -> and then serialize into RAM before deleting
             updateWorldSize();
-            std::cout << "deleted chunk" << std::endl;
+           // std::cout << "deleted chunk" << std::endl;
         } else {
             ++it;
         }

@@ -7,7 +7,7 @@ World::World(sf::RenderWindow& window)
 {
  
     trackedVars = new TrackedVariables();
-    chunkManager = std::make_unique<ChunkManager>();
+    chunkManager = std::make_unique<ChunkManager>(this);
     //createACO(); 
 
 
@@ -40,10 +40,10 @@ void World::update()
     for(auto &a : sims)
     {
         //if(in simulated) -> i.e. not manually controlled
-        std::cout << "Update aco" << std::endl;
+       // std::cout << "Update aco" << std::endl;
         a->update();
         numAnts += a->getNumberAnts();
-        std::cout << "done" << std::endl;
+       // std::cout << "done" << std::endl;
     }
     trackedVars->setNumAnts(numAnts);
 
@@ -76,9 +76,9 @@ void World::drawEntities(sf::RenderWindow& window)
     int startY = static_cast<int>((view.getCenter().y - view.getSize().y / 2) / conf::cellSize) - 1;
     int endY   = static_cast<int>((view.getCenter().y + view.getSize().y / 2) / conf::cellSize) + 1;
 
-   startX = std::max(0, startX);
+    startX = std::max(0, startX);
     startY = std::max(0, startY);
-   endX   = std::min(conf::worldSize.x, endX);
+    endX   = std::min(conf::worldSize.x, endX);
     endY   = std::min(conf::worldSize.y, endY);
 
     // Iterate over relevant cells
@@ -163,12 +163,15 @@ void World::createACO()
 
 void World::createACO(int chunkX, int chunkY)
 {
+    std::cout << "Create aco" << std::endl;
     std::vector<Cell *> raw_goals;
     std::vector<Entity *> t_bases;
 
+    std::cout << "Looking for chunk: " << chunkX << ", " << chunkY << std::endl;
     Chunk *chunk = getChunkAt(chunkX, chunkY);
     if (!chunk)
         return;
+    std::cout << "Got chunk" << std::endl;
     for (auto &cellPtr : chunk->getCells())
     { // assuming Chunk is a container of Cells
         for (auto &eg : cellPtr->data.entities)
@@ -188,6 +191,7 @@ void World::createACO(int chunkX, int chunkY)
 
     for (auto &base : t_bases)
     {
+        std::cout << "Pushed back" << std::endl;
         ACO *aco = new ACO(raw_goals, this, base);
         sims.push_back(aco);
     }
@@ -318,12 +322,12 @@ void World::render(sf::RenderWindow &window)
 
     window.clear();
     //drawGrid(window);
-    std::cout << "Draw terrain" << std::endl;
+   // std::cout << "Draw terrain" << std::endl;
     drawTerrain(window);
-    std::cout << "Fin draw" << std::endl;
-    std::cout << "Draw ent" << std::endl;
+   // std::cout << "Fin draw" << std::endl;
+   // std::cout << "Draw ent" << std::endl;
     drawEntities(window);
-    std::cout << "Fin draw" << std::endl;
+    //std::cout << "Fin draw" << std::endl;
 
 }
 

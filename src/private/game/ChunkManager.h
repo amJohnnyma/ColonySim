@@ -4,6 +4,7 @@
 #include <iostream>
 #include "Chunk.h"
 
+
 //This is the only place where chunks can be modified
 //Every system must comply and work through chunk manager
 // -> For thread safety later on
@@ -26,17 +27,19 @@ struct ChunkWrapper
 };
 
 class WorldGeneration;
+class World;
 class ChunkManager
 {
     private:
         std::unordered_map<std::pair<int, int>, ChunkWrapper, pair_hash> grid;
         std::unique_ptr<WorldGeneration> worldGen;
+        World* world;
     private:
         bool canWrite(/*Hash value?*/); //edit a chunk
         bool canRead(); //use a chunk
         bool canSerialize(); //serialize chunk
     public:
-        ChunkManager();
+        ChunkManager(World* world);
         ~ChunkManager();
         bool isAvailable(std::string type);
         void addChunk(std::pair<int, int> key, ChunkWrapper);
