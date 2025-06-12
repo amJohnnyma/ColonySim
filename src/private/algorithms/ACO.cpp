@@ -3,8 +3,7 @@
 
 ACO::ACO(std::vector<Cell *> &goals, World* world,  Entity* base)
 {
-std::cout << "ACO const" << std::endl;
-
+    std::cout << "ACO const" << std::endl;
     std::cout << "ACO for team: " + std::to_string(base->getTeam()) << std::endl;
     team = base->getTeam();
     this->base = base;
@@ -137,31 +136,48 @@ void ACO::update()
     {
         for (int y = 0; y < conf::worldSize.y; y++)
         {
+          //  std::cout << "Updating:" << x << ", " << y << std::endl;
             Cell *cell = world->at(x, y);
+          //  std::cout << "Updating P2:" << x << ", " << y << std::endl;
             if(cell)
             for (auto &e : cell->data.entities)
             {
+           // std::cout << "Updating P3:" << x << ", " << y << std::endl;
                 //  std::cout << "Checking entity" << std::endl;
-                if (e)
+                if(!e)
                 {
+                    std::cerr << "No ent" << std::endl;
+                    continue;
+
+                }
                     if (Ant *ant = dynamic_cast<Ant *>(e.get()))
                     {
+                        if(!ant)
+                        {
+                            std::cerr << "Not ant" << std::endl;
+                            continue;
 
-                        // std::cout << "Ant team: " << ant->getTeam() << ", Target: " << ant->getTarget()->getName() << "\n";
+                        }
+
 
                         if (!ant->sameTeam(ant->getTeam(), team))
                         {
-                            break;
+                            continue;
                         }
                         if(ant->stillAnimating())
                         {
-                            break;
+                            continue;
+                        }
+                        if(!ant->getTarget())
+                        {
+                            std::cerr << "No target" << std::endl;
+                            continue;
                         }
  
-                        //   std::cout << "found ant" << std::endl;
-                        //  std::cout << "Target name: " << ant->getTarget()->getName() << std::endl;
-                        //  std::cout << "target pos: " << ant->getTarget()->getX() <<", " << ant->getTarget()->getY() << std::endl;
-                        //  std::cout << "Current pos: " << ant->getX() << ", " << ant->getY() << std::endl;
+                          std::cout << "found ant" << std::endl;
+                         std::cout << "Target name: " << ant->getTarget()->getName() << std::endl;
+                         std::cout << "target pos: " << ant->getTarget()->getX() <<", " << ant->getTarget()->getY() << std::endl;
+                         std::cout << "Current pos: " << ant->getX() << ", " << ant->getY() << std::endl;
 
                         if (ant->getTarget()->getResource() <= 0 && ant->getTarget() != base)
                         {
@@ -175,12 +191,12 @@ void ACO::update()
                             {
                                 std::cout << "Getting new target" << std::endl;
                                 getNewTarget(ant);
-                                break;
+                                continue;
                             }
                             if ((!possibleLocations) && (e.get()->getX() == ant->getTarget()->getX()) && (e.get()->getY() == ant->getTarget()->getY()))
                             {
                                 getNewTarget(ant);
-                                break;
+                                continue;
                             }
                             // std::cout <<std::to_string(ant->getTeam()) +  "Returning home" << std::endl;
                             returnHome(cell, ant);
@@ -197,7 +213,7 @@ void ACO::update()
                         // e.get()->giveResource(1);
                         //   std::cout << e.get()->getName() << " : " << e.get()->getResource() << std::endl;
                     }
-                }
+                
             }
 
             // update pheromone

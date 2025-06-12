@@ -40,6 +40,7 @@ class World
     public:
         World(sf::RenderWindow& window);
         ~World();
+        void Init();
     public:
         void createACO(int chunkX, int chunkY);
         int getWidth();

@@ -7,9 +7,17 @@ World::World(sf::RenderWindow& window)
 {
  
     trackedVars = new TrackedVariables();
-    chunkManager = std::make_unique<ChunkManager>(this);
-    //createACO(); 
 
+}
+
+void World::Init()
+{
+    if(!chunkManager)
+    {
+    chunkManager = std::make_unique<ChunkManager>(this);
+    createACO(); 
+
+    }
 
 }
 
@@ -30,6 +38,11 @@ Cell* World::at(int x, int y) {
 }
 
 Chunk* World::getChunkAt(int chunkX, int chunkY) {
+    if (!chunkManager) {
+    std::cout << "chunkManager is null!" << std::endl;
+    return nullptr;
+}
+    std::cout << "World getting chunk" << std::endl;
     return chunkManager->getChunk(chunkX, chunkY);
 }
 
@@ -55,8 +68,8 @@ void World::update()
     // std::cout << "View Center: " << viewCenter.x << ", " << viewCenter.y << std::endl;
    //  std::cout << "Chunk Center: " << chunkX << ", " << chunkY << std::endl;
     // // Load necessary chunks and unload distant ones
-    chunkManager->ensureChunksAround(chunkX, chunkY, 4);  // load chunks in a 5x5 area
-    chunkManager->unloadDistantChunks(chunkX, chunkY, 5); // unload chunks beyond 9x9 area
+    chunkManager->ensureChunksAround(chunkX, chunkY, 2);  // load chunks in a 5x5 area
+  //  chunkManager->unloadDistantChunks(chunkX, chunkY, 5); // unload chunks beyond 9x9 area
 
    
 
@@ -135,28 +148,11 @@ void World::createACO()
     {
         for(int y = 0; y < conf::worldSize.y/conf::chunkSize;y++)
         {
-            Chunk* chunk = getChunkAt(x,y);
-            if(!chunk) continue;
-            for (auto& cellPtr : chunk->getCells()) { // assuming Chunk is a container of Cells
-                for (auto& eg : cellPtr->data.entities) {
-                    if (eg->getName().find("location") != std::string::npos) {
-                        raw_goals.push_back(cellPtr.get());
-                        std::cout << "Pushed back location" << std::endl;
-                    }
-                    if (eg->getName().find("Base") != std::string::npos) {
-                        trackedVars->setBase(eg.get());
-                    }
-                }
-        } 
+            createACO(x,y);
         }
     }
 
 
-    for(auto & base : trackedVars->getBases())
-    {
-        ACO* aco = new ACO(raw_goals, this, base);
-        sims.push_back(aco);
-    }
     
 
 }
@@ -165,17 +161,22 @@ void World::createACO(int chunkX, int chunkY)
 {
     std::cout << "Create aco" << std::endl;
     std::vector<Cell *> raw_goals;
-    std::vector<Entity *> t_bases;
+    Entity* t_bases = nullptr;
 
     std::cout << "Looking for chunk: " << chunkX << ", " << chunkY << std::endl;
-    Chunk *chunk = getChunkAt(chunkX, chunkY);
+    Chunk *chunk = getChunkAt(chunkY, chunkX);
     if (!chunk)
+    {
+        std::cout << "No chunk found!" << std::endl;
         return;
+
+    }
     std::cout << "Got chunk" << std::endl;
     for (auto &cellPtr : chunk->getCells())
     { // assuming Chunk is a container of Cells
         for (auto &eg : cellPtr->data.entities)
         {
+           // std::cout << eg->getName() << std::endl;
             if (eg->getName().find("location") != std::string::npos)
             {
                 raw_goals.push_back(cellPtr.get());
@@ -183,18 +184,29 @@ void World::createACO(int chunkX, int chunkY)
             }
             if (eg->getName().find("Base") != std::string::npos)
             {
-                trackedVars->setBase(eg.get());
-                t_bases.push_back(eg.get());
+                std::cout << "Found base" << std::endl;
+                for(auto& b : trackedVars->getBases())
+                {
+                    if(eg.get() == b)
+                    {
+                        return;
+                    }
+                }
+                t_bases=eg.get();
+                std::cout << "Base info: " << t_bases->getName() << " : " << t_bases->getTeam() << " (" << t_bases->getX() << ", " << t_bases->getY() << ")" << std::endl;
+                trackedVars->setBase(t_bases);
             }
         }
     }
 
-    for (auto &base : t_bases)
+    if(t_bases != nullptr)
     {
         std::cout << "Pushed back" << std::endl;
-        ACO *aco = new ACO(raw_goals, this, base);
+        ACO *aco = new ACO(raw_goals, this, t_bases);
         sims.push_back(aco);
+
     }
+    
 }
 
 //helper render

@@ -3,7 +3,7 @@
 
 #include "World.h"
 #include "ChunkManager.h"
-WorldGeneration::WorldGeneration(unsigned int seed, ChunkManager* cm, int cellSize)
+WorldGeneration::WorldGeneration(unsigned int seed, ChunkManager* cm, int cellSize, World* world)
 {
 
     if (seed == 0)
@@ -18,10 +18,9 @@ WorldGeneration::WorldGeneration(unsigned int seed, ChunkManager* cm, int cellSi
     perlinNoise = new PerlinNoise(conf::seed);
 
     this->cellSize = cellSize;
-    grid.clear();
     this->cm = cm;
     //std::cout << "Gen t s" << std::endl;
-    generateTerrain(); 
+   // generateTerrain(world); 
     //std::cout << "Gen t d" << std::endl;
     // std::cout << "Gen e s" << std::endl;
     // generateEntities(conf::numAnts,conf::numBases);
@@ -33,7 +32,7 @@ WorldGeneration::WorldGeneration(unsigned int seed, ChunkManager* cm, int cellSi
     // assignTextures();
     // std::cout << "Gen te d" << std::endl;
     //cm->ensureChunksAround(1,1,conf::worldSize.x);
-    logAllEntities();
+   // logAllEntities();
 
 }
 
@@ -111,12 +110,18 @@ std::unique_ptr<Cell> WorldGeneration::createCell(int x, int y, float cellSize, 
 void WorldGeneration::createChunk(int chunkX, int chunkY, World* world)
 {
     std::pair<int, int> key = {chunkX, chunkY};
-   // std::cout << chunkX << ", " << chunkY << std::endl;
+    if(cm->hasLoaded(chunkX,chunkY)){
+        std::cout << "Chunk already loaded" << std::endl;
+        return;
+    } 
+    std::cout << chunkX << ", " << chunkY << std::endl;
 
     auto chunk = std::make_unique<Chunk>(chunkX, chunkY, conf::chunkSize);
 
-        std::mt19937 rng(conf::seed + chunkX * 73856093 + chunkY * 19349663); 
-        std::uniform_real_distribution<float> dist(0.0f, 1.0f);
+    std::mt19937 rng(conf::seed + chunkX * 73856093 + chunkY * 19349663); 
+    std::uniform_real_distribution<float> dist(0.0f, 1.0f);
+    
+    bool makeAco = false;
 
     for (int x = 0; x < conf::chunkSize; ++x) {
         for (int y = 0; y < conf::chunkSize; ++y) {
@@ -127,6 +132,7 @@ void WorldGeneration::createChunk(int chunkX, int chunkY, World* world)
             float ny = worldY * conf::perlinSmoothness;
             float val = perlinNoise->val(nx, ny);
 
+           // std::cout << "Created cell " << worldX << ", " << worldY << std::endl;
             auto cell = createCell(worldX, worldY, conf::cellSize, val);
 
             //colonies
@@ -140,14 +146,15 @@ void WorldGeneration::createChunk(int chunkX, int chunkY, World* world)
                 auto base = createBase(worldX, worldY, p);
                 base->setTeam(p);
                 cell.get()->data.entities.push_back(std::move(base));
+                std::cout << "Made base in chunk: " << chunkX << ", " << chunkY << std::endl;
                 for (int k = 0; k < conf::defaultNumAntsPerBase; k++)
                 {
                     auto ant = createAnt(worldX, worldY);
                     ant->setTeam(p);
-                    cell.get()->data.entities.push_back(std::move(ant));               
+                    cell.get()->data.entities.push_back(std::move(ant));    
+                   // std::cout << "Made ant" << std::endl;           
                 }
-                if(world)
-                    world->createACO(chunkX,chunkY);
+                makeAco = true;
                 
             }
             float locationrng = dist(rng);
@@ -167,20 +174,20 @@ void WorldGeneration::createChunk(int chunkX, int chunkY, World* world)
             chunk->push_back(std::move(cell));
         }
     }
+    if(world && makeAco)
+        world->createACO(chunkX,chunkY);
     cm->addChunk(key, {std::move(chunk), state::AVAILABLE}); 
-    if (grid.find(key) != grid.end()) return; // Already generated
-    grid[key] = chunkCount;    // --> Load these into RAM aswell and when they are in a certain radius load back into this key
    // std::cout << "Num chunks: " << chunkCount << " -> Map size: " << grid.size() << std::endl;
     chunkCount++;
 
 }
 
 
-void WorldGeneration::generateTerrain()
+void WorldGeneration::generateTerrain(World* world)
 {
     for (int cx = 0; cx < conf::worldSize.x / conf::chunkSize; cx++) {
         for (int cy = 0; cy < conf::worldSize.y / conf::chunkSize; cy++) {
-            createChunk(cx,cy, nullptr);
+            createChunk(cx,cy, world);
         }
     }
 }

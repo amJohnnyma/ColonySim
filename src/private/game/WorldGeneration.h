@@ -29,13 +29,12 @@ class WorldGeneration
         PerlinNoise* perlinNoise;
         unsigned int seed;
         //std::map<std::pair<int, int>, std::unique_ptr<Chunk>> grid;
-        std::unordered_map<std::pair<int, int>, uint32_t, pair_hash> grid; //throwaway int value
         ChunkManager* cm;
         uint32_t chunkCount = 0;
         int cellSize;
 
     public:
-        WorldGeneration(unsigned int seed, ChunkManager* cm, int cellSize);
+        WorldGeneration(unsigned int seed, ChunkManager* cm, int cellSize, World* world);
         ~WorldGeneration();
         std::unordered_map<std::pair<int, int>, Chunk*, pair_hash> getResult();
         void createChunk(int chunkX, int chunkY, World* world);
@@ -46,7 +45,7 @@ class WorldGeneration
         double generateDifficulty();
         std::unique_ptr<Rectangle> createCellShape(int x, int y, float size);
         std::unique_ptr<Cell> createCell(int x, int y, float cellSize, float noise);
-        void generateTerrain();
+        void generateTerrain(World* world);
         std::unique_ptr<sf::Sprite> createAntShape(sf::Color fillColor, int x, int y, float cellSize);
         std::unique_ptr<sf::Sprite> createBaseShape(sf::Color fillColor, int x, int y, float cellSize);
         std::unique_ptr<Ant> createAnt(int x, int y);

@@ -4,7 +4,7 @@
 
 
 ChunkManager::ChunkManager(World* world)
-: worldGen(std::make_unique<WorldGeneration>(conf::seed, this, conf::cellSize)), world(world) 
+: worldGen(std::make_unique<WorldGeneration>(conf::seed, this, conf::cellSize, world)), world(world) 
 {
     
 }
@@ -21,14 +21,20 @@ bool ChunkManager::isAvailable(std::string type)
 
 void ChunkManager::addChunk(std::pair<int, int> key, ChunkWrapper newChunk)
 {
-   // std::cout << "Chunk at: " << key.first << ", " << key.second << std::endl;
     grid[key] = std::move(newChunk);
+    std::cout << "Chunk at: " << key.first << ", " << key.second << std::endl;
 }
 
 Chunk* ChunkManager::getChunk(int x, int y) {
+    if (!this) {
+    std::cout << "chunkManager is null!" << std::endl;
+    return nullptr;
+    }
+//std::cout << "grid size: " << grid.size() << std::endl;
+    //std::cout << "Looking chunk CM" << std::endl;
     auto it = grid.find({x, y});
     if (it != grid.end() && it->second.chunkState == state::AVAILABLE) {
-        //std::cout << "Found chunk CM" << std::endl;
+       // std::cout << "Found chunk CM" << std::endl;
         return it->second.chunk.get();
     }
     return nullptr;
@@ -56,13 +62,11 @@ void ChunkManager::ensureChunksAround(int centerChunkX, int centerChunkY, int ra
         {
             int cx = centerChunkX + dx;
             int cy = centerChunkY + dy;
-            if (cx < 0 || cy < 0)
+            if (cx < 0 || cy < 0 || hasLoaded(cx,cy) || cx > conf::max_world_size.x || cy > conf::max_world_size.y)
                 continue;
 
-            if (grid.find({cx, cy}) == grid.end())
-            {
-               // std::cout << "Mkae new chunk" << std::endl;
-                if (grid.size() < 512) // hard limit
+                std::cout << "Mkae new chunk" << std::endl;
+                if (grid.size() < 10) // hard limit
                 {
                    // std::cout << "Loaded grid " << grid.size() << std::endl;
                      //std::cout << "World size: " <<  conf::worldSize.x << ", " << conf::worldSize.y << std::endl;
@@ -90,11 +94,7 @@ void ChunkManager::ensureChunksAround(int centerChunkX, int centerChunkY, int ra
                     updateWorldSize();
                     // std::cout << "Created chunk: " << cy << ", " << cx << std::endl;
                 }
-            }
-            else
-            {
-               // std::cout << "Chunk already loaded" << std::endl;
-            }
+
             // else
             /*
             deserialize the chunk from memory
@@ -128,10 +128,10 @@ void ChunkManager::unloadDistantChunks(int playerChunkX, int playerChunkY, int r
     }
     //std::cout << "Unload fin" << std::endl;
 }
-bool ChunkManager::hasLoaded(int x, int y)
-{
-    return getChunk(x,y) != nullptr;
+bool ChunkManager::hasLoaded(int x, int y) const {
+    return grid.find({x, y}) != grid.end();
 }
+
 
 void ChunkManager::updateWorldSize() {
     if (grid.empty()) {
