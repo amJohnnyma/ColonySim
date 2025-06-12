@@ -47,7 +47,7 @@ Chunk* World::getChunkAt(int chunkX, int chunkY) {
 
 void World::update()
 {
-    //createACO();
+    createACO();
     int numAnts = 0;
     //this is aco
     for(auto &a : sims)
