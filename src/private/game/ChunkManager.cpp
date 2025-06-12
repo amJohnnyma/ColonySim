@@ -22,7 +22,7 @@ bool ChunkManager::isAvailable(std::string type)
 void ChunkManager::addChunk(std::pair<int, int> key, ChunkWrapper newChunk)
 {
     grid[key] = std::move(newChunk);
-    std::cout << "Chunk at: " << key.first << ", " << key.second << std::endl;
+   // std::cout << "Chunk at: " << key.first << ", " << key.second << std::endl;
 }
 
 Chunk* ChunkManager::getChunk(int x, int y) {
@@ -65,7 +65,7 @@ void ChunkManager::ensureChunksAround(int centerChunkX, int centerChunkY, int ra
             if (cx < 0 || cy < 0 || hasLoaded(cx,cy) || cx > conf::max_world_size.x || cy > conf::max_world_size.y)
                 continue;
 
-                std::cout << "Mkae new chunk" << std::endl;
+              //  std::cout << "Mkae new chunk" << std::endl;
                 if (grid.size() < 10) // hard limit
                 {
                    // std::cout << "Loaded grid " << grid.size() << std::endl;

@@ -112,9 +112,11 @@ void WorldGeneration::createChunk(int chunkX, int chunkY, World* world)
     std::pair<int, int> key = {chunkX, chunkY};
     if(cm->hasLoaded(chunkX,chunkY)){
         std::cout << "Chunk already loaded" << std::endl;
+        //first make sure all algos are loaded here
+        
         return;
     } 
-    std::cout << chunkX << ", " << chunkY << std::endl;
+   // std::cout << chunkX << ", " << chunkY << std::endl;
 
     auto chunk = std::make_unique<Chunk>(chunkX, chunkY, conf::chunkSize);
 
@@ -146,7 +148,7 @@ void WorldGeneration::createChunk(int chunkX, int chunkY, World* world)
                 auto base = createBase(worldX, worldY, p);
                 base->setTeam(p);
                 cell.get()->data.entities.push_back(std::move(base));
-                std::cout << "Made base in chunk: " << chunkX << ", " << chunkY << std::endl;
+               // std::cout << "Made base in chunk: " << chunkX << ", " << chunkY << std::endl;
                 for (int k = 0; k < conf::defaultNumAntsPerBase; k++)
                 {
                     auto ant = createAnt(worldX, worldY);
@@ -158,16 +160,22 @@ void WorldGeneration::createChunk(int chunkX, int chunkY, World* world)
                 
             }
             float locationrng = dist(rng);
-            if(locationrng < conf::locationSpawnChance)
+            if (locationrng < conf::locationSpawnChance)
             {
-                //spawn a location here
+                std::cout << "Location" << std::endl;
                 if (!cell->data.entities.empty() || !cell->data.biomeinfo.passable)
-                {
                     continue;
-                }
-                double difficulty = cell->data.difficulty; // consistent indexing: row major
-                auto location = createLocation(worldX,worldY,difficulty);
-                cell.get()->data.entities.push_back(std::move(location));
+
+                double difficulty = cell->data.difficulty;
+                auto location = createLocation(worldX, worldY, difficulty);
+
+                Entity* locationRaw = location.get();  // store raw pointer before move
+
+                cell->data.entities.push_back(std::move(location));
+
+                if (world)
+                    std::cout << "New location push in create chunk" << std::endl;
+                    world->pushLocation(locationRaw);
             }
             //spawn buildings
             //spawn whatever else
@@ -175,7 +183,10 @@ void WorldGeneration::createChunk(int chunkX, int chunkY, World* world)
         }
     }
     if(world && makeAco)
+    {
         world->createACO(chunkX,chunkY);
+
+    }
     cm->addChunk(key, {std::move(chunk), state::AVAILABLE}); 
    // std::cout << "Num chunks: " << chunkCount << " -> Map size: " << grid.size() << std::endl;
     chunkCount++;

@@ -29,6 +29,7 @@ class World
         sf::Clock antClock;
         //WorldGeneration* gen;
         std::unique_ptr<ChunkManager> chunkManager;
+        std::vector<Cell*> raw_goals;
 
     public:
     private:
@@ -55,6 +56,7 @@ class World
         void handleInput(InputManager& inputmanager, sf::RenderWindow& window);
         bool isRunning() { return running;}
         void toggleSimState();
+        void pushLocation(Entity* loc);
 
 
 
