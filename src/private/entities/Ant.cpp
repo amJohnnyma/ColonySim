@@ -1,6 +1,6 @@
 #include "Ant.h"
 
-Ant::Ant(int x, int y, std::string name, double maxResource, std::unique_ptr<sf::RectangleShape> hitbox, Cell *currentCell)
+Ant::Ant(int x, int y, std::string name, double maxResource, std::unique_ptr<sf::Sprite> hitbox, Cell *currentCell)
 : Entity(x,y,name,maxResource,std::move(hitbox),currentCell)
 {
 
@@ -25,6 +25,8 @@ void Ant::setRotation(double angle)
 
 void Ant::startMovingTo(float x, float y)
 {
+    //std::cout << "Start: " << hitbox->getPosition().x << "," << hitbox->getPosition().y << std::endl;
+    //std::cout << "Target: " << x << "," << y << std::endl;
     startPos = hitbox->getPosition();
     targetPos = sf::Vector2f(x, y);
     elapsedTime = 0.0f;
@@ -39,9 +41,12 @@ void Ant::updateMovement(float dt)
     sf::Vector2f direction = targetPos - pos;
     float distance = std::sqrt(direction.x * direction.x + direction.y * direction.y);
 
-    if (distance < 1.0f)
+    if (distance < conf::simulationSpeed)
     {
         hitbox->setPosition(targetPos); // Snap to final target
+        x = targetPos.x/conf::cellSize;
+        y = targetPos.y/conf::cellSize;
+
         isMoving = false;
         return;
     }
@@ -50,4 +55,34 @@ void Ant::updateMovement(float dt)
     sf::Vector2f velocity = normalizedDir * conf::antSpeed * dt;
 
     hitbox->move(velocity);
+}
+
+double Ant::takeDamage(double amount)
+{
+    this->hitpoints-=amount;
+    if(hitpoints <= 0)
+    {
+       // std::cout << "Died" << std::endl;
+    }
+
+    return this->hitpoints; //if less than 0 then killed
+}
+
+double Ant::dealDamage()
+{
+    return this->damage;
+}
+
+double Ant::attack(Ant *target)
+{
+    if(target)
+        return target->takeDamage(this->dealDamage());
+    if(this->attackTarget)
+        return this->attackTarget->takeDamage(this->dealDamage());
+}
+
+void Ant::setAttackTarget(Ant *ant)
+{
+    std::cout << "Atttack target set" << std::endl;
+    this->attackTarget = ant;
 }

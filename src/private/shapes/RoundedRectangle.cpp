@@ -8,6 +8,7 @@ RoundedRectangle::RoundedRectangle(int xg, int yg, double radius, int resolution
 
 }
 void RoundedRectangle::setFillColor(sf::Color col) {
+    this->col = col;
     for (size_t i = 0; i < getVA().getVertexCount(); ++i) {
         getVA()[i].color = col;  // Change color of all vertices in the shape
     }
@@ -120,4 +121,11 @@ void RoundedRectangle::buildShape() {
         sf::Vector2f(right - r, top + r),
         sf::Vector2f(right - r, bottom - r),
         sf::Vector2f(left + r, bottom - r));
+}
+
+void RoundedRectangle::moveTo(int xg, int yg)
+{
+    this->xg = xg;
+    this->yg=yg;
+    buildShape();
 }

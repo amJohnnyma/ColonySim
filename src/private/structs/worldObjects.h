@@ -5,20 +5,34 @@
 #include <vector>
 #include <memory>
 #include <SFML/Graphics.hpp>
-#include "GlobalVars.h"
 #include "../entities/Entity.h"
 #include "../shapes/Shape.h"
+#include "biomDef.h"
 
+struct pair_hash {
+    template <class T1, class T2>
+    std::size_t operator()(const std::pair<T1, T2>& p) const {
+        auto h1 = std::hash<T1>()(p.first);
+        auto h2 = std::hash<T2>()(p.second);
+        return h1 ^ (h2 << 1);
+    }
+};
 struct GridObject
 {
     virtual ~GridObject() = default;
 };
 
+struct perTeamPheromone
+{
+
+};
+
+//make a class
 struct pheromone
 {
-    double strength;
-    int x,y; //coords
-    std::string type;
+
+    std::map<int, double> pheromoneMap;
+
 };
 
 
@@ -27,28 +41,19 @@ struct CellData
     std::string type = "Default";
     std::string terrain ="flat";
     double difficulty = 0;
-    pheromone p[2];
+    pheromone p; 
     std::vector<std::unique_ptr<Entity>> entities;
+    BiomeData biomeinfo;
 
-    
+        // Move-only
+    CellData() = default;
+    CellData(CellData&&) = default;
+    CellData& operator=(CellData&&) = default;
+
+    // Disable copy
+    CellData(const CellData&) = delete;
+    CellData& operator=(const CellData&) = delete;
 };
-
-struct Cell
-{
- //   std::unique_ptr<sf::CircleShape> cs = std::make_unique<sf::CircleShape>();
-    std::unique_ptr<Shape> cellShape;
-    //grid position
-    int x,y;
-    CellData data;
-
-    //need copy constructor and operator=
-    void setColor(sf::Color col)
-    {
-        this->cellShape->setFillColor(col);
-    }
-    ~Cell() {}
-};
-
 
 
 

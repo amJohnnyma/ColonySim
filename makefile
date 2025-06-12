@@ -1,11 +1,15 @@
 # Compiler and flags
 CXX = g++ 
 CXXFLAGS = -std=c++17 -Wall -Wextra -O2 
+PKG_CONFIG = pkg-config
+GTKMM_CFLAGS = $(shell $(PKG_CONFIG) gtkmm-4.0 --cflags gtkmm-4.0)
+GTKMM_LIBS = $(shell $(PKG_CONFIG) gtkmm-4.0 --libs gtkmm-4.0)
 
 # Automatically gather all header paths under src/private/**/(headers|include)
 INCLUDE_DIRS = $(shell find src/private -type d \( -name headers -o -name include \))
 INCLUDES = $(addprefix -I, $(INCLUDE_DIRS))
-CXXFLAGS += $(INCLUDES)
+CXXFLAGS += $(INCLUDES) 
+CXXFLAGS += $(GTKMM_LIBS) 
 
 # Source and object files
 SRCS = $(shell find src/private -name '*.cpp')
@@ -16,6 +20,7 @@ TARGET = main
 
 # Linker flags
 LDFLAGS = -lsfml-graphics -lsfml-window -lsfml-system
+LDFLAGS += $(GTKMM_LIBS)
 
 # Default rule
 all: $(TARGET)

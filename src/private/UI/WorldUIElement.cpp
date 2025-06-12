@@ -1,5 +1,6 @@
 #include "WorldUIElement.h"
-
+#include <iostream>
+#include <unordered_map>
 WorldUIElement::WorldUIElement(World* world, int x, int y, int resolution, int radius, int width, int height, std::string function, std::string textArea)
  : UIElement(world), shape(nullptr), button(nullptr), updateFunc(nullptr)
 {
@@ -80,13 +81,13 @@ void WorldUIElement::draw(sf::RenderWindow& window)
 
 
 
-void WorldUIElement::update(sf::RenderWindow& window)
+void WorldUIElement::update(sf::RenderWindow& window, sf::Event &event)
 {
-    if(button)
+    if(button && isVisible())
     {
         if(button->isClicked(window))
         {
-            onClick();
+            onClick(); //selected = true
         }
     }
     if(updateFunc && this->args.element)
@@ -98,9 +99,11 @@ void WorldUIElement::update(sf::RenderWindow& window)
 
 void WorldUIElement::onClick()
 {
-   // std::cout << "Rect clicked" << std::endl;
+    std::cout << "Rect clicked" << std::endl;
+   //selected = true;
 }
 
+//needs to use player-controller such that enemy AI has access to the same commands
 const std::unordered_map<std::string, std::function<void(World*, const FunctionArgs&)>>& WorldUIElement::getFunctionMap() {
    static const std::unordered_map<std::string, std::function<void(World*, const FunctionArgs&)>> functionMap = {
         {"testClick", [](World* w, const FunctionArgs&) {
@@ -112,7 +115,23 @@ const std::unordered_map<std::string, std::function<void(World*, const FunctionA
             }
         }},
         {"toggleSimState", [](World* w, const FunctionArgs& args){
-            w->toggleSimState();
+            switch (Game::getInstance().getState())
+            {
+                case State::PAUSED:
+                    Game::getInstance().handleEvent(Event::START);                    
+                    break;
+                case State::RUNNING:
+                //dont change state
+                   // Game::getInstance().handleEvent(Event::START);
+                    break;
+                case State::IDLE:
+                    Game::getInstance().handleEvent(Event::START);
+                    break;
+                case State::STOPPED:
+                    Game::getInstance().handleEvent(Event::STOP);
+                    break;
+            }
+            w->toggleSimState();            
           //  std::cout << "Calling setColor on UIElement at " << *args.element << std::endl;
             bool running = w->isRunning();            
             if (args.element.has_value() && args.element.value() != nullptr) {
@@ -138,8 +157,9 @@ const std::unordered_map<std::string, std::function<void(World*, const FunctionA
             //    std::cout << "Making magic" << std::endl;
                 if (elem) {
               //      std::cout << "Magic trying" << std::endl;
-                    elem->setText("Stats:\nBase: "
-                         + std::to_string(tv.getBaseFood())
+              std::string basesInfo = tv.getBasesInfo();
+                    elem->setText("Stats: \n"
+                        + basesInfo 
                          +"\nPF: " + std::to_string(tv.getPF())
                          +"\nHF: " + std::to_string(tv.getHF())
                         );
@@ -164,6 +184,54 @@ const std::unordered_map<std::string, std::function<void(World*, const FunctionA
         {"decrementHeuristic", [](World* w, const FunctionArgs& args){
             w->changeHF(-0.1);
         }},
+        {"openBuildMenu", [](World* w, const FunctionArgs& args){
+
+                if(args.name.has_value())
+                {
+                    w->getWorldStats()->setBuildingMode(true);
+                    std::string name = args.name.value_or("Unnamed"); 
+                    w->buildBuilding(name);            
+                    w->getWorldStats()->setBuildingMode(false);
+                }
+
+            
+        }},
+        {"deleteBuilding", [](World* w, const FunctionArgs& args){
+
+                if(args.name.has_value())
+                {
+                    w->getWorldStats()->setBuildingMode(true);
+                    std::string name = args.name.value_or("Unnamed"); 
+                    w->destroyBuilding("");            
+                    w->getWorldStats()->setBuildingMode(false);
+                }
+
+            
+        }},
+        {"pauseGame", [](World* w, const FunctionArgs& args){
+            switch (Game::getInstance().getState())
+            {
+                case State::PAUSED:
+                    Game::getInstance().handleEvent(Event::UNPAUSE);                    
+                    break;
+                case State::RUNNING:
+                    Game::getInstance().handleEvent(Event::PAUSE);
+                    break;
+                case State::IDLE:
+                    Game::getInstance().handleEvent(Event::PAUSE);
+                    break;
+                case State::STOPPED:
+                    Game::getInstance().handleEvent(Event::STOP);
+                    break;
+            }
+
+        }},
+        {"trackInput", [](World* w, const FunctionArgs& args){
+            if (args.element.has_value() && args.element.value() != nullptr) {
+                std::cout << "Selected but " << std::to_string(args.element.value()->isSelected()) << std::endl;
+                args.element.value()->setSelected(true);
+            }
+        }}
 
     };
     return functionMap;
@@ -187,4 +255,9 @@ std::string WorldUIElement::getText()
 void WorldUIElement::setFontSize(int size)
 {
     this->text.setCharacterSize(size);
+}
+void WorldUIElement::move(int x, int y) {
+    shape->moveTo(x,y);
+    text.setPosition(x*conf::cellSize, y*conf::cellSize);
+    button->setPosition(x*conf::cellSize, y*conf::cellSize);
 }

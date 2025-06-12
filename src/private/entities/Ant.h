@@ -7,7 +7,7 @@
 class Ant : public Entity
 {
     private:
-        Entity* target;
+        Entity* target = nullptr;
         Entity* base;
         std::vector<Cell*> path;
         bool returningHome = false;
@@ -16,8 +16,11 @@ class Ant : public Entity
         float elapsedTime = 0.0f;
         float moveDuration = 0.5f; // seconds
         bool isMoving = false;
+        double hitpoints = 100; //base hp
+        double damage = 9; //this is base damage ->other ants may have more or less
+        Ant* attackTarget = nullptr;
     public:
-        Ant(int x, int y, std::string name, double maxResource, std::unique_ptr<sf::RectangleShape> hitbox, Cell* currentCell);
+        Ant(int x, int y, std::string name, double maxResource, std::unique_ptr<sf::Sprite> hitbox, Cell* currentCell);
     public:
         bool getStatus() {return returningHome;}
         void setStatus(bool stat) {returningHome = stat;}
@@ -29,6 +32,12 @@ class Ant : public Entity
         void startMovingTo(float x, float y);
         void updateMovement(float dt); // dt is time since last frame
         bool stillAnimating() {return isMoving;}
+        double takeDamage(double amount);
+        double dealDamage();
+        double attack(Ant* target = nullptr);
+        void Die();
+        void setAttackTarget(Ant* ant);
+        Ant* getAttackTarget() {return (this->attackTarget) ? this->attackTarget : nullptr;}
 };
 
 #endif
