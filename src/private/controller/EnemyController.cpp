@@ -7,7 +7,7 @@ EnemyController::EnemyController(World *world,sf::Color overlay)
 }
 void EnemyController::update() {
 }
-void EnemyController::selectCells(sf::Vector2i from, sf::Vector2i to, std::vector<std::string> filter)
+void EnemyController::selectCells(sf::Vector2i from, sf::Vector2i to)
 {
        // simplify edge cases by creating new float with bottom left and top right edges
        int left = std::min(from.x, to.x);
@@ -43,7 +43,7 @@ void EnemyController::selectCells(sf::Vector2i from, sf::Vector2i to, std::vecto
        {
               for(int y = topLeft.y; y < bottomRight.y; y++)
               {
-                     Cell* curC = world->at(y,x).get();
+                     Cell* curC = world->at(y,x);
                      curC->setFilterOverlay(selectOverlay);
                      selectedCells.push_back(curC);
               }

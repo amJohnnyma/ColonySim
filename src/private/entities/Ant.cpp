@@ -25,6 +25,8 @@ void Ant::setRotation(double angle)
 
 void Ant::startMovingTo(float x, float y)
 {
+    //std::cout << "Start: " << hitbox->getPosition().x << "," << hitbox->getPosition().y << std::endl;
+    //std::cout << "Target: " << x << "," << y << std::endl;
     startPos = hitbox->getPosition();
     targetPos = sf::Vector2f(x, y);
     elapsedTime = 0.0f;
@@ -39,9 +41,12 @@ void Ant::updateMovement(float dt)
     sf::Vector2f direction = targetPos - pos;
     float distance = std::sqrt(direction.x * direction.x + direction.y * direction.y);
 
-    if (distance < 1.0f)
+    if (distance < conf::simulationSpeed)
     {
         hitbox->setPosition(targetPos); // Snap to final target
+        x = targetPos.x/conf::cellSize;
+        y = targetPos.y/conf::cellSize;
+
         isMoving = false;
         return;
     }

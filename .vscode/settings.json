@@ -60,7 +60,10 @@
         "stop_token": "cpp",
         "thread": "cpp",
         "variant": "cpp",
-        "set": "cpp"
+        "set": "cpp",
+        "list": "cpp",
+        "cinttypes": "cpp",
+        "valarray": "cpp"
     },
     "makefile.configureOnOpen": false
 }

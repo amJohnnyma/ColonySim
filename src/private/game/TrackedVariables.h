@@ -1,7 +1,7 @@
 #ifndef TRACKED_VARIABLES_H
 #define TRACKED_VARIABLES_H
 
-#include "../../structs/worldObjects.h"
+#include "../structs/worldObjects.h"
 
 
 class TrackedVariables
@@ -12,6 +12,7 @@ class TrackedVariables
         int numAnts;
         std::vector<Cell*> selectedCells;
         bool inBuildingMode = false;
+        sf::Vector2f viewCenter;
     public:
         TrackedVariables() {};
         ~TrackedVariables() {};
@@ -50,6 +51,14 @@ class TrackedVariables
             out += std::to_string(b->getTeam()) + ": " + std::to_string(b->getResource()) + "\n";
         }
         return out;
+    }
+
+    sf::Vector2f getViewCenter() const {
+    return viewCenter;
+    }
+
+    void setViewCenter(const sf::Vector2f& center) {
+        viewCenter = center;
     }
 
 };

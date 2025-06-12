@@ -4,7 +4,7 @@
 #include <vector>
 #include <SFML/Graphics.hpp>
 #include <cmath>
-#include "../game/headers/GlobalVars.h"
+#include "../game/GlobalVars.h"
 
 class Shape //abstract
 {

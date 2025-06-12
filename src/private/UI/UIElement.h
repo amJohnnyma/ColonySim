@@ -3,12 +3,12 @@
 
 #include <SFML/Graphics.hpp>
 #include <iostream>
-#include "../game/headers/World.h"
+#include "../game/World.h"
 #include "../shapes/RoundedRectangle.h"
 #include "Button.h"
 #include <optional>
 #include "../structs/enums.h"
-#include "../game/headers/Game.h"
+#include "../game/Game.h"
 class UIElement;
 struct FunctionArgs
 {

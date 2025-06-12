@@ -4,8 +4,8 @@
 #include <SFML/Graphics.hpp>
 #include <memory>
 #include <string>
-#include "../game/headers/GlobalVars.h"
-#include "../utils/headers/TextureManager.h"
+#include "../game/GlobalVars.h"
+#include "../utils/TextureManager.h"
 
 #include <cstdint>
 #include <sstream>
@@ -73,6 +73,7 @@ protected:
     std::unique_ptr<sf::Sprite> hitbox;
     //bits for team//
     TeamInfo teamInfo;
+    Cell* currentCell;
 
 public:
     // Constructor
@@ -84,9 +85,9 @@ public:
 
     // Getter and setter for position
     void setPos(int x, int y);
-    // Function to take resources
+    // Function to take resources from self
     int takeResource(int amount);
-    // Function to give resources
+    // Function to give resource to self
     int giveResource(int amount);
     // Additional getter methods for private members
     int getX() const { return x; }

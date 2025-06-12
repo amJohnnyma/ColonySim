@@ -1,15 +1,17 @@
-#include "../headers/Game.h"
+#include "Game.h"
 
 Game* Game::instance = nullptr;
 
 void Game::run()
 {
     using clock = std::chrono::steady_clock;
-    auto lastUpdate = clock::now();
-    const std::chrono::milliseconds updateInterval(50); 
-    while(wind->wndw->isOpen())
-    {
+    constexpr std::chrono::duration<double, std::milli> targetFrameTime(16.667); // ~60 FPS = 16.667
 
+    while (wind->wndw->isOpen())
+    {
+        auto frameStart = clock::now();
+
+        // Handle game state
         switch (currentState)
         {
             case State::IDLE:
@@ -25,14 +27,22 @@ void Game::run()
                 stoppedState();
                 break;
             default:
-                std::cerr << "Unkown state" << std::endl;
+                std::cerr << "Unknown state" << std::endl;
                 wind->wndw->close();
                 break;
         }
-        std::this_thread::sleep_for(std::chrono::milliseconds(1)); // Prevents CPU spinning
-}
 
+        // Calculate how long frame took
+        auto frameEnd = clock::now();
+        auto elapsed = frameEnd - frameStart;
 
+        // Sleep to limit frame rate, if frame finished early
+        if (elapsed < targetFrameTime)
+        {
+            std::this_thread::sleep_for(targetFrameTime - elapsed);
+        }
+             //   std::this_thread::sleep_for(std::chrono::milliseconds(1)); // Prevents CPU spinning
+    }
 }
 
 void Game::renderFrame() {
@@ -61,7 +71,7 @@ void Game::runningState()
 {
     using clock = std::chrono::steady_clock;
     static auto lastUpdate = clock::now();
-    const std::chrono::milliseconds updateInterval(50);
+    const std::chrono::milliseconds updateInterval(0);
 
     sf::Event event;
     while (wind->wndw->pollEvent(event))
@@ -138,10 +148,11 @@ void Game::handleEvent(Event event) {
 Game::Game(int windowWidth, int windowHeight, int worldWidth, int worldHeight)
 {
     wind = new window(windowWidth,windowHeight);
-    world = new World(worldWidth,worldHeight,*wind->wndw);
+    world = new World(*wind->wndw);
     uiMan = new UIManager(world);
-    inputManager = new InputManager(world);    
-    handleEvent(Event::PAUSE);    
+    inputManager = new InputManager(world,*wind->wndw);    
+    handleEvent(Event::PAUSE);   
+    world->Init(); 
 }
 
 Game::~Game()
@@ -157,44 +168,31 @@ void Game::fixedrun()
 {
     using clock = std::chrono::steady_clock;
     auto lastUpdate = clock::now();
-    const std::chrono::milliseconds updateInterval(50);
-
-    int updatesDone = 0;
-    const int maxUpdates = 1;
-    
-    sf::Event event;   
-
-    while (wind->wndw->isOpen())
+    const std::chrono::milliseconds updateInterval(50); 
+    currentState = State::RUNNING;
+    while(wind->wndw->isOpen())
     {
-        inputManager->processEvent(event,*wind->wndw);
-        while (wind->wndw->pollEvent(event))
+
+        switch (currentState)
         {
-            if (event.type == sf::Event::Closed)
+            case State::IDLE:
+                idleState();  
+                break;          
+            case State::PAUSED:
+                pausedState();
+                break;
+            case State::RUNNING:
+                runningState();
+                break;
+            case State::STOPPED:
+                stoppedState();
+                break;
+            default:
+                std::cerr << "Unkown state" << std::endl;
                 wind->wndw->close();
+                break;
         }
+        std::this_thread::sleep_for(std::chrono::milliseconds(1)); // Prevents CPU spinning
+}
 
-        world->handleInput(*inputManager, *wind->wndw);
-        inputManager->update(*wind->wndw);
-
-
-        auto now = clock::now();
-        if (now - lastUpdate >= updateInterval && world->isRunning())
-        {
-            world->update();
-            lastUpdate = now;
-
-            updatesDone++;
-            if (updatesDone >= maxUpdates)
-            {
-                // Close window to exit loop
-                wind->wndw->close();
-            }
-        }
-
-        uiMan->update(*wind->wndw, event);
-        world->render(*wind->wndw);
-        uiMan->draw(*wind->wndw);
-        inputManager->draw(*wind->wndw); 
-        wind->wndw->display();
-    }
 }

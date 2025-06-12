@@ -1,4 +1,4 @@
-#include "../headers/TextureManager.h"
+#include "TextureManager.h"
 #include <iostream>
 #include <string>
 

@@ -1,6 +1,6 @@
 #ifndef INPUT_MANAGER_H
 #define INPUT_MANAGER_H
-#include "../game/headers/GlobalVars.h"
+#include "../game/GlobalVars.h"
 #include <SFML/Graphics.hpp>
 #include <optional>
 #include <map>
@@ -21,6 +21,9 @@ private:
     bool selecting = false;
     Controller* controller;
     SelectionBox* selectionBox;
+    float currentZoom = 1.0f;
+    float zoomFactor = 1.1f;
+    sf::View view;
 
 public:
     void processEvent(const sf::Event& event, sf::RenderWindow& window);
@@ -30,11 +33,14 @@ public:
     bool isKeyPressedOnce(sf::Keyboard::Key key);
     bool isMouseHeld(sf::Mouse::Button button) const;
     void draw(sf::RenderWindow& window);
+    float getCurrentZoom(){return currentZoom;}
+    sf::View& getView() { return view; }
+    void setView(const sf::View& v) { view = v; }
 
 
     std::optional<std::pair<sf::Vector2i, sf::Vector2i>> getSelectionBox(const sf::RenderWindow& window);
 
-    InputManager(World* world);
+    InputManager(World* world, sf::RenderWindow& window);
     ~InputManager();
 
 };
