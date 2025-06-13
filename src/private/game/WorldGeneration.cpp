@@ -139,10 +139,10 @@ void WorldGeneration::createChunk(int chunkX, int chunkY, World* world)
 
             //colonies
             float baserng = dist(rng);
-            int team = static_cast<int>(dist(rng)*conf::numberOfTeams);
+            int team = curTeam;
             TeamInfo p = 0;
             p = setTeam(p, team);
-            if(baserng < conf::baseSpawnChance) 
+            if(baserng < conf::baseSpawnChance && cell.get()->data.biomeinfo.passable) 
             {
                 //spawn base and the ants in this cell
                 auto base = createBase(worldX, worldY, p);
@@ -159,6 +159,11 @@ void WorldGeneration::createChunk(int chunkX, int chunkY, World* world)
                    // std::cout << "Made ant" << std::endl;           
                 }
                 makeAco = true;
+                curTeam++;
+                if(curTeam > conf::numberOfTeams)
+                {
+                    curTeam = 0;
+                }
                 
             }
             float locationrng = dist(rng);

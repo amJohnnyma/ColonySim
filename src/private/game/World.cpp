@@ -71,10 +71,24 @@ void World::update()
     // // Load necessary chunks and unload distant ones
     chunkManager->ensureChunksAround(chunkX, chunkY, 2);  // load chunks in a 5x5 area
   //  chunkManager->unloadDistantChunks(chunkX, chunkY, 5); // unload chunks beyond 9x9 area
-  std::cout << "Bases: " << trackedVars->getBases().size() << "\tSims: " << sims.size() << std::endl;
+ // std::cout << "Bases: " << trackedVars->getBases().size() << "\tSims: " << sims.size() << std::endl;
   if(trackedVars->getBases().size() > sims.size())
   {
-    createACO();
+    //createACO();
+    // for(auto& b : trackedVars->getBases())
+    // {
+    //     int chunkX = b->getX() / conf::chunkSize;
+    //     int chunkY = b->getY() / conf::chunkSize;
+    //     createACO(chunkX,chunkY);
+    // }
+    //brute force... because something is missing
+    for(int x = 0; x < conf::worldSize.x / conf::chunkSize;x++)
+    {
+        for(int y = 0; y < conf::worldSize.y / conf::chunkSize;y++)
+        {
+            createACO(x,y);
+        }
+    }
   }
 
    
@@ -204,12 +218,12 @@ void World::createACO(int chunkX, int chunkY)
             }
             if (eg->getName().find("Base") != std::string::npos)
             {
-                std::cout << "Found base" << std::endl;
+              //  std::cout << "Found base" << std::endl;
                 for (auto& sim : sims)
                 {
                     if (sim->getBase() == eg.get())
                     {
-                        std::cout << "Has ACO" << std::endl;
+                      //  std::cout << "Has ACO" << std::endl;
                         return; // Already has an ACO
                     }
                 }
