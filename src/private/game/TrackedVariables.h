@@ -35,7 +35,7 @@ class TrackedVariables
     }
     std::vector<Entity*> getBases() 
     {
-        std::cout << "Num bases: " + std::to_string(this->bases.size()) << std::endl;
+      //  std::cout << "Num bases: " + std::to_string(this->bases.size()) << std::endl;
         return bases;}
     std::vector<Cell*> getSelectedCells() { return selectedCells; }
     double getPF() {return conf::pF;}

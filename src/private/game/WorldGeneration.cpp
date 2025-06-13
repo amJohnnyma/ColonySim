@@ -139,15 +139,17 @@ void WorldGeneration::createChunk(int chunkX, int chunkY, World* world)
 
             //colonies
             float baserng = dist(rng);
-            int team = static_cast<int>(dist(rng)*conf::numberOfTeams);
+            int team = curTeam;
             TeamInfo p = 0;
             p = setTeam(p, team);
-            if(baserng < conf::baseSpawnChance) 
+            if(baserng < conf::baseSpawnChance && cell.get()->data.biomeinfo.passable) 
             {
                 //spawn base and the ants in this cell
                 auto base = createBase(worldX, worldY, p);
                 base->setTeam(p);
+                world->pushBase(base.get());
                 cell.get()->data.entities.push_back(std::move(base));
+                
                // std::cout << "Made base in chunk: " << chunkX << ", " << chunkY << std::endl;
                 for (int k = 0; k < conf::defaultNumAntsPerBase; k++)
                 {
@@ -157,6 +159,11 @@ void WorldGeneration::createChunk(int chunkX, int chunkY, World* world)
                    // std::cout << "Made ant" << std::endl;           
                 }
                 makeAco = true;
+                curTeam++;
+                if(curTeam > conf::numberOfTeams)
+                {
+                    curTeam = 0;
+                }
                 
             }
             float locationrng = dist(rng);
@@ -170,6 +177,7 @@ void WorldGeneration::createChunk(int chunkX, int chunkY, World* world)
                 auto location = createLocation(worldX, worldY, difficulty);
 
                 Entity* locationRaw = location.get();  // store raw pointer before move
+                std::cout << "Adding location" << std::endl;
 
                 cell->data.entities.push_back(std::move(location));
 
@@ -185,7 +193,6 @@ void WorldGeneration::createChunk(int chunkX, int chunkY, World* world)
     if(world && makeAco)
     {
         world->createACO(chunkX,chunkY);
-
     }
     cm->addChunk(key, {std::move(chunk), state::AVAILABLE}); 
    // std::cout << "Num chunks: " << chunkCount << " -> Map size: " << grid.size() << std::endl;

@@ -57,6 +57,7 @@ class World
         bool isRunning() { return running;}
         void toggleSimState();
         void pushLocation(Entity* loc);
+        void pushBase(Entity* loc);
 
 
 
