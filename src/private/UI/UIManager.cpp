@@ -43,6 +43,14 @@ void UIManager::update(sf::RenderWindow& window, sf::Event& event)
         
     }
 
+    for(auto& elem:buttons)
+    {
+        if(elem.first->isButtonClicked(window))
+        {
+            
+        }
+    }
+
     
 }
 

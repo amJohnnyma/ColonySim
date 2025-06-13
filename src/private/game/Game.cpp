@@ -15,15 +15,19 @@ void Game::run()
         switch (currentState)
         {
             case State::IDLE:
+            //std::cout << "Idle" << std::endl;
                 idleState();  
                 break;          
             case State::PAUSED:
+            //std::cout << "paused" << std::endl;
                 pausedState();
                 break;
             case State::RUNNING:
+           // std::cout << "running" << std::endl;
                 runningState();
                 break;
             case State::STOPPED:
+          //  std::cout << "stopped" << std::endl;
                 stoppedState();
                 break;
             default:
@@ -72,7 +76,6 @@ void Game::runningState()
     using clock = std::chrono::steady_clock;
     static auto lastUpdate = clock::now();
     const std::chrono::milliseconds updateInterval(0);
-
     sf::Event event;
     while (wind->wndw->pollEvent(event))
     {
@@ -152,6 +155,7 @@ Game::Game(int windowWidth, int windowHeight, int worldWidth, int worldHeight)
     uiMan = new UIManager(world, *wind->wndw);
     inputManager = new InputManager(world,*wind->wndw);    
     handleEvent(Event::UNPAUSE);   
+    handleEvent(Event::START);   
     world->Init(); 
 }
 

@@ -7,7 +7,7 @@ namespace conf
     double maxPheromone = 20;
     const sf::Vector2f window_size = {1000, 1000};
     const sf::Vector2f window_size_f = static_cast<sf::Vector2f>(window_size);
-    sf::Vector2i max_world_size = {5, 5}; //in chunks    
+    sf::Vector2i max_world_size = {3, 3}; //in chunks    
     int chunkSize = 16;
     sf::Vector2i worldSize = {16*1, 16*1};//the initial size 
     /*

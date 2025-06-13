@@ -23,7 +23,7 @@ class World
         float baseSpeed = 5.0f;
         float speed;
         std::vector<ACO*> sims;
-        bool running = false;
+        bool running = true;
         TrackedVariables* trackedVars;
         Entity* antBase; //temporary
         sf::Clock antClock;
