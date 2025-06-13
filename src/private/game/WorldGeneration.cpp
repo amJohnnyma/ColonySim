@@ -170,6 +170,7 @@ void WorldGeneration::createChunk(int chunkX, int chunkY, World* world)
                 auto location = createLocation(worldX, worldY, difficulty);
 
                 Entity* locationRaw = location.get();  // store raw pointer before move
+                std::cout << "Adding location" << std::endl;
 
                 cell->data.entities.push_back(std::move(location));
 

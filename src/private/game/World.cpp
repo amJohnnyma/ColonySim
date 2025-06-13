@@ -15,7 +15,7 @@ void World::Init()
     if(!chunkManager)
     {
     chunkManager = std::make_unique<ChunkManager>(this);
-    chunkManager.get()->ensureChunksAround(0,0,3);
+    chunkManager.get()->ensureChunksAround(0,0,1);
     createACO(); 
     }
 
