@@ -15,7 +15,7 @@ void World::Init()
     if(!chunkManager)
     {
     chunkManager = std::make_unique<ChunkManager>(this);
-    chunkManager.get()->ensureChunksAround(0,0,5);
+    chunkManager.get()->ensureChunksAround(0,0,3);
     createACO(); 
     }
 
@@ -69,7 +69,7 @@ void World::update()
     // std::cout << "View Center: " << viewCenter.x << ", " << viewCenter.y << std::endl;
    //  std::cout << "Chunk Center: " << chunkX << ", " << chunkY << std::endl;
     // // Load necessary chunks and unload distant ones
-   // chunkManager->ensureChunksAround(chunkX, chunkY, 2);  // load chunks in a 5x5 area
+    chunkManager->ensureChunksAround(chunkX, chunkY, 2);  // load chunks in a 5x5 area
   //  chunkManager->unloadDistantChunks(chunkX, chunkY, 5); // unload chunks beyond 9x9 area
 
    
@@ -430,6 +430,7 @@ void World::pushLocation(Entity *loc)
     raw_goals.push_back(at(loc->getX(),loc->getY()));
     for(auto& a : sims)
     {
+        std::cout << "Sim add location: " << loc->getX() << ", " << loc->getY() << std::endl;
         a->addLocation(loc);
     }
 }

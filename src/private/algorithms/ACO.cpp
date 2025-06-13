@@ -3,15 +3,15 @@
 
 ACO::ACO(std::vector<Cell*> &goals, World* world,  Entity* base)
 {
-    std::cout << "ACO const" << std::endl;
-    std::cout << "ACO for team: " + std::to_string(base->getTeam()) << std::endl;
+ //   std::cout << "ACO const" << std::endl;
+  //  std::cout << "ACO for team: " + std::to_string(base->getTeam()) << std::endl;
     team = base->getTeam();
     this->base = base;
-    std::cout << this->base->getTeam() << std::endl;
-    std::cout << "Num goals: " << goals.size() << std::endl;
+ //   std::cout << this->base->getTeam() << std::endl;
+//    std::cout << "Num goals: " << goals.size() << std::endl;
     for (auto& g : goals) {
     if (!g) {
-        std::cerr << "[WARN] Null goal pointer encountered, skipping.\n";
+   //     std::cerr << "[WARN] Null goal pointer encountered, skipping.\n";
         continue;
     }
 
@@ -22,7 +22,7 @@ ACO::ACO(std::vector<Cell*> &goals, World* world,  Entity* base)
 
     assignRandomTarget(goals);
 
-    std::cout << "Fin" << std::endl;
+ //   std::cout << "Fin" << std::endl;
 }
 
 ACO::~ACO()
@@ -30,7 +30,7 @@ ACO::~ACO()
 }
 void ACO::assignRandomTarget(std::vector<Cell *> &raw_goals)
 {
-    std::cout << "Raw goal size: " << std::to_string(raw_goals.size()) << std::endl;
+  //  std::cout << "Raw goal size: " << std::to_string(raw_goals.size()) << std::endl;
 
     for (auto& cell : raw_goals)
     {
@@ -132,7 +132,7 @@ void ACO::getNewTarget(Ant *ant)
 
     for (const auto& [score, x, y, food] : scoredTargets) {
         if (food) {
-            std::cout << "Target: " << x << ", " << y << std::endl;
+          //  std::cout << "Target: " << x << ", " << y << std::endl;
             ant->setTarget(food);
             possibleLocations = true;
             return;
@@ -171,7 +171,7 @@ void ACO::update()
                 //  std::cout << "Checking entity" << std::endl;
                 if(!e)
                 {
-                    std::cerr << "No ent" << std::endl;
+                  //  std::cerr << "No ent" << std::endl;
                     continue;
 
                 }
@@ -179,7 +179,7 @@ void ACO::update()
                     {
                         if(!ant)
                         {
-                            std::cerr << "Not ant" << std::endl;
+                          //  std::cerr << "Not ant" << std::endl;
                             continue;
 
                         }
@@ -195,7 +195,7 @@ void ACO::update()
                         }
                         if(!ant->getTarget())
                         {
-                            std::cerr << "No target" << std::endl;
+                          //  std::cerr << "No target" << std::endl;
                             getNewTarget(ant);
                             continue;
                         }
