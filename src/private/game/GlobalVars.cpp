@@ -9,7 +9,7 @@ namespace conf
     const sf::Vector2f window_size_f = static_cast<sf::Vector2f>(window_size);
     sf::Vector2i max_world_size = {4, 4}; //in chunks    
     int chunkSize = 16;
-    sf::Vector2i worldSize = {16*3, 16*3};//the initial size 
+    sf::Vector2i worldSize = {16*16, 16*16};//the initial size 
     /*
     16,16 = 1x1
     32,32 = 2x2
