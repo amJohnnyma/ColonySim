@@ -3,7 +3,8 @@
         {
             "name": "Linux",
             "includePath": [
-                "${workspaceFolder}/**"
+                "${workspaceFolder}/**",
+                "${workspaceFolder}/src/private/UI/sfml-gui/**"
             ],
             "defines": [],
             "compilerPath": "/usr/bin/gcc",
