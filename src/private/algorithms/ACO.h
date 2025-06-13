@@ -68,6 +68,7 @@ class ACO
         void assignRandomTarget(std::vector<Cell*> &raw_goals);
         int getNumberAnts() {return numberAnts;}
         void addLocation(Entity* loc);
+        Entity* getBase();
  
 };
 

@@ -15,7 +15,7 @@ void World::Init()
     if(!chunkManager)
     {
     chunkManager = std::make_unique<ChunkManager>(this);
-    chunkManager.get()->ensureChunksAround(0,0,1);
+    chunkManager.get()->ensureChunksAround(0,0,0);
     createACO(); 
     }
 
@@ -71,6 +71,11 @@ void World::update()
     // // Load necessary chunks and unload distant ones
     chunkManager->ensureChunksAround(chunkX, chunkY, 2);  // load chunks in a 5x5 area
   //  chunkManager->unloadDistantChunks(chunkX, chunkY, 5); // unload chunks beyond 9x9 area
+  std::cout << "Bases: " << trackedVars->getBases().size() << "\tSims: " << sims.size() << std::endl;
+  if(trackedVars->getBases().size() > sims.size())
+  {
+    createACO();
+  }
 
    
 
@@ -142,42 +147,49 @@ void World::drawEntities(sf::RenderWindow& window)
 
 
 void World::createACO()
-{    
+{
+    std::vector<Entity*> basesToAdd = trackedVars->getBases();
 
-    for(int x = 0; x < conf::worldSize.x/conf::chunkSize; x++)
+    // Remove any base that's already being simulated
+    for (auto& s : sims)
     {
-        for(int y = 0; y < conf::worldSize.y/conf::chunkSize;y++)
+        Entity* simBase = s->getBase();
+        for (auto it = basesToAdd.begin(); it != basesToAdd.end(); )
         {
-            createACO(x,y);
+            if (simBase == *it)
+            {
+                it = basesToAdd.erase(it);
+            }
+            else
+            {
+                ++it;
+            }
         }
-    }    
+    }
 
+    // For each base left without an ACO, create one at its chunk position
+    for (Entity* base : basesToAdd)
+    {
+        int chunkX = base->getX() / conf::chunkSize;
+        int chunkY = base->getY() / conf::chunkSize;
+        createACO(chunkX, chunkY);
+    }
 }
 
 void World::createACO(int chunkX, int chunkY)
 {
-    //loop through existing bases first and make sure there isnt an ACO here already
-    for (auto& b : trackedVars->getBases())
-    {
-        int baseChunkX = b->getX() / conf::chunkSize;
-        int baseChunkY = b->getY() / conf::chunkSize;
 
-        if (baseChunkX == chunkX && baseChunkY == chunkY)
-        {
-           return; 
-        }
-    }
-    std::cout << "Create aco" << std::endl;
+  //  std::cout << "Create aco" << std::endl;
     Entity* t_bases = nullptr;
 
-    std::cout << "Looking for chunk: " << chunkX << ", " << chunkY << std::endl;
+   // std::cout << "Looking for chunk: " << chunkX << ", " << chunkY << std::endl;
     Chunk *chunk = getChunkAt(chunkY, chunkX);
     if (!chunk)
     {
-        std::cout << "No chunk found!" << std::endl;
+   //     std::cout << "No chunk found!" << std::endl;
         return;
     }
- //   std::cout << "Got chunk" << std::endl;
+   // std::cout << "Got chunk" << std::endl;
     for (auto &cellPtr : chunk->getCells())
     { 
         for (auto &eg : cellPtr->data.entities)
@@ -193,11 +205,12 @@ void World::createACO(int chunkX, int chunkY)
             if (eg->getName().find("Base") != std::string::npos)
             {
                 std::cout << "Found base" << std::endl;
-                for(auto& b : trackedVars->getBases())
+                for (auto& sim : sims)
                 {
-                    if(eg.get() == b)
+                    if (sim->getBase() == eg.get())
                     {
-                        return;
+                        std::cout << "Has ACO" << std::endl;
+                        return; // Already has an ACO
                     }
                 }
                 t_bases=eg.get();
@@ -433,6 +446,11 @@ void World::pushLocation(Entity *loc)
         std::cout << "Sim add location: " << loc->getX() << ", " << loc->getY() << std::endl;
         a->addLocation(loc);
     }
+}
+
+void World::pushBase(Entity *loc)
+{
+    trackedVars->setBase(loc);
 }
 
 void World::buildBuilding(std::string type)

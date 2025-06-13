@@ -4,7 +4,7 @@ namespace conf
 {
     const int cellSize = 50;
     const int antSize = 50;
-    double maxPheromone = 0;
+    double maxPheromone = 20;
     const sf::Vector2f window_size = {1000, 1000};
     const sf::Vector2f window_size_f = static_cast<sf::Vector2f>(window_size);
     sf::Vector2i max_world_size = {3, 3}; //in chunks    
@@ -29,12 +29,12 @@ namespace conf
     double hF = 20.8; // heuristic influence //higher because terrain difficulty lowers it heavily
     double pheremoneEvap = 0.005;
     unsigned int timestep = 500;
-    double locationFoodRegenerationRate = 100;
+    double locationFoodRegenerationRate = 1000;
     float antSpeed = 250; //250 / log(simSpeed + 0.1) + 1 -> decent scaling
     float terrainDifficultyScale = 0.05f;
     int baseSeparationDistance = 5;
     float perlinSmoothness = 0.1f;
-    unsigned int seed = 12345;
+    unsigned int seed = 0;
     int perlinLayers = 5;
     double perlinFlatness = 0.95f;
     const BiomeData biomeInfo[biomeSize] = {
@@ -46,10 +46,10 @@ namespace conf
     };
     int simulationSpeed = 10;
     double baseSpawnChance = 0.001; //0 - 1
-    int defaultNumAntsPerBase = 20;
+    int defaultNumAntsPerBase = 200;
     double numAntsToSpawn = 0.5; //0.5 - 1.5
     double locationSpawnChance = 0.001; //0 - 1
-    int numberOfTeams = 2; // >0
+    int numberOfTeams = 16; // >0
     double chosenTeam; //0 - 1 (chosen * num teams = team)
     
 }

@@ -147,7 +147,9 @@ void WorldGeneration::createChunk(int chunkX, int chunkY, World* world)
                 //spawn base and the ants in this cell
                 auto base = createBase(worldX, worldY, p);
                 base->setTeam(p);
+                world->pushBase(base.get());
                 cell.get()->data.entities.push_back(std::move(base));
+                
                // std::cout << "Made base in chunk: " << chunkX << ", " << chunkY << std::endl;
                 for (int k = 0; k < conf::defaultNumAntsPerBase; k++)
                 {
@@ -186,7 +188,6 @@ void WorldGeneration::createChunk(int chunkX, int chunkY, World* world)
     if(world && makeAco)
     {
         world->createACO(chunkX,chunkY);
-
     }
     cm->addChunk(key, {std::move(chunk), state::AVAILABLE}); 
    // std::cout << "Num chunks: " << chunkCount << " -> Map size: " << grid.size() << std::endl;

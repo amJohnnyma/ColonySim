@@ -4,6 +4,18 @@ Ant::Ant(int x, int y, std::string name, double maxResource, std::unique_ptr<sf:
 : Entity(x,y,name,maxResource,std::move(hitbox),currentCell)
 {
 
+
+
+}
+
+void Ant::setBase(Entity* base)
+{
+    this->base = base;
+}
+
+Entity* Ant::getBase()
+{
+    return this->base;
 }
 
 void Ant::addPath(Cell *newC)
