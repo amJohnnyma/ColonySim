@@ -15,7 +15,8 @@ void World::Init()
     if(!chunkManager)
     {
     chunkManager = std::make_unique<ChunkManager>(this);
-    //createACO(); 
+    chunkManager.get()->ensureChunksAround(0,0,5);
+    createACO(); 
     }
 
 }
@@ -47,7 +48,7 @@ Chunk* World::getChunkAt(int chunkX, int chunkY) {
 
 void World::update()
 {
-    createACO();
+   // createACO(); //
     int numAnts = 0;
     //this is aco
     for(auto &a : sims)
@@ -68,7 +69,7 @@ void World::update()
     // std::cout << "View Center: " << viewCenter.x << ", " << viewCenter.y << std::endl;
    //  std::cout << "Chunk Center: " << chunkX << ", " << chunkY << std::endl;
     // // Load necessary chunks and unload distant ones
-    chunkManager->ensureChunksAround(chunkX, chunkY, 2);  // load chunks in a 5x5 area
+   // chunkManager->ensureChunksAround(chunkX, chunkY, 2);  // load chunks in a 5x5 area
   //  chunkManager->unloadDistantChunks(chunkX, chunkY, 5); // unload chunks beyond 9x9 area
 
    
