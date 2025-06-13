@@ -8,7 +8,7 @@ class Ant : public Entity
 {
     private:
         Entity* target = nullptr;
-        Entity* base;
+        Entity* base = nullptr;
         std::vector<Cell*> path;
         bool returningHome = false;
         sf::Vector2f startPos;
@@ -38,6 +38,8 @@ class Ant : public Entity
         void Die();
         void setAttackTarget(Ant* ant);
         Ant* getAttackTarget() {return (this->attackTarget) ? this->attackTarget : nullptr;}
+        void setBase(Entity* base);
+        Entity* getBase();
 };
 
 #endif

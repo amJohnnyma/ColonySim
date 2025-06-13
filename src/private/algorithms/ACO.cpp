@@ -3,15 +3,15 @@
 
 ACO::ACO(std::vector<Cell*> &goals, World* world,  Entity* base)
 {
-    std::cout << "ACO const" << std::endl;
-    std::cout << "ACO for team: " + std::to_string(base->getTeam()) << std::endl;
+ //   std::cout << "ACO const" << std::endl;
+  //  std::cout << "ACO for team: " + std::to_string(base->getTeam()) << std::endl;
     team = base->getTeam();
     this->base = base;
-    std::cout << this->base->getTeam() << std::endl;
-    std::cout << "Num goals: " << goals.size() << std::endl;
+ //   std::cout << this->base->getTeam() << std::endl;
+//    std::cout << "Num goals: " << goals.size() << std::endl;
     for (auto& g : goals) {
     if (!g) {
-        std::cerr << "[WARN] Null goal pointer encountered, skipping.\n";
+   //     std::cerr << "[WARN] Null goal pointer encountered, skipping.\n";
         continue;
     }
 
@@ -20,9 +20,18 @@ ACO::ACO(std::vector<Cell*> &goals, World* world,  Entity* base)
 
     this->world = world;
 
+    Cell* cell = world->at(base->getX(), base->getY());
+    for(auto& b: cell->data.entities)
+    {
+        if(Ant* a = dynamic_cast<Ant*>(b.get()))
+        {
+            a->setBase(base);
+        }
+    }
+
     assignRandomTarget(goals);
 
-    std::cout << "Fin" << std::endl;
+ //   std::cout << "Fin" << std::endl;
 }
 
 ACO::~ACO()
@@ -30,7 +39,7 @@ ACO::~ACO()
 }
 void ACO::assignRandomTarget(std::vector<Cell *> &raw_goals)
 {
-    std::cout << "Raw goal size: " << std::to_string(raw_goals.size()) << std::endl;
+  //  std::cout << "Raw goal size: " << std::to_string(raw_goals.size()) << std::endl;
 
     for (auto& cell : raw_goals)
     {
@@ -132,7 +141,7 @@ void ACO::getNewTarget(Ant *ant)
 
     for (const auto& [score, x, y, food] : scoredTargets) {
         if (food) {
-            std::cout << "Target: " << x << ", " << y << std::endl;
+          //  std::cout << "Target: " << x << ", " << y << std::endl;
             ant->setTarget(food);
             possibleLocations = true;
             return;
@@ -171,7 +180,7 @@ void ACO::update()
                 //  std::cout << "Checking entity" << std::endl;
                 if(!e)
                 {
-                    std::cerr << "No ent" << std::endl;
+                  //  std::cerr << "No ent" << std::endl;
                     continue;
 
                 }
@@ -179,9 +188,13 @@ void ACO::update()
                     {
                         if(!ant)
                         {
-                            std::cerr << "Not ant" << std::endl;
+                          //  std::cerr << "Not ant" << std::endl;
                             continue;
 
+                        }
+                        if(ant->getBase() == nullptr)
+                        {
+                            ant->setBase(base);
                         }
 
 
@@ -195,7 +208,7 @@ void ACO::update()
                         }
                         if(!ant->getTarget())
                         {
-                            std::cerr << "No target" << std::endl;
+                          //  std::cerr << "No target" << std::endl;
                             getNewTarget(ant);
                             continue;
                         }
@@ -211,9 +224,9 @@ void ACO::update()
                         }
                         if (ant->getTarget() && ant->getTarget()->getName() == "Base:" + std::to_string(ant->getTeam()))
                         {
-                            //std::cout << "Base found" << std::endl;
+                          //  std::cout << "Base found" << std::endl;
                            // std::cout << ant->getTeam() << ", " << ant->getTarget()->getTeam() << std::endl;
-                            if (!ant->sameTeam(ant->getTeam(), ant->getTarget()->getTeam()) || ant->getTeam() == ant->getTarget()->getTeam())
+                            if (!ant->sameTeam(ant->getTeam(), ant->getTarget()->getTeam()))
                             {
                                // std::cout << "Getting new target" << std::endl;
                                 getNewTarget(ant);
@@ -221,6 +234,7 @@ void ACO::update()
                             }
                             if ((!possibleLocations) && (e.get()->getX() == ant->getTarget()->getX()) && (e.get()->getY() == ant->getTarget()->getY()))
                             {
+                              //  std::cout << "Not possible locations" << std::endl;
                                 getNewTarget(ant);
                                 continue;
                             }
@@ -335,7 +349,7 @@ void ACO::findFood(Cell *cell, Ant *e)
                 {
                     if(FoodLocation* fl = dynamic_cast<FoodLocation*>(ent.get()))
                     {
-                        e->giveResource(fl->takeResource(10));
+                        e->giveResource(fl->takeResource(0));
                     }
                 }
             //   std::cout << "Target base -----------------------------------------------------------------------------" << base->getTeam() << std::endl;
@@ -346,6 +360,12 @@ void ACO::findFood(Cell *cell, Ant *e)
             double currentP = s.first->data.p.pheromoneMap[team];
             double updatedP = conf::Q / (currentP + 0.0001);  // or your preferred epsilon
             s.first->data.p.pheromoneMap[team] += updatedP;
+
+            if(s.first->data.p.pheromoneMap[team] > conf::maxPheromone)
+            {
+            s.first->data.p.pheromoneMap[team] = conf::maxPheromone;
+
+            }
 
 
             moveToCell({cell->x, cell->y}, {s.first->x, s.first->y}, e);
@@ -391,26 +411,31 @@ void ACO::returnHome(Cell *cell, Ant *e)
             // e->getPath().push_back(s.first);
             e->addPath(s.first);
 
-            bool containsTarget = same(s.first->x, s.first->y, base->getX(), base->getY());
+            bool containsTarget = same(s.first->x, s.first->y, e->getBase()->getX(), e->getBase()->getY());
         //    std::cout << "ANT( " << e->getX() << ", " << e->getY() << ")" << std::endl;
-          //  std::cout << "TARGET( " << s.first->x << ", " <<s.first->y << ")" << std::endl;
-           // std::cout << "BASE( " << base->getX() << ", " << base->getY() << ")" << std::endl;
+        //    std::cout << "TARGET( " << s.first->x << ", " <<s.first->y << ")" << std::endl;
+        //    std::cout << "BASE( " << base->getX() << ", " << base->getY() << ")" << std::endl;
 
             if (containsTarget)
             {
              //   std::cout << "Target rand -----------------------------------------------------------------------------" << base->getTeam() << std::endl;
                 
-                std::cout << "e:"<< e->getTeam() << " b:" << base->getTeam() << " aco:" << team << std::endl;
-                if (!(e->getTeam() == base->getTeam() && base->getTeam() == team)) {
+               // std::cout << "e:"<< e->getTeam() << " b:" << e->getBase()->getTeam() << " aco:" << team << std::endl;
+                if (!(e->getTeam() == e->getBase()->getTeam())) {
                     exit(0);
                 }
-                base->giveResource(e->takeResource(10));
+                e->getBase()->giveResource(e->takeResource(0));
                 getNewTarget(e);
             }
             // Update pheromone after choosing the cell
             double currentP = s.first->data.p.pheromoneMap[team];
             double updatedP = conf::Q / (currentP + 0.0001);  // or your preferred epsilon
             s.first->data.p.pheromoneMap[team] += updatedP;
+            if(s.first->data.p.pheromoneMap[team] > conf::maxPheromone)
+            {
+            s.first->data.p.pheromoneMap[team] = conf::maxPheromone;
+
+            }
 
 
 
@@ -558,4 +583,9 @@ void ACO::transferResource(Entity* from, Entity* to, int amount)
     int taken = from->takeResource(amount);
     int excess = to->giveResource(taken);
     from->giveResource(excess); // return unused portion
+}
+
+Entity* ACO::getBase()
+{
+    return this->base;
 }
