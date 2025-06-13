@@ -149,9 +149,9 @@ Game::Game(int windowWidth, int windowHeight, int worldWidth, int worldHeight)
 {
     wind = new window(windowWidth,windowHeight);
     world = new World(*wind->wndw);
-    uiMan = new UIManager(world);
+    uiMan = new UIManager(world, *wind->wndw);
     inputManager = new InputManager(world,*wind->wndw);    
-    handleEvent(Event::PAUSE);   
+    handleEvent(Event::UNPAUSE);   
     world->Init(); 
 }
 

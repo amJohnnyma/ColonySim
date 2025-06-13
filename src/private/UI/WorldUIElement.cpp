@@ -1,4 +1,4 @@
-#include "WorldUIElement.h"
+/*#include "WorldUIElement.h"
 #include <iostream>
 #include <unordered_map>
 WorldUIElement::WorldUIElement(World* world, int x, int y, int resolution, int radius, int width, int height, std::string function, std::string textArea)
@@ -261,3 +261,4 @@ void WorldUIElement::move(int x, int y) {
     text.setPosition(x*conf::cellSize, y*conf::cellSize);
     button->setPosition(x*conf::cellSize, y*conf::cellSize);
 }
+*/

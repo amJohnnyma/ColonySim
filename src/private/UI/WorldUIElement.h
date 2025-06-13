@@ -1,3 +1,5 @@
+/*
+
 #ifndef WORLD_UI_ELEMENT_H
 #define WORLD_UI_ELEMENT_H
 
@@ -31,3 +33,4 @@ class WorldUIElement : public UIElement
 };
 
 #endif
+*/
