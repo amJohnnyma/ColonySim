@@ -55,11 +55,3 @@ make run
 * FPS counter top right
 
 
-
-### Next features
-* NN for ants to build a base
-* Ants die if they're away from a food source for too long
-* Ant factions
-* Player controls ant/s movement or lets ACO
-* Find a cool theme
-* Make a game
