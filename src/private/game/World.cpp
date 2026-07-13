@@ -15,7 +15,13 @@ void World::Init()
     if(!chunkManager)
     {
     chunkManager = std::make_unique<ChunkManager>(this);
-    chunkManager.get()->ensureChunksAround(0,0,0);
+
+    for (int cx = -3; cx <= 3; ++cx) {
+            for (int cy = -3; cy <= 3; ++cy) {
+                // Let your manager handle creation without filtering it out
+                chunkManager->ensureChunksAround(cx, cy, 0); 
+            }
+        }
     createACO(); 
     }
 
@@ -69,9 +75,10 @@ void World::update()
     // std::cout << "View Center: " << viewCenter.x << ", " << viewCenter.y << std::endl;
    //  std::cout << "Chunk Center: " << chunkX << ", " << chunkY << std::endl;
     // // Load necessary chunks and unload distant ones
-    chunkManager->ensureChunksAround(chunkX, chunkY, 2);  // load chunks in a 5x5 area
+   // chunkManager->ensureChunksAround(chunkX, chunkY, 2);  // load chunks in a 5x5 area
   //  chunkManager->unloadDistantChunks(chunkX, chunkY, 5); // unload chunks beyond 9x9 area
  // std::cout << "Bases: " << trackedVars->getBases().size() << "\tSims: " << sims.size() << std::endl;
+ /*
   if(trackedVars->getBases().size() > sims.size())
   {
     //createACO();
@@ -86,11 +93,11 @@ void World::update()
     {
         for(int y = 0; y < conf::worldSize.y / conf::chunkSize;y++)
         {
-            createACO(x,y);
+            createACO(y,x);
         }
     }
   }
-
+*/
    
 
 }
@@ -197,7 +204,7 @@ void World::createACO(int chunkX, int chunkY)
     Entity* t_bases = nullptr;
 
    // std::cout << "Looking for chunk: " << chunkX << ", " << chunkY << std::endl;
-    Chunk *chunk = getChunkAt(chunkY, chunkX);
+    Chunk *chunk = getChunkAt(chunkX, chunkY);
     if (!chunk)
     {
    //     std::cout << "No chunk found!" << std::endl;

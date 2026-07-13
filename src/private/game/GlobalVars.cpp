@@ -26,7 +26,7 @@ namespace conf
     const int antPathDrawLength = 10;
     int Q = 1;
     double pF = 0.5; //pheremone influnce
-    double hF = 20.8; // heuristic influence //higher because terrain difficulty lowers it heavily
+    double hF = 2; // heuristic influence //higher because terrain difficulty lowers it heavily
     double pheremoneEvap = 0.005;
     unsigned int timestep = 500;
     double locationFoodRegenerationRate = 1000;
