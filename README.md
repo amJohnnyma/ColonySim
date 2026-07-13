@@ -1,5 +1,5 @@
 # ColonySim
-A colony sim which uses ACO and other genetic algorithms alongside player input to create an immersive gameplay loop.
+
 
 ![Game View](https://github.com/amJohnnyma/ColonySim/blob/main/planning/Game.png)
 
